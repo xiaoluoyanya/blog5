@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Adventure Profile</title>
+    <!-- 引入圆润可爱的字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    <!-- 引入 Google 的 Model Viewer 组件 -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+    
+    <style>
+    :root {
+        --primary-red: #E60012;
+        --sky-blue: #4facfe;
+        --bg-gradient: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+        --panel-bg: rgba(255, 255, 255, 0.95);
+        --text-dark: #4a4a4a;
+        --accent-yellow: #FFD700;
+        --shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+/* 默认是白天，这里定义黑夜模式的变量覆盖 */
+[data-theme="dark"] {
+    --primary-red: #ff0055; /* 霓虹红 */
+    --sky-blue: #00f2fe;    /* 霓虹蓝 */
+    --bg-gradient: linear-gradient(180deg, #2b1055 0%, #7597de 100%); /* 深紫色夜空 */
+    --panel-bg: rgba(20, 20, 30, 0.95); /* 深色面板 */
+    --text-dark: #ffffff;   /* 文字变白 */
+    --accent-yellow: #f9ca24; 
+    --shadow: 0 8px 20px rgba(0,242,254, 0.3); /* 发光的阴影 */
+}
+
+/* 夜间模式下的一些微调 */
+[data-theme="dark"] body {
+    /* 星空背景图 */
+    background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+    background-size: 550px 550px, 350px 350px, 250px 250px; 
+    background-position: 0 0, 40px 60px, 130px 270px;
+}
+
+[data-theme="dark"] .panel {
+    border-color: #444; /* 边框变暗 */
+}
+
+[data-theme="dark"] h2 {
+    color: #fff;
+    text-shadow: 0 0 10px var(--sky-blue); /* 标题发光 */
+}
+
+[data-theme="dark"] .card-title { color: #333; } /* 卡片内部还是白底，字要黑 */
+[data-theme="dark"] .article-item { color: #333; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Nunito', sans-serif;
+        background: var(--bg-gradient);
+        height: 100vh;
+        overflow: hidden; /* 禁止整个网页滚动 */
+        color: var(--text-dark);
+        /* 像素鼠标 */
+        cursor: url('https://cur.cursors-4u.net/games/gam-13/gam1282.cur'), auto;
+        /* 动态背景图 */
+        background-image: 
+            radial-gradient(circle 20px at 10% 10%, rgba(255,255,255,0.4) 100%, transparent),
+            radial-gradient(circle 30px at 80% 20%, rgba(255,255,255,0.4) 100%, transparent);
+        background-size: 100% 100%;
+    }
+
+    /* 按钮鼠标手势 */
+    a, button { cursor: url('https://cur.cursors-4u.net/games/gam-13/gam1283.cur'), pointer; }
+
+    /* --- 1. 初始画面 --- */
+    #intro-scene {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--bg-gradient);
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .logo-title {
+        font-family: 'Fredoka One', cursive;
+        font-size: 5rem;
+        color: var(--primary-red);
+        -webkit-text-stroke: 3px #fff;
+        text-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        animation: bounce 2s infinite;
+    }
+
+    .start-btn {
+        font-family: 'Fredoka One', cursive;
+        font-size: 1.5rem;
+        background: #fff;
+        color: var(--sky-blue);
+        padding: 15px 50px;
+        border-radius: 50px;
+        border: none;
+        box-shadow: 0 10px 0 #ddd;
+        margin-top: 50px;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
+    .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #ddd; }
+
+    /* --- 2. 全屏主界面 (关键布局修改) --- */
+    #main-dashboard {
+        display: grid;
+        /* 
+           修改点 1：三列布局 
+           左侧 300px | 中间 1fr (自适应) | 右侧 340px (作品集)
+        */
+        grid-template-columns: 300px 1fr 340px; 
+        grid-template-rows: 85vh; /* 固定高度，内容在内部滚动 */
+        gap: 25px;
+        padding: 20px;
+        
+        /* 修改点 2：限制最大宽度，防止中间太宽 */
+        max-width: 1480px; 
+        margin: 0 auto; /* 居中 */
+        align-content: center;
+        
+        opacity: 0; 
+        transform: scale(0.95);
+        transition: all 0.5s ease;
+    }
+
+    /* 通用面板样式 */
+    .panel {
+        background: var(--panel-bg);
+        border-radius: 25px;
+        box-shadow: var(--shadow);
+        border: 4px solid #fff;
+        padding: 20px;
+        overflow-y: auto; /* 内容多了可以滚动 */
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .panel::-webkit-scrollbar { width: 0px; }
+
+    /* 各栏动画 */
+    .left-col { animation: slideInLeft 0.8s ease backwards; }
+    .mid-col { animation: zoomIn 0.8s ease backwards 0.2s; border: 8px solid #fff; }
+    .right-col { animation: slideInRight 0.8s ease backwards 0.4s; }
+
+    /* 内部元素样式 */
+    .avatar-container {
+        width: 150px; height: 150px;
+        margin: 0 auto;
+        background: #ffecb3;
+        border-radius: 50%;
+        border: 5px solid #fff;
+        box-shadow: 0 0 0 3px var(--accent-yellow);
+        overflow: hidden;
+    }
+    .avatar-container img { width: 100%; height: 100%; }
+
+    h2 {
+        font-family: 'Fredoka One';
+        color: var(--sky-blue);
+        border-bottom: 2px dashed #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    /* 卡带样式 (Inventory) */
+    .cartridge {
+        background: #333;
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px;
+        /* margin-bottom: 15px; */
+        cursor: pointer;
+        transition: transform 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .cartridge:hover { transform: translateX(-5px); background: var(--primary-red); }
+    .cartridge-icon { 
+        width: 40px; height: 40px; background: #555; border-radius: 5px; 
+        display:flex; align-items:center; justify-content:center; font-weight:bold;
+    }
+
+    /* === 响应式：小屏幕变单列 === */
+    @media (max-width: 1200px) {
+        #main-dashboard {
+            grid-template-columns: 1fr; /* 变成一列 */
+            grid-template-rows: auto;
+            height: auto;
+            overflow-y: scroll;
+            max-width: 100%;
+        }
+        body { overflow: auto; height: auto; }
+        .panel { height: auto; margin-bottom: 20px; }
+    }
+
+    /* 动画定义 */
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .visible { opacity: 1 !important; transform: scale(1) !important; }
+    .hidden { transform: translateY(-100%); }
+
+    /* === 音乐播放器样式 === */
+    .music-player-card {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(255, 105, 180, 0.3);
+        transition: transform 0.2s;
+    }
+    .music-player-card:hover { transform: scale(1.02); }
+
+    .album-cover {
+        width: 80px; height: 80px;
+        background: #000;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    .album-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .playing-icon {
+        display: flex; gap: 3px; align-items: flex-end; height: 20px; margin-top: 10px;
+    }
+    .bar {
+        width: 4px; background: #fff;
+        animation: equalizer 0.5s infinite alternate;
+    }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
+    .bar:nth-child(4) { animation-delay: 0.3s; }
+
+/* === 新增：播放器控制区 === */
+    .player-controls {
+        display: flex; align-items: center; gap: 10px; margin-top: 10px;
+    }
+    .player-controls button {
+        background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+        color: #fff; border-radius: 50%; width: 35px; height: 35px;
+        cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+    }
+    .player-controls button:hover {
+        background: #fff; color: #ff6b6b; transform: scale(1.1);
+    }
+
+    /* === 新增：播放列表样式 === */
+    .playlist-container {
+        background: #fff;
+        border-radius: 15px;
+        margin-top: 10px;
+        padding: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+    }
+    
+    /* 列表展开/收起逻辑 */
+    .hidden-list {
+        max-height: 0; opacity: 0; padding: 0 10px; border: none; margin: 0;
+    }
+    .show-list {
+        max-height: 300px; opacity: 1; padding: 10px; overflow-y: auto;
+    }
+
+    /* 单个歌曲行 */
+    .track-item {
+        display: flex; justify-content: space-between; padding: 8px;
+        border-bottom: 1px dashed #eee; cursor: pointer; font-size: 0.85rem;
+        color: #555; border-radius: 5px;
+    }
+    .track-item:hover { background: #f0f8ff; color: var(--sky-blue); }
+    .track-item:last-child { border-bottom: none; }
+    
+    /* 当前正在播放的歌高亮 */
+    .track-item.active {
+        background: #ffecb3; color: #e67e22; font-weight: bold;
+    }
+    /* === 游戏收藏架样式 === */
+    .game-shelf {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    .game-box {
+        aspect-ratio: 3/4;
+        background: #ddd;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .game-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        z-index: 10;
+    }
+    .game-box img { width: 100%; height: 100%; object-fit: cover; }
+    .game-title {
+        position: absolute; bottom: 0; left: 0; width: 100%;
+        background: rgba(0,0,0,0.7); color: #fff;
+        font-size: 0.6rem; padding: 5px; text-align: center;
+        opacity: 0; transition: opacity 0.2s;
+    }
+    .game-box:hover .game-title { opacity: 1; }
+
+    /* === 右侧栏：作品集卡片样式 (新增) === */
+    .portfolio-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+        padding: 5px;
+        flex: 1;
+    }
+    .portfolio-container::-webkit-scrollbar { width: 0; }
+
+    .portfolio-card {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+        border: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        min-height: 200px;
+    }
+    .portfolio-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+
+    .card-img {
+        width: 100%;
+        height: 110px;
+        background-color: #eee;
+        background-size: cover;
+        background-position: center;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .card-content { padding: 15px; display: flex; flex-direction: column; flex: 1; }
+    
+    .card-tag {
+        display: inline-block;
+        font-size: 0.6rem;
+        font-weight: 800;
+        background: var(--sky-blue);
+        color: #fff;
+        padding: 3px 8px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        align-self: flex-start;
+    }
+    .card-title { font-size: 1rem; margin: 0 0 5px 0; color: #333; font-weight: 800; }
+    .card-desc { font-size: 0.75rem; color: #888; line-height: 1.5; margin-bottom: 15px; flex: 1; }
+    
+    .card-btn {
+        display: block; text-align: center; background: #f8f9fa; color: #555;
+        text-decoration: none; padding: 8px; border-radius: 8px;
+        font-size: 0.8rem; font-weight: bold; transition: 0.2s; border: 1px solid #eee;
+    }
+    .card-btn:hover { background: var(--text-dark); color: #fff; border-color: var(--text-dark); }
+
+    /* === 弹窗 & 留言板样式保持不变 === */
+    @keyframes equalizer { 0% { height: 5px; } 100% { height: 20px; } }
+
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.8); z-index: 2000;
+        display: flex; justify-content: center; align-items: center;
+        backdrop-filter: blur(5px); transition: opacity 0.3s;
+    }
+    .model-window {
+        width: 90%; max-width: 600px; background: #fff; border-radius: 25px;
+        padding: 20px; border: 5px solid var(--sky-blue);
+        box-shadow: 0 0 30px rgba(79, 172, 254, 0.6); position: relative;
+        transform: scale(1); transition: transform 0.3s;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .close-btn {
+        position: absolute; top: -20px; right: -10px;
+        background: var(--primary-red); color: white;
+        border: 3px solid #fff; padding: 5px 15px; border-radius: 20px;
+        cursor: pointer; font-weight: bold; box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+    .close-btn:hover { transform: scale(1.1); }
+    @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* 留言板样式 */
+    .floating-btn {
+        background: #fff; border: 2px solid #eee; padding: 10px 20px;
+        border-radius: 20px; font-family: 'Fredoka One';
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer;
+    }
+    .floating-btn:hover { transform: scale(1.1) rotate(-3deg); color: var(--sky-blue); }
+
+/* === 🟢 粘贴这段新的样式 === */
+    .side-drawer {
+        position: fixed;
+        top: 0; 
+        right: -360px; /* 默认隐藏在右侧外面 */
+        width: 350px; /* 宽度适中 */
+        max-width: 85vw; /* 关键：手机上最多占屏幕宽度的85%，不会撑破屏幕 */
+        height: 100%;
+        
+        /* 视觉美化 */
+        background: rgba(255, 255, 255, 0.9); /*稍微透明一点 */
+        backdrop-filter: blur(15px); /* 毛玻璃模糊特效 */
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1); /* 左侧阴影 */
+        border-left: 4px solid #fff; /* 左侧白边 */
+        
+        z-index: 1001;
+        transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* 顺滑的动画 */
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* 打开状态 */
+    .side-drawer.open { right: 0; }
+    /* === 表单输入区域美化 === */
+    .input-area {
+        display: flex; 
+        flex-direction: column; 
+        gap: 15px; /* 增加间距 */
+        margin-top: 20px;
+    }
+    
+    .input-area input, .input-area textarea {
+        width: 100%; 
+        padding: 12px; 
+        border-radius: 12px;
+        border: 2px solid #eee; 
+        outline: none; 
+        font-family: 'Nunito';
+        background: rgba(255,255,255,0.8);
+        transition: 0.3s;
+    }
+    
+    /* 输入框聚焦时变蓝 */
+    .input-area input:focus, .input-area textarea:focus {
+        border-color: var(--sky-blue);
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(79, 172, 254, 0.1);
+    }
+    
+    /* 发送按钮 */
+    .input-area button {
+        background: var(--primary-red); 
+        color: #fff; 
+        border: none;
+        padding: 12px; 
+        border-radius: 12px; 
+        font-weight: bold;
+        cursor: pointer; 
+        transition: 0.2s;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+    
+    .input-area button:hover { 
+        background: var(--sky-blue); 
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* 禁用状态 (发送中) */
+    .input-area button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .message-list-area {
+        flex: 1; overflow-y: auto; margin-bottom: 20px;
+        border: 2px dashed #eee; border-radius: 10px;
+        padding: 10px; background: rgba(255,255,255,0.5);
+    }
+    .msg-card {
+        background: #fff; border-radius: 10px; padding: 10px; margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid var(--sky-blue);
+        font-size: 0.9rem; animation: slideInRight 0.3s ease;
+    }
+    .msg-header {
+        font-weight: bold; color: var(--primary-red); font-size: 0.8rem;
+        display: flex; justify-content: space-between; margin-bottom: 5px;
+    }
+    .msg-time { color: #ccc; font-size: 0.7rem; font-weight: normal;}
+    .input-area { display: flex; flex-direction: column; gap: 10px; }
+    .input-area input, .input-area textarea {
+        width: 100%; padding: 10px; border-radius: 10px;
+        border: 2px solid #eee; outline: none; font-family: 'Nunito';
+    }
+    .input-area input:focus, .input-area textarea:focus { border-color: var(--sky-blue); }
+    .input-area button {
+        background: var(--primary-red); color: #fff; border: none;
+        padding: 10px; border-radius: 10px; font-weight: bold;
+        cursor: pointer; transition: 0.2s;
+    }
+    .input-area button:hover { background: var(--sky-blue); transform: translateY(-2px); }
+    .empty-tip { text-align: center; color: #999; margin-top: 50px; font-size: 0.8rem; }
+
+    /* === 全屏画廊专用样式 === */
+    .gallery-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #000; /* 纯黑背景，沉浸感 */
+        z-index: 3000; /* 保证在最顶层 */
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        transition: opacity 0.5s ease;
+    }
+
+    /* 图片容器：利用相对定位 */
+    .gallery-container {
+        position: relative;
+        width: 90%; height: 80%;
+        display: flex; justify-content: center; align-items: center;
+    }
+
+    /* 核心：图片的淡入淡出逻辑 */
+    .gallery-slide {
+        position: absolute; /* 让所有图片重叠在一起 */
+        max-width: 100%; max-height: 100%;
+        object-fit: contain; /* 保持比例完整显示 */
+        opacity: 0; /* 默认透明 */
+        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* 0.8秒缓慢渐变 */
+        pointer-events: none; /* 避免点到隐藏的图 */
+    }
+
+    /* 只有加了 active 类的图片才会显示 */
+    .gallery-slide.active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 2;
+    }
+
+    /* 左右切换箭头 */
+    .nav-btn {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        background: rgba(255,255,255,0.1); color: #fff; border: none;
+        font-size: 3rem; padding: 10px 20px; cursor: pointer; border-radius: 10px;
+        transition: 0.3s; user-select: none; z-index: 10;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.3); }
+    .nav-btn.prev { left: 20px; }
+    .nav-btn.next { right: 20px; }
+
+    /* 独立的关闭按钮 */
+    .close-btn-gallery {
+        position: absolute; top: 20px; right: 30px;
+        background: transparent; border: 2px solid rgba(255,255,255,0.5);
+        color: #fff; padding: 8px 20px; border-radius: 30px;
+        cursor: pointer; font-weight: bold; z-index: 10; transition: 0.3s;
+    }
+    .close-btn-gallery:hover { background: #fff; color: #000; }
+
+    /* 底部指示器 */
+    .gallery-indicator {
+        position: absolute; bottom: 30px; color: #888; font-family: 'Fredoka One'; letter-spacing: 2px;
+    }
+    /* === 博客文章列表样式 === */
+    .article-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 300px; /* 如果文章太多，支持内部滚动 */
+        overflow-y: auto;
+    }
+
+    /* 每一行文章的样式 */
+    .article-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        text-decoration: none; /* 去掉下划线 */
+        color: #333;
+        transition: all 0.2s;
+        border: 2px solid transparent; /* 预留边框位置 */
+    }
+
+    /* 鼠标悬停效果：变白、浮起、变蓝边框 */
+    .article-item:hover {
+        background: #fff;
+        border-color: var(--sky-blue);
+        transform: translateX(5px); /* 微微右移 */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .article-date {
+        font-size: 0.7rem;
+        color: #999;
+        font-weight: bold;
+        margin-right: 15px;
+        font-family: 'Nunito';
+    }
+
+    .article-title {
+        flex: 1; /* 占满剩余空间 */
+        font-size: 0.9rem;
+        font-weight: bold;
+        white-space: nowrap; /* 不换行 */
+        overflow: hidden;
+        text-overflow: ellipsis; /* 超出显示省略号 */
+    }
+
+    .article-arrow {
+        color: #ccc;
+        font-weight: bold;
+    }
+    .article-item:hover .article-arrow { color: var(--sky-blue); }
+        /* === 加载界面样式 === */
+    #loading-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%); /* 与背景一致 */
+        z-index: 3000; /* 保证最顶层 */
+        display: flex; justify-content: center; align-items: center; flex-direction: column;
+        transition: opacity 0.8s ease-out, visibility 0.8s;
+    }
+    .loading-content { text-align: center; width: 300px; }
+    .loading-icon { font-size: 4rem; margin-bottom: 20px; animation: spin 2s infinite linear; }
+    .loading-text {
+        font-family: 'Fredoka One', cursive; color: #fff; font-size: 1.2rem;
+        margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; height: 1.5rem;
+    }
+    .progress-track {
+        width: 100%; height: 20px; background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px; overflow: hidden; border: 3px solid #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .progress-fill {
+        width: 0%; height: 100%; background: #FFD700;
+        background-image: linear-gradient(45deg, rgba(255,255,255,.25) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.25) 50%, rgba(255,255,255,.25) 75%, transparent 75%, transparent);
+        background-size: 20px 20px; transition: width 0.2s ease;
+    }
+    .loading-percent { font-family: 'Fredoka One', cursive; color: #fff; margin-top: 10px; font-size: 1rem; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .loaded { opacity: 0; visibility: hidden; pointer-events: none; }
+    </style>
+</head>
+<body>
+<!-- === 0. 游戏加载界面 (Loading Screen) === -->
+<div id="loading-screen">
+    <div class="loading-content">
+        <!-- 加载图标 (可以是简单的 Emoji 或者你的 Logo) -->
+        <div class="loading-icon">⚔️</div>
+        
+        <!-- 随机提示文字 -->
+        <div id="loading-text" class="loading-text">SYSTEM INITIALIZING...</div>
+        
+        <!-- 进度条外框 -->
+        <div class="progress-track">
+            <!-- 进度条本体 -->
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        
+        <!-- 百分比数字 -->
+        <div id="loading-percent" class="loading-percent">0%</div>
+    </div>
+</div>
+<!-- 1. 音乐开关 (只留这一个包含两个按钮的盒子) -->
+    <div style="position:fixed; top:20px; right:20px; z-index:1000; display:flex; gap:10px;">
+         <!-- 夜间模式按钮 -->
+        <button onclick="toggleTheme()" id="theme-btn" style="background:#fff; border:2px solid #eee; padding:10px; border-radius:20px; font-family:'Fredoka One'; cursor:pointer;">
+            ☀️ DAY
+        </button>
+        <!-- 音乐按钮 -->
+        <button id="music-btn" onclick="toggleMusic()" style="background:#fff; border:2px solid #eee; padding:10px; border-radius:20px; font-family:'Fredoka One'; cursor:pointer;">
+            🎵 BGM: OFF
+        </button>
+    </div>
+    <audio id="bgm" loop src="bgm.mp3"></audio>
+
+    <!-- 2. 初始开始画面 -->
+    <div id="intro-scene">
+        <h1 class="logo-title">PLAYER ONE</h1>
+        <p style="color:#fff; font-size:1.2rem;">READY PLAYER ONE?</p>
+        <button class="start-btn" onclick="startGame()">PRESS START</button>
+    </div>
+
+    <!-- 3. 留言板按钮 -->
+    <div style="position:fixed; top:80px; right:20px; z-index:1000;">
+        <button onclick="toggleMessageBoard()" class="floating-btn">
+            💬 留言板
+        </button>
+    </div>
+
+<!-- 4. 留言板侧滑抽屉 (完美原生样式 + 真实发送) -->
+    <div id="message-board-panel" class="side-drawer">
+        <h3 style="font-family:'Fredoka One'; color:var(--primary-red);">📮 PRIVATE BOX</h3>
+        <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">
+            Send a secret message to me.<br>
+            您的留言将直接发送到我的邮箱。
+        </p>
+        
+        <!-- 这里的 ID 很重要，JS 要用 -->
+        <form id="my-game-form" class="input-area">
+            
+            <!-- 名字输入框 (加了 name="name") -->
+            <input type="text" name="name" placeholder="你的昵称 / Name" required>
+            
+            <!-- 内容输入框 (加了 name="message") -->
+            <textarea name="message" placeholder="写点什么吧... / Message..." rows="3" required></textarea>
+            
+            <!-- 发送按钮 (type="submit") -->
+            <button type="submit" id="send-btn">🚀 发送 / SEND</button>
+            
+            <!-- 状态提示文字 -->
+            <p id="form-status" style="font-size:0.8rem; color:#888; text-align:center; margin-top:5px;"></p>
+        </form>
+    </div>
+
+    <!-- 5. 主界面 (三栏布局) -->
+    <div id="main-dashboard">
+        
+        <!-- 🏢 左侧栏：玩家属性 -->
+        <aside class="panel left-col">
+            <div class="avatar-container">
+                <img src="me.jpg" alt="avatar">
+            </div>
+            <div style="text-align:center;">
+                <h1 style="font-family:'Fredoka One'; margin-top:10px;">无音desu</h1>
+                <span style="background:var(--accent-yellow); padding:5px 10px; border-radius:10px; font-size:0.8rem; font-weight:bold;">LV.23 DESIGNER</span>
+            </div>
+
+            <div style="margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; margin-bottom:5px;">
+                    <span>HP (精力)</span> <span>100/100</span>
+                </div>
+                <div style="height:10px; background:#eee; border-radius:5px; overflow:hidden;">
+                    <div style="width:100%; height:100%; background:#ff5252;"></div>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; margin-top:10px; margin-bottom:5px;">
+                    <span>MP (灵感)</span> <span>85/100</span>
+                </div>
+                <div style="height:10px; background:#eee; border-radius:5px; overflow:hidden;">
+                    <div style="width:85%; height:100%; background:#4facfe;"></div>
+                </div>
+            </div>
+
+            <div style="margin-top:auto; display:grid; gap:10px;">
+                <a href="resume.pdf" target="_blank" style="display:block; text-align:center; background:#eee; padding:10px; border-radius:10px; text-decoration:none; color:#333; font-weight:bold;">
+                    📄 下载简历
+                </a>
+                <a href="mailto:test@test.com" style="display:block; text-align:center; background:#333; color:#fff; padding:10px; border-radius:10px; text-decoration:none; font-weight:bold;">
+                    ✉️ 发送邮件
+                </a>
+            </div>
+        </aside>
+
+        <!-- 🏠 中间栏：内容展示 (包含了原本的 Inventory) -->
+        <main class="panel mid-col">
+            
+            <!-- 欢迎语 -->
+            <div style="margin-bottom: 20px;">
+                <h2>👋 HELLO WORLD!</h2>
+                <p style="color:#666; line-height:1.6;">
+                    这里是我的数字秘密基地。我不只是写代码，我还拯救过海拉鲁大陆，
+                    在帕底亚地区当宝可梦训练家，偶尔也在云村听听歌。你说简历？左下角下载就好啦！
+                    由于链接github，主页有些内容可能无法展现哦
+                </p>
+            </div>
+
+<!-- 音乐卡片 (升级版) -->
+            <h2 style="border-color: #ff9a9e; color: #ff6b6b;">🎵 NOW PLAYING</h2>
+            
+            <!-- 主播放器卡片 -->
+            <div class="music-player-card" id="track-player-ui">
+                <div class="album-cover">
+                    <!-- 封面图 -->
+                    <img id="track-cover" src="https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163" alt="Album">
+                </div>
+                
+                <div style="flex: 1; overflow: hidden;">
+                    <!-- 歌名和歌手 -->
+                    <h3 id="track-title" style="margin:0; font-size:1.1rem; white-space:nowrap;">Beat It</h3>
+                    <p id="track-artist" style="margin:5px 0; font-size:0.8rem; opacity:0.9;">Michael Jackson</p>
+                    
+                    <!-- 控制按钮区 -->
+                    <div class="player-controls">
+                        <button onclick="prevTrack()" title="上一首">⏮</button>
+                        <button onclick="toggleTrackPlay()" id="play-pause-btn" title="播放/暂停" style="font-size:1.2rem;">🞂 </button>
+                        <button onclick="nextTrack()" title="下一首">⏭</button>
+                        <button onclick="togglePlaylist()" title="播放列表" style="margin-left:10px; font-size:0.9rem;">📜 列表</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 隐藏的播放列表 (默认收起) -->
+            <div id="playlist-box" class="playlist-container hidden-list">
+                <!-- 列表内容由 JS 生成 -->
+            </div>
+
+            <!-- 游戏收藏 -->
+            <h2 style="margin-top: 30px; border-color: #4ecdc4; color: #4ecdc4;">🎮 COLLECTION</h2>
+            <div class="game-shelf">
+                <div class="game-box"><img src="images/宝可梦紫.jpg"><div class="game-title">宝可梦紫</div></div>
+                <div class="game-box"><img src="images/圣兽之王.webp"><div class="game-title">圣兽之王</div></div>
+                <div class="game-box"><img src="images/英雄联盟.jpg"><div class="game-title">英雄联盟</div></div>
+                <div class="game-box"><img src="images/塞尔达传说王国之泪.jpg"><div class="game-title">王国之泪</div></div>
+            </div>
+
+            <!-- 🎒 物品栏 (从右侧搬过来了！) -->
+            <h2 style="margin-top:30px; border-color:#ffe66d; color:#e6c200;">🎒 INVENTORY (模型库)</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <!-- 物品 1 -->
+                <div class="cartridge" onclick="openModelView('Astronaut.glb', '太空宇航员')">
+                    <div class="cartridge-icon" style="color:#ff6b6b;">🧑‍🚀</div>
+                    <div>
+                        <div style="font-weight:bold; font-size:0.9rem;">Astronaut</div>
+                        <div style="font-size:0.7rem; opacity:0.7;">NASA Demo</div>
+                    </div>
+                </div>
+                <!-- 物品 2 -->
+                <div class="cartridge" onclick="openModelView('https://raw.githubusercontent.com/phivyvsfaav-droid/3dwenjian/main/car.glb', '法拉利')">
+                    <div class="cartridge-icon" style="color:#4ecdc4;">🏎️</div>
+                    <div>
+                        <div style="font-weight:bold; font-size:0.9rem;">Racing Car</div>
+                        <div style="font-size:0.7rem; opacity:0.7;">3D Asset</div>
+                    </div>
+                </div>
+                <!-- 🔵 物品 3 (这是新加的) -->
+                <div class="cartridge" onclick="openModelView('baimao.glb', '角色模型')">
+                    <!-- 👇 图标颜色和形状可以改 -->
+                    <div class="cartridge-icon" style="color:#a29bfe;">📱</div>
+                    <div>
+                        <!-- 👇 卡片上显示的名字 -->
+                        <div style="font-weight:bold; font-size:0.9rem;">Role Model</div>
+                        <!-- 👇 下面的小字描述 -->
+                        <div style="font-size:0.7rem; opacity:0.7;">3d model</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 🏢 右侧栏：作品集 (Projects) -->
+        <aside class="panel right-col">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2 style="margin:0; border:none; font-size:1.4rem;">📂 作品集 </h2>
+                <span style="background:#333; color:#fff; padding:2px 8px; border-radius:5px; font-size:0.7rem;">PUBLIC</span>
+            </div>
+            
+            <p style="font-size:0.8rem; color:#888; margin-bottom:20px;">
+                已解密的任务档案 (Selected Works)
+            </p>
+
+            <!-- 作品列表 -->
+            <div class="portfolio-container">
+
+                <!-- 作品 1 -->
+                <div class="portfolio-card">
+                    <!-- 👇 这里可以换成你的游戏截图 -->
+                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=500&q=80');"></div>
+                    <div class="card-content">
+                        <div class="card-tag" style="background:#ff7675;">GAME DEMO</div>
+                        <h3 class="card-title">游戏 Demo 演示</h3>
+                        <p class="card-desc">这是我开发的独立游戏实机演示录屏</p>
+                        
+                        <!-- 👇 关键：点击调用 openVideo 函数，传入文件名 -->
+                        <a href="javascript:void(0)" onclick="openVideo('游戏demo展示.mp4')" class="card-btn">
+                            🎬 点击播放视频
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 作品 2 (已修改为全屏图片集) -->
+                <div class="portfolio-card">
+                    <div class="card-img" style="background-image: url('images/blender作品.png');"></div>
+                    <div class="card-content">
+                        <!-- 标签颜色改成了紫色，代表相册 -->
+                        <div class="card-tag" style="background:#a29bfe; color:#fff;">GALLERY</div>
+                        <h3 class="card-title">相册集</h3>
+                        <p class="card-desc">展示个人品味与成就的相册集</p>
+                        
+                        <!-- 👇 按钮触发 openGallery() -->
+                        <a href="javascript:void(0)" onclick="openGallery()" class="card-btn">
+                            📸 查看图片集
+                        </a>
+                    </div>
+                </div>
+
+            <!-- 作品 3 (已修改为博客列表) -->
+                <div class="portfolio-card">
+                    <!-- 👇 换了一张更有书卷气的图 -->
+                    <div class="card-img" style="background-image: url('images/绫小路.jpg');"></div>
+                    <div class="card-content">
+                        <!-- 标签颜色改为清新的薄荷绿 -->
+                        <div class="card-tag" style="background:#00b894; color:#fff;">BLOG</div>
+                        <h3 class="card-title">个人博客</h3>
+                        <p class="card-desc">分享我的技术笔记、游戏攻略与生活感悟。</p>
+                        
+                        <!-- 👇 点击触发 openBlog() -->
+                        <a href="javascript:void(0)" onclick="openBlog()" class="card-btn">
+                            📖 阅览博客
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div style="margin-top:auto; border-top:2px dashed #ddd; padding-top:10px; text-align:center; color:#aaa; font-size:0.7rem;">
+                SYSTEM STATUS: ONLINE <br> © 2024 PLAYER ONE
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- === 3D 模型弹窗 === -->
+    <div id="model-modal" class="modal-overlay hidden">
+        <div class="model-window">
+            <button class="close-btn" onclick="closeModelView()">❌ CLOSE</button>
+            <h2 id="model-title" style="text-align:center; color:#333; margin-bottom:10px;">ITEM INSPECTION</h2>
+            <model-viewer id="model-viewer-entity" src="" alt="3D Model" auto-rotate camera-controls style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 15px;"></model-viewer>
+            <p style="text-align:center; color:#666; font-size:0.8rem; margin-top:10px;">🖱️ 拖动旋转 | 🤏 滚轮缩放</p>
+        </div>
+    </div>
+    <!-- === 新增：视频播放弹窗 === -->
+    <div id="video-modal" class="modal-overlay hidden">
+        <div class="model-window" style="background:#000; border-color:#333;">
+            <!-- 关闭按钮 -->
+            <button class="close-btn" onclick="closeVideo()">❌ CLOSE</button>
+            
+            <h2 style="text-align:center; color:#fff; margin-bottom:10px;">GAMEPLAY FOOTAGE</h2>
+            
+            <!-- 视频播放器 -->
+            <video id="video-player" controls style="width: 100%; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.1);">
+                <source src="" type="video/mp4">
+                您的浏览器不支持视频播放。
+            </video>
+        </div>
+    </div>
+    <!-- === 新增：博客文章列表弹窗 === -->
+    <div id="blog-modal" class="modal-overlay hidden">
+        <div class="model-window" style="max-width: 500px;">
+            <!-- 关闭按钮 -->
+            <button class="close-btn" onclick="closeBlog()">❌ CLOSE</button>
+            
+            <h2 style="text-align:center; color:#333; margin-bottom:5px;">MY ARTICLES</h2>
+            <p style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:20px;">最近更新 / Recent Updates</p>
+            
+            <!-- 文章列表容器 -->
+            <div class="article-list">
+                
+                <!-- 文章 1 -->
+                <a href="articles/火焰纹章Engage玩法大揭秘.pdf" target="_blank" class="article-item">
+                    <div class="article-date">2025.7.24</div>
+                    <div class="article-title">🚀 火焰纹章engage为什么能让人玩到停不下来？</div>
+                    <div class="article-arrow">➜</div>
+                </a>
+
+                <!-- 文章 2 -->
+                <a href="#" class="article-item">
+                    <div class="article-date">2024.11.15</div>
+                    <div class="article-title">🎮 《塞尔达传说：王国之泪》通关感想</div>
+                    <div class="article-arrow">➜</div>
+                </a>
+
+                <!-- 文章 3 -->
+                <a href="#" class="article-item">
+                    <div class="article-date">2024.10.20</div>
+                    <div class="article-title">💻 论程序员的自我修养</div>
+                    <div class="article-arrow">➜</div>
+                </a>
+
+                <!-- 文章 4 -->
+                <a href="#" class="article-item">
+                    <div class="article-date">2024.10.01</div>
+                    <div class="article-title">🍜 周末去哪吃：探店日记 </div>
+                    <div class="article-arrow">➜</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+    <!-- === 新增：全屏渐变画廊 === -->
+    <div id="gallery-modal" class="gallery-overlay hidden">
+        
+        <!-- 关闭按钮 (右上角) -->
+        <button class="close-btn-gallery" onclick="closeGallery()">❌ CLOSE</button>
+        
+        <!-- 图片容器 -->
+        <div class="gallery-container">
+            <!-- 👇 这里放你要展示的图片，记得换成你自己的图片路径 -->
+            <!-- 第 1 张 (默认显示) -->
+            <img src="images/blender作品.png" class="gallery-slide active" alt="图1">
+            <!-- 第 2 张 -->
+            <img src="images/ZBrush小怪兽.png" class="gallery-slide" alt="图2">
+            <!-- 第 3 张 -->
+            <img src="images/对马岛相册1.png" class="gallery-slide" alt="图3">
+            <!-- 第 4 张 -->
+            <img src="images/对马岛相册2.png" class="gallery-slide" alt="图4">
+            <!-- 第 5 张 -->
+            <img src="images/表情包.jpg" class="gallery-slide" alt="图5">
+            <!-- 第 6 张 -->
+            <img src="images/线下观影.jpg" class="gallery-slide" alt="图6">
+            <!-- 第 7 张 -->
+            <img src="images/鼠标.jpg" class="gallery-slide" alt="图7">
+            <!-- 第 8 张 -->
+            <img src="images/美食1.jpg" class="gallery-slide" alt="图8">
+            <!-- 第 9 张 -->
+            <img src="images/美食2.jpg" class="gallery-slide" alt="图9">
+            <!-- 第 10 张 -->
+            <img src="images/美食3.jpg" class="gallery-slide" alt="图10">
+        </div>
+
+        <!-- 左右切换按钮 -->
+        <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
+        <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
+
+        <!-- 底部指示文字 -->
+        <div class="gallery-indicator">
+            IMAGE <span id="current-num">1</span> / <span id="total-num">3</span>
+        </div>
+    </div>
+    <!-- JS 逻辑 -->
+    <script>
+          // === ⏳ 假加载系统 ===
+    document.addEventListener("DOMContentLoaded", function() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const percentText = document.getElementById('loading-percent');
+        const statusText = document.getElementById('loading-text');
+
+        const messages = [
+            "正在连接服务器...", "正在生成世界地图...", "正在召唤 NPC...",
+            "正在加载高清材质包...", "正在给像素上色...", "正在磨砺宝剑...",
+            "正在泡咖啡...", "SYSTEM READY..."
+        ];
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 5) + 1;
+            if (progress > 100) progress = 100;
+
+            progressBar.style.width = progress + "%";
+            percentText.innerText = progress + "%";
+
+            if (progress % 15 === 0 || Math.random() > 0.8) {
+                statusText.innerText = messages[Math.floor(Math.random() * messages.length)];
+            }
+
+            if (progress === 100) {
+                clearInterval(interval);
+                statusText.innerText = "PRESS START!";
+                setTimeout(() => {
+                    loadingScreen.classList.add('loaded'); 
+                }, 500);
+            }
+        }, 50); 
+    });
+        function startGame() {
+            document.getElementById('intro-scene').classList.add('hidden');
+            document.getElementById('main-dashboard').classList.add('visible');
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.3;
+            bgm.play().catch(e => console.log("需用户交互才能播放"));
+        }
+
+function toggleMusic() {
+    const bgm = document.getElementById('bgm');
+    const btn = document.getElementById('music-btn'); // 1. 找到按钮
+
+    if (bgm.paused) {
+        // === 如果当前是暂停，那就播放 ===
+        bgm.play();
+        
+        // 改变文字
+        btn.innerHTML = "🎵 BGM: ON 🎶"; 
+        
+        // 🌟 额外效果：让按钮变粉色，表示“激活状态”
+        btn.style.background = "#ff9a9e"; 
+        btn.style.color = "#fff";
+        btn.style.borderColor = "#ff9a9e";
+        
+    } else {
+        // === 如果当前是播放，那就暂停 ===
+        bgm.pause();
+        
+        // 变回原来的文字
+        btn.innerHTML = "🎵 BGM: OFF"; 
+        
+        // 🌟 恢复原来的白色背景
+        btn.style.background = "#fff";
+        btn.style.color = "#333";
+        btn.style.borderColor = "#eee";
+    }
+}
+        
+        function openModelView(modelPath, modelName) {
+            const modal = document.getElementById('model-modal');
+            const viewer = document.getElementById('model-viewer-entity');
+            const title = document.getElementById('model-title');
+            viewer.src = modelPath;
+            title.innerText = modelName;
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex'; 
+        }
+
+        function closeModelView() {
+            const modal = document.getElementById('model-modal');
+            modal.classList.add('hidden');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        // 留言板功能
+        function toggleMessageBoard() {
+            const panel = document.getElementById('message-board-panel');
+            panel.classList.toggle('open');
+            if(panel.classList.contains('open')) loadMessages();
+        }
+
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('message-board-panel');
+            const btn = document.querySelector('.floating-btn');
+            if (!panel.contains(e.target) && !btn.contains(e.target) && panel.classList.contains('open')) {
+                panel.classList.remove('open');
+            }
+        });
+
+// === 真实的邮件发送逻辑 (Formspree AJAX) ===
+        const form = document.getElementById("my-game-form");
+        
+        async function handleSubmit(event) {
+            event.preventDefault(); // 1. 阻止页面跳转
+            
+            const status = document.getElementById("form-status");
+            const btn = document.getElementById("send-btn");
+            const originalBtnText = btn.innerText;
+
+            // 2. 锁定按钮，防止重复点
+            btn.disabled = true;
+            btn.innerText = "⏳ Sending...";
+            
+            // 3. 准备数据
+            const data = new FormData(event.target);
+
+            // ⚠️⚠️⚠️ 请把下面的 xxxxxxxx 换成你在第一步申请到的 Formspree ID ⚠️⚠️⚠️
+            fetch("https://formspree.io/f/mwpzewkq", {
+                method: "POST",
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // 发送成功
+                    status.innerHTML = "✅ 发送成功！我会尽快查看邮件。<br>Message Sent!";
+                    status.style.color = "green";
+                    form.reset(); // 清空输入框
+                } else {
+                    // 发送失败
+                    status.innerHTML = "❌ 发送失败，请稍后再试。";
+                    status.style.color = "red";
+                }
+                // 恢复按钮
+                btn.disabled = false;
+                btn.innerText = originalBtnText;
+            }).catch(error => {
+                status.innerHTML = "❌ 网络错误，请检查网络。";
+                status.style.color = "red";
+                btn.disabled = false;
+                btn.innerText = originalBtnText;
+            });
+        }
+        
+        // 绑定监听器
+        form.addEventListener("submit", handleSubmit);
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+        // === 视频弹窗控制逻辑 ===
+        
+        function openVideo(videoPath) {
+            const modal = document.getElementById('video-modal');
+            const video = document.getElementById('video-player');
+            
+            // 1. 设置视频路径
+            video.src = videoPath;
+            
+            // 2. 显示弹窗
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            
+            // 3. 自动播放 (为了体验好)
+            video.play();
+        }
+
+        function closeVideo() {
+            const modal = document.getElementById('video-modal');
+            const video = document.getElementById('video-player');
+            
+            // 1. 暂停视频 (很重要！不然关了窗口声音还在响)
+            video.pause();
+            
+            // 2. 隐藏弹窗
+            modal.classList.add('hidden');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+        
+        // 点击弹窗背景也能关闭视频
+        document.getElementById('video-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVideo();
+            }
+        });
+        // === 全屏画廊逻辑 ===
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.gallery-slide');
+        const totalSlides = slides.length;
+
+        // 初始化总页数
+        document.getElementById('total-num').innerText = totalSlides;
+
+        function openGallery() {
+            const modal = document.getElementById('gallery-modal');
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex'; // 使用 flex 居中
+        }
+
+        function closeGallery() {
+            const modal = document.getElementById('gallery-modal');
+            modal.classList.add('hidden');
+            setTimeout(() => { modal.style.display = 'none'; }, 500);
+        }
+
+        function changeSlide(direction) {
+            // 1. 找到当前显示的图，去掉 active (它会慢慢淡出)
+            slides[currentSlideIndex].classList.remove('active');
+
+            // 2. 计算下一张图的索引 (支持循环：最后一张点右边回到第一张)
+            currentSlideIndex += direction;
+            
+            if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
+
+            // 3. 给下一张图加上 active (它会慢慢淡入)
+            slides[currentSlideIndex].classList.add('active');
+
+            // 4. 更新底部页码
+            document.getElementById('current-num').innerText = currentSlideIndex + 1;
+        }
+
+        // 支持键盘左右键切换 (体验优化)
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('gallery-modal');
+            if (modal.style.display === 'flex') {
+                if (e.key === 'ArrowRight') changeSlide(1);
+                if (e.key === 'ArrowLeft') changeSlide(-1);
+                if (e.key === 'Escape') closeGallery();
+            }
+        });
+        // === 博客列表弹窗控制 ===
+        function openBlog() {
+            const modal = document.getElementById('blog-modal');
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+
+        function closeBlog() {
+            const modal = document.getElementById('blog-modal');
+            modal.classList.add('hidden');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        // 点击博客弹窗背景关闭
+        document.getElementById('blog-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeBlog();
+        });
+        function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('theme-btn');
+        
+        // 检查当前是否是暗色模式
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        
+        if (isDark) {
+            body.removeAttribute('data-theme'); // 切换回白天
+            btn.innerHTML = "☀️ DAY";
+            btn.style.background = "#fff";
+            btn.style.color = "#333";
+        } else {
+            body.setAttribute('data-theme', 'dark'); // 切换到黑夜
+            btn.innerHTML = "🌙 NIGHT";
+            btn.style.background = "#333";
+            btn.style.color = "#fff";
+        }
+        
+        // 播放音效
+        if(typeof clickSound !== 'undefined') clickSound.play();
+    }
+    // ==========================================
+    // 🎵 超级播放器逻辑 (Real Music Player)
+    // ==========================================
+    
+    // 1. 歌曲数据库 (你可以把这里换成你自己的 MP3 链接)
+    const trackList = [
+        {
+            title: "インタビュア",
+            artist: "H△G",
+            cover: "H△G - インタビュア.mp3",
+            src: "music/H△G - インタビュア.mp3" // 示例音乐1
+        },
+        {
+            title: "ハローハロー",
+            artist: "H△G",
+            cover: "",
+            src: "music/H△G - ハローハロー.mp3" // 示例音乐2
+        },
+        {
+            title: "没想到",
+            artist: "Max李玄",
+            cover: "",
+            src: "music/Max李玄 - 没想到.mp3" // 示例音乐3
+        },
+        {
+            title: "没关系[prod.Musi]",
+            artist: "MISTERK",
+            cover: "",
+            src: "music/MISTERK - 没关系[prod.Musi].mp3" // 示例音乐3
+        },
+        {
+            title: "总等到淋雨才逃跑",
+            artist: "土豆披萨直营",
+            cover: "",
+            src: "music/土豆披萨直营,Taisheng Music - 总等到淋雨才逃跑.mp3" // 示例音乐3
+        },
+        {
+            title: "归期",
+            artist: "钱润玉",
+            cover: "",
+            src: "music/钱润玉 - 归期.mp3" // 示例音乐3
+        }
+    ];
+
+    let currentTrackIndex = 0;
+    let isTrackPlaying = false;
+    const trackAudio = new Audio(); // 创建一个新的音频对象，专门给这个播放器用
+    trackAudio.volume = 0.5;
+
+    // 初始化播放器
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTrack(currentTrackIndex);
+        renderPlaylist();
+    });
+
+    // 加载歌曲信息
+    function loadTrack(index) {
+        const track = trackList[index];
+        trackAudio.src = track.src;
+        document.getElementById('track-title').innerText = track.title;
+        document.getElementById('track-artist').innerText = track.artist;
+        document.getElementById('track-cover').src = track.cover;
+        
+        // 更新播放列表的高亮状态
+        updatePlaylistHighlight(index);
+    }
+
+    // ⏯️ 播放/暂停控制 (核心冲突逻辑在这里！)
+    function toggleTrackPlay() {
+        const btn = document.getElementById('play-pause-btn');
+        
+        if (isTrackPlaying) {
+            // 如果正在播，就暂停
+            trackAudio.pause();
+            isTrackPlaying = false;
+            btn.innerText = "🞂 ";
+        } else {
+            // === 🌟 关键：如果要开始播放新歌，先关掉右上角的 BGM ===
+            const bgm = document.getElementById('bgm');
+            const bgmBtn = document.getElementById('music-btn');
+            
+            if (!bgm.paused) {
+                bgm.pause(); // 暂停背景音乐
+                // 强制把右上角按钮变回 OFF 状态
+                if(bgmBtn) {
+                    bgmBtn.innerHTML = "🎵 BGM: OFF";
+                    bgmBtn.style.background = "#fff";
+                    bgmBtn.style.color = "#333";
+                }
+            }
+
+            // 然后再播放这首歌
+            trackAudio.play();
+            isTrackPlaying = true;
+            btn.innerText = "⏸";
+        }
+    }
+
+    // 上一首
+    function prevTrack() {
+        currentTrackIndex--;
+        if (currentTrackIndex < 0) currentTrackIndex = trackList.length - 1;
+        loadTrack(currentTrackIndex);
+        if (isTrackPlaying) trackAudio.play();
+    }
+
+    // 下一首
+    function nextTrack() {
+        currentTrackIndex++;
+        if (currentTrackIndex >= trackList.length) currentTrackIndex = 0;
+        loadTrack(currentTrackIndex);
+        if (isTrackPlaying) trackAudio.play();
+    }
+
+    // 📜 切换显示/隐藏播放列表
+    function togglePlaylist() {
+        const box = document.getElementById('playlist-box');
+        if (box.classList.contains('hidden-list')) {
+            box.classList.remove('hidden-list');
+            box.classList.add('show-list');
+        } else {
+            box.classList.remove('show-list');
+            box.classList.add('hidden-list');
+        }
+    }
+
+    // 渲染播放列表
+    function renderPlaylist() {
+        const box = document.getElementById('playlist-box');
+        box.innerHTML = ''; // 清空
+        
+        trackList.forEach((track, index) => {
+            const div = document.createElement('div');
+            div.className = 'track-item';
+            div.innerHTML = `<span>${index + 1}. ${track.title}</span> <span style="font-size:0.7rem;">${track.artist}</span>`;
+            div.onclick = () => {
+                currentTrackIndex = index;
+                loadTrack(index);
+                // 如果没播，就自动开始播
+                if (!isTrackPlaying) toggleTrackPlay(); 
+                else trackAudio.play();
+            };
+            box.appendChild(div);
+        });
+    }
+
+    // 更新列表高亮
+    function updatePlaylistHighlight(index) {
+        const items = document.querySelectorAll('.track-item');
+        items.forEach((item, i) => {
+            if (i === index) item.classList.add('active');
+            else item.classList.remove('active');
+        });
+    }
+    
+    // 歌曲放完了自动切下一首
+    trackAudio.addEventListener('ended', nextTrack);
+    </script>
+</body>
+</html>
