@@ -622,62 +622,9 @@
         font-weight: bold;
     }
     .article-item:hover .article-arrow { color: var(--sky-blue); }
-        /* === 加载界面样式 === */
-    #loading-screen {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%); /* 与背景一致 */
-        z-index: 3000; /* 保证最顶层 */
-        display: flex; justify-content: center; align-items: center; flex-direction: column;
-        transition: opacity 0.8s ease-out, visibility 0.8s;
-        /* 👇👇👇 新增这一行保险丝：3秒后强制隐身，防止卡死 👇👇👇 */
-        animation: forceHide 0s forwards 3s; 
-    }
-
-        /* 定义强制隐藏动画 */
-    @keyframes forceHide { 
-        to { visibility: hidden; pointer-events: none; } 
-    }
-    .loading-content { text-align: center; width: 300px; }
-    .loading-icon { font-size: 4rem; margin-bottom: 20px; animation: spin 2s infinite linear; }
-    .loading-text {
-        font-family: 'Fredoka One', cursive; color: #fff; font-size: 1.2rem;
-        margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; height: 1.5rem;
-    }
-    .progress-track {
-        width: 100%; height: 20px; background: rgba(255, 255, 255, 0.3);
-        border-radius: 10px; overflow: hidden; border: 3px solid #fff;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .progress-fill {
-        width: 0%; height: 100%; background: #FFD700;
-        background-image: linear-gradient(45deg, rgba(255,255,255,.25) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.25) 50%, rgba(255,255,255,.25) 75%, transparent 75%, transparent);
-        background-size: 20px 20px; transition: width 0.2s ease;
-    }
-    .loading-percent { font-family: 'Fredoka One', cursive; color: #fff; margin-top: 10px; font-size: 1rem; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .loaded { opacity: 0; visibility: hidden; pointer-events: none; }
     </style>
 </head>
 <body>
-<!-- === 0. 游戏加载界面 (Loading Screen) === -->
-<div id="loading-screen">
-    <div class="loading-content">
-        <!-- 加载图标 (可以是简单的 Emoji 或者你的 Logo) -->
-        <div class="loading-icon">⚔️</div>
-        
-        <!-- 随机提示文字 -->
-        <div id="loading-text" class="loading-text">SYSTEM INITIALIZING...</div>
-        
-        <!-- 进度条外框 -->
-        <div class="progress-track">
-            <!-- 进度条本体 -->
-            <div id="progress-bar" class="progress-fill"></div>
-        </div>
-        
-        <!-- 百分比数字 -->
-        <div id="loading-percent" class="loading-percent">0%</div>
-    </div>
-</div>
 <!-- 1. 音乐开关 (只留这一个包含两个按钮的盒子) -->
     <div style="position:fixed; top:20px; right:20px; z-index:1000; display:flex; gap:10px;">
          <!-- 夜间模式按钮 -->
@@ -1036,53 +983,6 @@
     </div>
     <!-- JS 逻辑 -->
     <script>
-// === ⏳ 假加载系统 (手机防卡死修复版) ===
-    function runLoadingAnimation() {
-        const loadingScreen = document.getElementById('loading-screen');
-        const progressBar = document.getElementById('progress-bar');
-        const percentText = document.getElementById('loading-percent');
-        const statusText = document.getElementById('loading-text');
-
-        // 防止重复运行
-        if (loadingScreen.classList.contains('loaded')) return;
-
-        const messages = [
-            "正在连接服务器...", "正在生成世界地图...", "正在召唤 NPC...",
-            "正在加载高清材质包...", "正在给像素上色...", "正在磨砺宝剑...",
-            "正在泡咖啡...", "SYSTEM READY..."
-        ];
-
-        let progress = 0;
-        const interval = setInterval(() => {
-            // 手机端跑快点
-            progress += Math.floor(Math.random() * 5) + 2; 
-            if (progress > 100) progress = 100;
-
-            // 容错处理
-            if(progressBar) progressBar.style.width = progress + "%";
-            if(percentText) percentText.innerText = progress + "%";
-
-            if (progress % 20 === 0 || Math.random() > 0.8) {
-                if(statusText) statusText.innerText = messages[Math.floor(Math.random() * messages.length)];
-            }
-
-            if (progress === 100) {
-                clearInterval(interval);
-                if(statusText) statusText.innerText = "PRESS START!";
-                setTimeout(() => {
-                    loadingScreen.classList.add('loaded');
-                    setTimeout(() => { loadingScreen.style.display = 'none'; }, 1000);
-                }, 500);
-            }
-        }, 40); 
-    }
-
-    // 🚀 核心修复：智能启动逻辑
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runLoadingAnimation);
-    } else {
-        runLoadingAnimation();
-    }
         function startGame() {
             document.getElementById('intro-scene').classList.add('hidden');
             document.getElementById('main-dashboard').classList.add('visible');
