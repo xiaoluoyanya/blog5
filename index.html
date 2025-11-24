@@ -622,6 +622,41 @@
         font-weight: bold;
     }
     .article-item:hover .article-arrow { color: var(--sky-blue); }
+    
+    /* === 左侧栏交互按钮样式 === */
+    .action-btn {
+        display: block;
+        text-align: center;
+        background: #fff; /* 默认白底 */
+        padding: 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #555;
+        font-weight: 800; /* 字体加粗 */
+        border: 2px solid #eee; /* 浅灰边框 */
+        transition: all 0.2s ease; /* 0.2秒平滑过渡 */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        font-family: 'Fredoka One', 'Nunito', sans-serif;
+    }
+
+    /* 🖱️ 鼠标悬停时的特效 (关键！) */
+    .action-btn:hover {
+        transform: translateY(-3px); /* 向上浮起 */
+        color: #fff; /* 文字变白 */
+        border-color: transparent;
+    }
+
+    /* 📺 B站/社交按钮专用颜色 (粉色) */
+    .bilibili-style:hover {
+        background: #fb7299; /* B站粉 */
+        box-shadow: 0 8px 15px rgba(251, 114, 153, 0.4); /* 粉色光晕 */
+    }
+
+    /* ✉️ 邮件按钮专用颜色 (黑色/深色) */
+    .email-style:hover {
+        background: #333;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
     </style>
 </head>
 <body>
@@ -707,12 +742,21 @@
             </div>
 
             <div style="margin-top:auto; display:grid; gap:10px;">
-                <a href="resume.pdf" target="_blank" style="display:block; text-align:center; background:#eee; padding:10px; border-radius:10px; text-decoration:none; color:#333; font-weight:bold;">
-                    📄 下载简历
+<!-- === 修改后的按钮区域 === -->
+            <div style="margin-top:auto; display:grid; gap:12px;">
+                
+                <!-- 1. B站/社交主页按钮 -->
+                <!-- ⚠️ 记得把 href 里面的链接换成你自己的 B站主页链接 -->
+                <a href="https://space.bilibili.com/504400240" target="_blank" class="action-btn bilibili-style">
+                    📺 Bilibili / 社交主页
                 </a>
-                <a href="mailto:test@test.com" style="display:block; text-align:center; background:#333; color:#fff; padding:10px; border-radius:10px; text-decoration:none; font-weight:bold;">
-                    ✉️ 发送邮件
+
+                <!-- 2. 发送邮件按钮 -->
+                <!-- 我顺便把这个也升级了，现在它也会动了！ -->
+                <a href="mailto:1939888510@qq.com?subject=来自个人主页的联系" class="action-btn email-style">
+                    ✉️ 发送邮件 / Email
                 </a>
+                
             </div>
         </aside>
 
@@ -1412,7 +1456,7 @@ function toggleMusic() {
     const blogData = {
         // 文章ID : { 标题, 图片列表 }
         "fireemblem": {
-            title: "🔥 火焰纹章 Engage 玩法大揭秘",
+            title: "🔥 火焰纹章Engage玩法大揭秘",
             images: [
                 // ⚠️ 请确保这些图片真实存在于你的 articles 文件夹里
                 // 你可以把 PDF 转成 jpg/png 后改名放进去
@@ -1421,7 +1465,7 @@ function toggleMusic() {
         },
         
         "zelda": {
-            title: "🎮 塞尔达传说：王国之泪 通关感想",
+            title: "🎮 塞尔达传说：王国之泪通关感想",
             images: [
                 "articles/zelda_01.jpg",
                 "articles/zelda_02.jpg"
