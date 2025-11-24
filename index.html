@@ -981,6 +981,23 @@
             IMAGE <span id="current-num">1</span> / <span id="total-num">3</span>
         </div>
     </div>
+    <!-- === 通用文章阅读器 (长图模式) === -->
+<div id="reader-modal" class="modal-overlay hidden">
+    <!-- 这里的 max-width: 800px 决定了阅读器有多宽，适合阅读 -->
+    <div class="model-window" style="max-width: 800px; height: 90vh; padding: 0; display:flex; flex-direction:column; overflow:hidden;">
+        
+        <!-- 顶部标题栏 -->
+        <div style="padding: 15px; background: #fff; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="reader-title" style="margin:0; font-size:1rem; color:#333;">文章阅读</h3>
+            <button onclick="closeReader()" style="border:none; background:var(--primary-red); color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer; font-weight:bold;">×</button>
+        </div>
+
+        <!-- 图片容器 (这里是空的，JS 会往里塞图片) -->
+        <div id="reader-container" style="flex:1; overflow-y:auto; background: #f5f5f5; text-align:center;">
+            <!-- JS 动态生成的 img 标签会出现在这里 -->
+        </div>
+    </div>
+</div>
     <!-- JS 逻辑 -->
     <script>
         function startGame() {
@@ -1381,6 +1398,101 @@ function toggleMusic() {
     
     // 歌曲放完了自动切下一首
     trackAudio.addEventListener('ended', nextTrack);
+
+        // ==========================================
+    // 📖 博客阅读器功能 (长图版) - 新增代码区
+    // ==========================================
+
+    /* 1. 博客数据配置 (在这里添加新文章) */
+    const blogData = {
+        // 文章ID : { 标题, 图片列表 }
+        "fireemblem": {
+            title: "🔥 火焰纹章 Engage 玩法大揭秘",
+            images: [
+                // ⚠️ 请确保这些图片真实存在于你的 articles 文件夹里
+                // 你可以把 PDF 转成 jpg/png 后改名放进去
+                "articles/火焰纹章Engage玩法大揭秘.png", 
+            ]
+        },
+        
+        "zelda": {
+            title: "🎮 塞尔达传说：王国之泪 通关感想",
+            images: [
+                "articles/zelda_01.jpg",
+                "articles/zelda_02.jpg"
+            ]
+        },
+        
+        "ai_logic": {
+            title: "💻 AI时代，程序员的逻辑重构",
+            images: [
+                "articles/AI时代，如何重构程序员的分层逻辑.png" 
+            ]
+        }
+    };
+
+    /* 2. 打开阅读器逻辑 */
+    function openReader(articleId) {
+        const modal = document.getElementById('reader-modal');
+        const container = document.getElementById('reader-container');
+        const title = document.getElementById('reader-title');
+        
+        // 从配置里找数据
+        const data = blogData[articleId];
+        
+        if (!data) {
+            alert("🚧 该文章正在施工中，图片暂未上传！\n(Article ID: " + articleId + ")");
+            return;
+        }
+
+        // 设置标题
+        title.innerText = data.title;
+
+        // 清空上一次的内容
+        container.innerHTML = '';
+
+        // 循环生成图片标签
+        data.images.forEach(imgSrc => {
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            img.style.display = 'block';
+            img.style.marginBottom = '0'; // 图片无缝拼接
+            img.loading = "lazy"; // 懒加载优化
+            
+            // 如果图片加载失败（比如路径不对），显示一个提示
+            img.onerror = function() {
+                this.style.display = 'none'; // 隐藏破图
+                const err = document.createElement('div');
+                err.innerText = "❌ 图片加载失败: " + imgSrc;
+                err.style.color = "red";
+                err.style.padding = "20px";
+                container.appendChild(err);
+            };
+
+            container.appendChild(img);
+        });
+
+        // 显示弹窗
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+    }
+
+    /* 3. 关闭阅读器逻辑 */
+    function closeReader() {
+        const modal = document.getElementById('reader-modal');
+        modal.classList.add('hidden');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    // 点击背景关闭
+    const readerModal = document.getElementById('reader-modal');
+    if(readerModal) {
+        readerModal.addEventListener('click', function(e) {
+            if (e.target === this) closeReader();
+        });
+    }
     </script>
 </body>
 </html>
