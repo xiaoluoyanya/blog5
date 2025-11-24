@@ -908,37 +908,42 @@
             <p style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:20px;">最近更新 / Recent Updates</p>
             
             <!-- 文章列表容器 -->
-            <div class="article-list">
-                
-                <!-- 文章 1 -->
-                <a href="articles/火焰纹章Engage玩法大揭秘.pdf" target="_blank" class="article-item">
-                    <div class="article-date">2025.7.24</div>
-                    <div class="article-title">🚀 火焰纹章engage为什么能让人玩到停不下来？</div>
-                    <div class="article-arrow">➜</div>
-                </a>
+<!-- === 找到这一块代码进行替换 === -->
+<div class="article-list">
+    
+    <!-- 文章 1：火焰纹章 -->
+    <!-- ❌ 错误写法 (旧的): href="articles/....pdf" -->
+    <!-- ✅ 正确写法 (新的): onclick="openReader('fireemblem')" -->
+    <a href="javascript:void(0)" onclick="openReader('fireemblem')" class="article-item">
+        <div class="article-date">2025.7.24</div>
+        <div class="article-title">🚀 火焰纹章engage为什么能让人玩到停不下来？</div>
+        <div class="article-arrow">➜</div>
+    </a>
 
-                <!-- 文章 2 -->
-                <a href="#" class="article-item">
-                    <div class="article-date">2024.11.15</div>
-                    <div class="article-title">🎮 《塞尔达传说：王国之泪》通关感想</div>
-                    <div class="article-arrow">➜</div>
-                </a>
+    <!-- 文章 2：塞尔达 -->
+    <a href="javascript:void(0)" onclick="openReader('zelda')" class="article-item">
+        <div class="article-date">2024.11.15</div>
+        <div class="article-title">🎮 《塞尔达传说：王国之泪》通关感想</div>
+        <div class="article-arrow">➜</div>
+    </a>
 
-                <!-- 文章 3 -->
-                <a href="articles/AI时代，如何重构程序员的分层逻辑.pdf" class="article-item">
-                    <div class="article-date">2025.11.23</div>
-                    <div class="article-title">💻 AI时代下，如何重构程序员的分层逻辑？</div>
-                    <div class="article-arrow">➜</div>
-                </a>
+    <!-- 文章 3：AI 逻辑 -->
+    <!-- ❌ 错误写法 (旧的): href="...pdf" -->
+    <!-- ✅ 正确写法 (新的): 对应 blogData 里的 "ai_logic" -->
+    <a href="javascript:void(0)" onclick="openReader('ai_logic')" class="article-item">
+        <div class="article-date">2025.11.23</div>
+        <div class="article-title">💻 AI时代下，如何重构程序员的分层逻辑？</div>
+        <div class="article-arrow">➜</div>
+    </a>
 
-                <!-- 文章 4 -->
-                <a href="#" class="article-item">
-                    <div class="article-date">2025.10.01</div>
-                    <div class="article-title">🍜 周末去哪吃：探店日记 </div>
-                    <div class="article-arrow">➜</div>
-                </a>
+    <!-- 文章 4：探店 (暂时没有数据，可以不做修改或者先不加 onclick) -->
+    <a href="#" class="article-item">
+        <div class="article-date">2025.10.01</div>
+        <div class="article-title">🍜 周末去哪吃：探店日记 </div>
+        <div class="article-arrow">➜</div>
+    </a>
 
-            </div>
+</div>
         </div>
     </div>
     <!-- === 新增：全屏渐变画廊 === -->
