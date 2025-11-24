@@ -671,7 +671,7 @@
             🎵 BGM: OFF
         </button>
     </div>
-    <audio id="bgm" loop src="bgm.mp3"></audio>
+    <audio id="bgm" loop src="music/bgm.mp3"></audio>
 
     <!-- 2. 初始开始画面 -->
     <div id="intro-scene">
@@ -718,7 +718,7 @@
         <!-- 🏢 左侧栏：玩家属性 -->
         <aside class="panel left-col">
             <div class="avatar-container">
-                <img src="me.jpg" alt="avatar">
+                <img src="images/me.jpg" alt="avatar">
             </div>
             <div style="text-align:center;">
                 <h1 style="font-family:'Fredoka One'; margin-top:10px;">无音desu</h1>
@@ -816,7 +816,7 @@
             <h2 style="margin-top:30px; border-color:#ffe66d; color:#e6c200;">🎒 INVENTORY (模型库)</h2>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                 <!-- 物品 1 -->
-                <div class="cartridge" onclick="openModelView('Astronaut.glb', '太空宇航员')">
+                <div class="cartridge" onclick="openModelView('3d model/Astronaut.glb', '太空宇航员')">
                     <div class="cartridge-icon" style="color:#ff6b6b;">🧑‍🚀</div>
                     <div>
                         <div style="font-weight:bold; font-size:0.9rem;">Astronaut</div>
@@ -824,7 +824,7 @@
                     </div>
                 </div>
                 <!-- 物品 2 -->
-                <div class="cartridge" onclick="openModelView('https://raw.githubusercontent.com/phivyvsfaav-droid/3dwenjian/main/car.glb', '法拉利')">
+                <div class="cartridge" onclick="openModelView('3d model/car.glb', '法拉利')">
                     <div class="cartridge-icon" style="color:#4ecdc4;">🏎️</div>
                     <div>
                         <div style="font-weight:bold; font-size:0.9rem;">Racing Car</div>
@@ -832,7 +832,7 @@
                     </div>
                 </div>
                 <!-- 🔵 物品 3 (这是新加的) -->
-                <div class="cartridge" onclick="openModelView('baimao.glb', '角色模型')">
+                <div class="cartridge" onclick="openModelView('3d model/baimao.glb', '角色模型')">
                     <!-- 👇 图标颜色和形状可以改 -->
                     <div class="cartridge-icon" style="color:#a29bfe;">📱</div>
                     <div>
@@ -952,41 +952,42 @@
             <p style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:20px;">最近更新 / Recent Updates</p>
             
             <!-- 文章列表容器 -->
-<!-- === 找到这一块代码进行替换 === -->
 <div class="article-list">
     
     <!-- 文章 1：火焰纹章 -->
-    <!-- ❌ 错误写法 (旧的): href="articles/....pdf" -->
-    <!-- ✅ 正确写法 (新的): onclick="openReader('fireemblem')" -->
     <a href="javascript:void(0)" onclick="openReader('fireemblem')" class="article-item">
         <div class="article-date">2025.7.24</div>
-        <div class="article-title">🚀 火焰纹章engage为什么能让人玩到停不下来？</div>
+        <div class="article-title">🎮 火焰纹章engage为什么能让人玩到停不下来？</div>
         <div class="article-arrow">➜</div>
     </a>
 
-    <!-- 文章 2：塞尔达 -->
     <a href="javascript:void(0)" onclick="openReader('zelda')" class="article-item">
         <div class="article-date">2024.11.15</div>
         <div class="article-title">🎮 《塞尔达传说：王国之泪》通关感想</div>
         <div class="article-arrow">➜</div>
     </a>
 
-    <!-- 文章 3：AI 逻辑 -->
-    <!-- ❌ 错误写法 (旧的): href="...pdf" -->
-    <!-- ✅ 正确写法 (新的): 对应 blogData 里的 "ai_logic" -->
     <a href="javascript:void(0)" onclick="openReader('ai_logic')" class="article-item">
         <div class="article-date">2025.11.23</div>
         <div class="article-title">💻 AI时代下，如何重构程序员的分层逻辑？</div>
         <div class="article-arrow">➜</div>
     </a>
 
-    <!-- 文章 4：探店 (暂时没有数据，可以不做修改或者先不加 onclick) -->
-    <a href="#" class="article-item">
+    <a href="javascript:void(0)" onclick="openReader('game experience')" class="article-item">
         <div class="article-date">2025.10.01</div>
-        <div class="article-title">🍜 周末去哪吃：探店日记 </div>
+        <div class="article-title">🎮 我的游戏经历 </div>
         <div class="article-arrow">➜</div>
     </a>
-
+    <!-- === 这是一个跳转链接 (External Link) === -->
+    <!-- 1. href: 填你要跳转的网址 -->
+    <!-- 2. target="_blank": 强制在新窗口打开，不覆盖当前网页 -->
+    <!-- 3. 去掉 onclick 事件，因为它不需要打开阅读器 -->
+    <a href="https://www.bilibili.com/video/BVxxxxxx" target="_blank" class="article-item">
+        <div class="article-date">2025.11.25</div>
+        <div class="article-title">📺 [视频] 点击跳转去看我的 B 站视频</div>
+        <!-- 小细节：把箭头改成斜箭头，暗示是跳转 -->
+        <div class="article-arrow">↗</div> 
+    </a>
 </div>
         </div>
     </div>
@@ -1477,7 +1478,14 @@ function toggleMusic() {
             images: [
                 "articles/AI时代，如何重构程序员的分层逻辑.png" 
             ]
-        }
+        },
+
+        "game experience": {
+            title: "我的游戏经历",
+            images: [
+                "articles/游戏经历.jpg" 
+            ]
+        },
     };
 
     /* 2. 打开阅读器逻辑 */
