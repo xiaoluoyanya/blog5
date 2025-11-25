@@ -970,6 +970,55 @@ body[data-theme="dark"] {
         animation: fadeIn 0.3s ease;
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* ============================================
+       📱 手机端体验修复补丁 (Mobile Fixes)
+       ============================================ */
+
+    /* --- 修复 1：优化笔记版本切换 --- */
+    @media (max-width: 900px) {
+        /* 1. 恢复显示侧边栏 (让版本按钮回来) */
+        .note-sidebar {
+            display: block !important; 
+            margin-bottom: 20px;
+        }
+
+        /* 2. 为了节省手机空间，把上面的“头像卡片”藏起来 */
+        /* 这样用户一进来就能直接看到 目录 和 版本切换按钮 */
+        .note-author-card {
+            display: none !important;
+        }
+
+        /* 3. 调整布局顺序 */
+        .note-container {
+            display: flex;
+            flex-direction: column; /* 从上往下排 */
+        }
+    }
+
+    /* --- 修复 2：3D模型弹窗遮挡问题 --- */
+    
+    /* 1. 提升弹窗层级：让它必须盖过顶部的白色导航栏 (5000) */
+    #model-modal {
+        z-index: 6000 !important;
+    }
+
+    /* 2. 调整手机上的关闭按钮位置 */
+    @media (max-width: 600px) {
+        /* 让弹窗稍微往下挪一点，别顶着天花板 */
+        .model-window {
+            margin-top: 60px !important; 
+            width: 95% !important; /* 宽度稍微宽一点 */
+        }
+
+        /* 把关闭按钮从“右上角外面”挪到“右上角里面” */
+        /* 防止手机屏幕太窄，按钮跑到屏幕外面去了 */
+        #model-modal .close-btn {
+            top: 10px !important;
+            right: 10px !important;
+            background: rgba(230, 0, 18, 0.9) !important; /* 加深颜色确保看见 */
+            box-shadow: 0 0 10px rgba(255,255,255,0.5) !important;
+        }
+    }
     </style>
 </head>
 <body>
