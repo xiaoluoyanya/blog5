@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优化笔记 | DevLog</title>
+    <!-- 引入圆润可爱的字体 -->
+    <link href="https://fonts.loli.net/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === 1. 基础变量 & 全局样式 (源自 index.html) === */
+        :root {
+            --primary-red: #E60012;
+            --sky-blue: #4facfe;
+            --text-dark: #4a4a4a;
+            --bg-color: #f5f6f7; /* 笔记页面的浅灰底色 */
+        }
+
+        /* === 2. 顶部导航栏 === */
+        .note-navbar {
+            background: #fff; padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .note-close-btn {
+            text-decoration: none; /* 去掉下划线 */
+            background: #f0f2f5; border: none; padding: 8px 20px;
+            border-radius: 20px; font-weight: bold; color: #666; cursor: pointer;
+            transition: 0.2s; font-size: 0.9rem;
+        }
+        .note-close-btn:hover { background: var(--primary-red); color: #fff; }
+
+        /* === 3. 核心布局容器 === */
+        .note-container {
+            max-width: 1200px; width: 90%; margin: 30px auto;
+            display: grid; 
+            grid-template-columns: 280px 1fr; /* 左侧固定，右侧自适应 */
+            gap: 20px;
+            align-items: start; /* 顶部对齐 */
+        }
+
+        /* === 4. 左侧栏样式 === */
+        /* 手机适配时会隐藏，大屏时显示 */
+        .note-sidebar { position: sticky; top: 90px; }
+
+        /* 卡片通用样式 */
+        .note-author-card, .note-toc-card {
+            background: #fff; border-radius: 15px; padding: 20px;
+            text-align: center; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        /* 作者信息 */
+        .note-avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #f0f2f5; }
+        .note-stats { 
+            display: flex; justify-content: space-around; margin-top: 15px; 
+            border-top: 1px solid #eee; padding-top: 15px; 
+        }
+
+        /* 目录样式 */
+        .note-toc-card { text-align: left; }
+        .toc-list { list-style: none; padding: 0; }
+        .toc-list li { margin-bottom: 8px; }
+        .toc-list a { 
+            text-decoration: none; color: #666; font-size: 0.9rem; transition: 0.2s; display: block; padding: 5px; border-radius: 5px;
+        }
+        .toc-list a:hover { background: #f0f2f5; color: var(--sky-blue); }
+
+        /* 版本列表样式 */
+        .version-list { list-style: none; padding: 0; }
+        .version-item {
+            padding: 10px; border-radius: 8px; cursor: pointer;
+            transition: 0.2s; border-bottom: 1px dashed #eee;
+            font-size: 0.9rem; color: #666; display: flex; align-items: center; gap: 8px;
+        }
+        .version-item:hover { background: #f9f9f9; color: var(--sky-blue); }
+        .version-item.active {
+            background: #e3f2fd; color: var(--sky-blue); font-weight: bold;
+            border-left: 3px solid var(--sky-blue);
+        }
+        .v-tag {
+            background: var(--primary-red); color: #fff; 
+            font-size: 0.6rem; padding: 2px 5px; border-radius: 4px;
+        }
+
+        /* === 5. 右侧内容区样式 === */
+        .note-content-card {
+            background: #fff; border-radius: 15px; padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            min-height: 80vh;
+        }
+        .note-header { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
+        .note-tag { background: var(--sky-blue); color: #fff; padding: 2px 8px; border-radius: 5px; font-size: 0.8rem; }
+        .note-date { color: #999; font-size: 0.9rem; }
+
+        /* Banner图 */
+        .note-banner {
+            width: 100%; height: 200px; 
+            background-size: cover; background-position: center;
+            border-radius: 10px; margin: 20px 0;
+            position: relative; overflow: hidden;
+        }
+        .note-banner::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
+        }
+        .note-banner-text {
+            position: absolute; bottom: 20px; left: 20px; color: #fff; 
+            font-size: 1.5rem; font-weight: bold; z-index: 2;
+        }
+
+        /* 文章正文 */
+        .note-body h2 { border-left: 5px solid var(--primary-red); padding-left: 10px; margin-top: 40px; font-size: 1.4rem; }
+        .note-body p { line-height: 1.8; color: #444; margin-bottom: 15px; }
+        .code-block {
+            background: #2d3436; color: #a29bfe; padding: 15px; 
+            border-radius: 8px; font-family: monospace; margin: 15px 0;
+        }
+        .badge { background: #eee; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;}
+        
+        /* 动画 */
+        .version-content { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 📱 手机适配 */
+        @media (max-width: 900px) {
+            .note-container { grid-template-columns: 1fr; display: flex; flex-direction: column; }
+            .note-sidebar { position: static; margin-bottom: 20px; }
+            /* 手机上隐藏头像卡片，只显示目录和版本 */
+            .note-author-card { display: none; } 
+            .note-content-card { padding: 20px; }
+        }
+        /* 1. 修复选择器：body 自身带有 data-theme 属性 */
+        body[data-theme="dark"] {
+            /* 强制背景色变黑 */
+            background-color: #121212 !important;
+            color: #e0e0e0 !important;
+            
+            /* 移植星空背景 */
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px) !important;
+            
+            background-size: 550px 550px, 350px 350px, 250px 250px; 
+            background-position: 0 0, 40px 60px, 130px 270px;
+
+            /* 确保背景铺满且不随滚动移动 (解决白边问题的核心) */
+            min-height: 100vh; 
+            background-attachment: fixed; 
+        }
+
+        /* ===  通用背景修复 (Day/Night 通用) === */
+        html {
+            /* 让 html 的底色永远跟随变量，防止出现断层 */
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        /* 确保 body 能够撑开高度 */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-dark);
+            overflow-y: auto;
+            min-height: 100vh; /* Day模式也要撑满 */
+        }
+
+/* === 🌙 黑夜模式样式 (最终无白边版) === */
+        
+        /* 1. 关键修复：让 html 根标签也变黑，消灭四周白边 */
+        :root:has(body[data-theme="dark"]),
+        html:has(body[data-theme="dark"]) {
+            background-color: #121212 !important;
+        }
+
+        /* 2. body 设置星空背景 */
+        body[data-theme="dark"] {
+            /* 强制背景色变黑 */
+            background-color: #121212 !important;
+            color: #e0e0e0 !important;
+            
+            /* 移植星空背景 */
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px) !important;
+            
+            background-size: 550px 550px, 350px 350px, 250px 250px; 
+            background-position: 0 0, 40px 60px, 130px 270px;
+
+            /* 钉死背景，防止滚动露白 */
+            min-height: 100vh; 
+            background-attachment: fixed; 
+            margin: 0; /* 双重保险：去掉外边距 */
+        }
+
+        /* 3. 黑夜模式下的卡片变色 */
+        [data-theme="dark"] .note-navbar, 
+        [data-theme="dark"] .note-author-card, 
+        [data-theme="dark"] .note-toc-card, 
+        [data-theme="dark"] .note-content-card {
+            background: rgba(30, 30, 46, 0.95) !important; /* 半透明深色 */
+            color: #fff !important;
+            border: 1px solid #444;
+            backdrop-filter: blur(5px);
+        }
+
+        /* 4. 细节微调 */
+        [data-theme="dark"] .toc-list a { color: #aaa !important; }
+        [data-theme="dark"] .toc-list a:hover { background: #333 !important; color: var(--sky-blue) !important; }
+        [data-theme="dark"] .version-item { color: #aaa !important; border-bottom-color: #333 !important; }
+        [data-theme="dark"] .version-item:hover { background: #333 !important; }
+        [data-theme="dark"] .note-body p { color: #ccc !important; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 顶部导航 (样式复刻) -->
+    <div class="note-navbar">
+        <div style="font-weight:bold; font-size:1.2rem;">📝 优化笔记 / DevLog</div>
+        <!-- 👇 这里改成了a标签跳转，样式模拟原来的按钮 -->
+        <a href="index.html" class="note-close-btn">❌ CLOSE / 返回主页</a>
+    </div>
+
+    <!-- 2. 核心布局容器 -->
+    <div class="note-container">
+        
+<!-- ⬅️ 左侧边栏 -->
+        <aside class="note-sidebar">
+            
+            <!-- (A) 作者卡片 -->
+            <div class="note-author-card">
+                <img src="images/me.jpg" class="note-avatar" alt="avatar">
+                <h3 style="margin:10px 0 5px 0;">无音desu</h3>
+                <p style="color:#888; font-size:0.8rem;">LV.23 DESIGNER</p>
+               
+                <!-- 数据统计 -->
+                <div class="note-stats">
+                    <div>
+                        <div style="font-weight:bold;">6</div> <!-- 更新文章数 -->
+                        <div style="font-size:0.7rem; color:#aaa;">文章</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:bold;">15</div>
+                        <div style="font-size:0.7rem; color:#aaa;">标签</div>
+                    </div>
+                    <div>
+                        <div id="visit-count" style="font-weight:bold;">1,024</div>
+                        <div style="font-size:0.7rem; color:#aaa;">访问</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- (B) 目录区 (所有版本的目录都在这里，默认隐藏旧的) -->
+            
+            <!-- v7 目录 -->
+            <div id="toc-v7" class="note-toc-card version-toc">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
+                    📑 目录 (v7.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v7-1"># 1. 架构重构：页面静态化</a></li>
+                    <li><a href="#v7-2"># 2. 状态同步：LocalStorage</a></li>
+                    <li><a href="#v7-3"># 3. 视觉修复：无缝黑夜</a></li>
+                    <li><a href="#v7-4"># 4. 扩展性：模板系统</a></li>
+                </ul>
+            </div>
+            
+            <!-- v6 目录 -->
+            <div id="toc-v6" class="note-toc-card version-toc">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
+                    📑 目录 (v6.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v6-1"># 1. 核心特效：动态形态变换</a></li>
+                    <li><a href="#v6-2"># 2. 沉浸式体验升级</a></li>
+                    <li><a href="#v6-3"># 3. 全新的“优化笔记”系统</a></li>
+                    <li><a href="#v6-4"># 4. 交互优化</a></li>
+                </ul>
+            </div>
+
+            <!-- v5 目录 -->
+            <div id="toc-v5" class="note-toc-card version-toc" style="display:none;">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid #ccc; padding-left:10px;">
+                    📑 目录 (v5.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v5-1"># 1. 邮件交互优化</a></li>
+                    <li><a href="#v5-2"># 2. 域名绑定与访问加速</a></li>
+                </ul>
+            </div>
+
+            <!-- v4 目录 -->
+            <div id="toc-v4" class="note-toc-card version-toc" style="display:none;">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid #ccc; padding-left:10px;">
+                    📑 目录 (v4.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v4-1"># 1. 留言板实装</a></li>
+                    <li><a href="#v4-2"># 2. BGM 交互反馈</a></li>
+                    <li><a href="#v4-3"># 3. 音频互斥逻辑</a></li>
+                </ul>
+            </div>
+
+            <!-- v3 目录 -->
+            <div id="toc-v3" class="note-toc-card version-toc" style="display:none;">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid #ccc; padding-left:10px;">
+                    📑 目录 (v3.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v3-1"># 1. BGM 实装</a></li>
+                    <li><a href="#v3-2"># 2. 日夜模式切换</a></li>
+                    <li><a href="#v3-3"># 3. 留言板 UI</a></li>
+                </ul>
+            </div>
+
+            <!-- v2 目录 -->
+            <div id="toc-v2" class="note-toc-card version-toc" style="display:none;">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid #ccc; padding-left:10px;">
+                    📑 目录 (v2.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v2-1"># 1. 内容填充</a></li>
+                    <li><a href="#v2-2"># 2. 3D 引擎本地化</a></li>
+                    <li><a href="#v2-3"># 3. 资源路径优化</a></li>
+                </ul>
+            </div>
+
+            <!-- v1 目录 -->
+            <div id="toc-v1" class="note-toc-card version-toc" style="display:none;">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid #ccc; padding-left:10px;">
+                    📑 目录 (v1.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v1-1"># 1. 设计初衷</a></li>
+                    <li><a href="#v1-2"># 2. 三栏式布局</a></li>
+                    <li><a href="#v1-3"># 3. 技术选型</a></li>
+                </ul>
+            </div>
+
+            <!-- (C) 历史版本列表 (已修复点击事件) -->
+            <div class="note-toc-card" style="margin-top: 20px;">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--primary-red); padding-left:10px;">
+                    🕒 历史版本 / Versions
+                </div>
+                <ul class="version-list">
+                    <li onclick="switchVersion('v7')" id="btn-v7" class="version-item active">
+                    <span class="v-tag">NEW</span> 第七版 (v7.0)
+                    </li>
+                    <li onclick="switchVersion('v6')" id="btn-v6" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第六版 (v6.0)
+                    </li>
+                    <li onclick="switchVersion('v5')" id="btn-v5" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第五版 (v5.0)
+                    </li>
+                    <li onclick="switchVersion('v4')" id="btn-v4" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第四版 (v4.0)
+                    </li>
+                    <li onclick="switchVersion('v3')" id="btn-v3" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第三版 (v3.0)
+                    </li>
+                    <li onclick="switchVersion('v2')" id="btn-v2" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第二版 (v2.0)
+                    </li>
+                    <li onclick="switchVersion('v1')" id="btn-v1" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第一版 (v1.0)
+                    </li>
+                </ul>
+            </div>
+
+        </aside>
+
+        <!-- ➡️ 右侧主要内容区 -->
+        <main class="note-content-card">
+            <!-- ====================  第七版内容 (v7.0) ==================== -->
+            <div id="content-v7" class="version-content">
+                <div class="note-header">
+                    <span class="note-tag">v7.0 Architecture</span>
+                    <span class="note-date">📅 2025-11-26</span>
+                </div>
+
+                <h1>🛠️ v7.0：架构重构与位面同步</h1>
+                
+                <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80');">
+                    <div class="note-banner-text">System Modularization</div>
+                </div>
+
+                <div class="note-body">
+                    <p>随着功能的不断增加，<code>index.html</code> 的代码量越来越多。为了避免“牵一发而动全身”的维护噩梦，v7.0 重点进行了<b>底层架构的拆分与重组</b>。</p>
+
+                    <h2 id="v7-1">1. 架构重构：页面静态化 (Static Separation)</h2>
+                    <p>我们将原本臃肿的“优化笔记”弹窗从主页中剥离，建立独立的 <code>devlog.html</code> 页面。</p>
+                    <ul>
+                        <li><b>瘦身成功：</b> 主页代码量减少了约 40%。</li>
+                        <li><b>扁平化管理：</b> 采用同级目录结构，解决了相对路径导致的资源丢失（图片、CSS）问题。</li>
+                        <li><b>维护性：</b> 现在更新日志有了专属领地，不再干扰主页的逻辑。</li>
+                    </ul>
+
+                    <h2 id="v7-2">2. 状态同步：记忆植入 (State Sync)</h2>
+                    <p>为了解决“主页是黑夜，跳到笔记页变白天”的体验割裂感，我们引入了 <b>LocalStorage</b> 技术。</p>
+                    <div class="code-block">
+                        // 1. 主页切换时写入状态
+                        localStorage.setItem('site_theme', 'dark');
+                        
+                        // 2. 笔记页加载前读取状态
+                        if(localStorage.getItem('site_theme') === 'dark') { ... }
+                    </div>
+                    <p>现在，浏览器会记忆你的偏好。无论你在哪个页面切换日夜模式，整个网站的所有页面都会同步响应。</p>
+
+                    <h2 id="v7-3">3. 视觉修复：无缝黑夜 (Infinite Dark)</h2>
+                    <p>修复了最为顽固的<b>“背景白边”</b>和<b>“背景塌陷”</b> BUG。</p>
+                    <p>通过使用 CSS 高级选择器 <code>html:has(body[data-theme="dark"])</code> 和 <code>background-attachment: fixed</code>，我们将星空背景强制钉死在视口底层，彻底消灭了滚动条边缘和页面底部的白色漏光，实现了真正的沉浸式体验。</p>
+
+                    <h2 id="v7-4">4. 扩展性：万能模板系统</h2>
+                    <p>确立了未来的更新规范：</p>
+                    <ul>
+                        <li><b>系列更新：</b> 继续在 <code>devlog.html</code> 中通过版本切换展示。</li>
+                        <li><b>独立文章：</b> 创建了 <code>template.html</code> 标准模板，未来撰写单篇游戏评测或技术博客时，只需“复制-粘贴-修改”，即可快速生成新页面。</li>
+                    </ul>
+
+                    <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                    <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                        Architecture Stabilized. <br> 
+                        © 2025 无音desu / Code with Passion
+                    </p>
+                </div>
+            </div>
+            <!-- ====================  第六版内容 (v6.0) ==================== -->
+            <div id="content-v6" class="version-content">
+                <div class="note-header">
+                    <span class="note-tag">v6.0 Major Update</span>
+                    <span class="note-date">📅 2025-11-25</span>
+                </div>
+
+                <h1>🚀 v6.0：从静态主页升级为动态主页</h1>
+                
+                <!-- 封面图 -->
+                <div class="note-banner" style="background-image: url('images/blender作品.png');">
+                    <div class="note-banner-text">Project: Transformer Profile</div>
+                </div>
+
+                <div class="note-body">
+                    <p>这是一个里程碑式的版本。经过高强度开发与代码迭代，终于将个人主页从一个静态的展示页，升级为具有<b>动态叙事能力</b>的互动网页。</p>
+
+                    <h2 id="v6-1">1. 核心特效：动态形态变换 (The Morphing)</h2>
+                    <p>这是本次更新最困难、也最酷炫的功能。左侧的个人信息栏现在拥有两种形态：</p>
+                    <ul>
+                        <li><b>初始形态：</b> 一个占据屏幕 90% 宽度的 Hero Banner（大横幅），极具视觉冲击力。</li>
+                        <li><b>最终形态：</b> 随着滚动条下滑，它会平滑收缩、归位，变成标准的 300px 侧边栏。</li>
+                    </ul>
+                    <p>为了解决动画过程中的“视觉抖动”和“内容拉伸”问题，采用了<b>坐标系锁定技术</b>：</p>
+                    <div class="code-block">
+                        // 关键逻辑：焊死高度 + 左上角坐标系修正
+                        leftCol.style.height = "650px"; // 物理锁死高度
+                        leftCol.style.transformOrigin = "0 0"; // 钉死左上角
+                    </div>
+
+                    <h2 id="v6-2">2. 沉浸式体验升级</h2>
+                    <p>为了让网页更有质感，我们对视觉细节进行了全方位打磨：</p>
+                    <ul>
+                        <li><span class="badge">黑夜模式 2.0</span> 修复了网页两侧的白边问题，现在背景是纯粹的深邃黑，配合星空粒子，沉浸感拉满。</li>
+                        <li><span class="badge">布局重构</span> 重新规划了右侧作品集的顺序（博客 ➡ 相册 ➡ 游戏），更符合浏览逻辑。</li>
+                        <li><span class="badge">顶部导航</span> 新增了磨砂玻璃质感的顶部 Navbar，整合了“一键回城”和“功能开关”。</li>
+                    </ul>
+
+                    <h2 id="v6-3">3. 全新的“优化笔记”系统</h2>
+                    <p>你现在看到的这个页面就是本次更新的成果之一！</p>
+                    <ul>
+                        <li><b>独立阅读页：</b> 采用了左侧目录、右侧内容的经典博客布局。</li>
+                        <li><b>版本控制：</b> 左侧新增了版本切换功能，可以随时回顾 v5.0、v4.0 的开发历程。</li>
+                        <li><b>访问计数器：</b> 基于 LocalStorage 实现了访问量统计</li>
+                    </ul>
+
+                    <h2 id="v6-4">4. 交互优化</h2>
+                    <p>加入了<b>“一键通关”</b>逻辑：点击首页按钮，会自动触发开场动画并丝滑滚动到底部，直接展示网页的“完全体”形态。</p>
+
+                    <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                    <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                        System Upgrade Complete. <br> 
+                        © 2025 无音desu / Code with Passion
+                    </p>
+                </div>
+            </div>
+                <!-- ==================== ⚪ 第五版内容 (更新为连接性优化) ==================== -->
+                <div id="content-v5" class="version-content" style="display: none;">
+                    <div class="note-header">
+                        <span class="note-tag" style="background:#999;">v5.0 Connectivity</span>
+                        <!-- 日期稍微往前推一天，保持时间线逻辑 -->
+                        <span class="note-date">📅 2025-11-24</span>
+                    </div>
+
+                    <h1>⚡ v5.0：域名加速与邮件集成</h1>
+                    
+                    <!-- 封面图 -->
+                    <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80');">
+                        <div class="note-banner-text">Connection Established</div>
+                    </div>
+
+                    <div class="note-body">
+                        <p>在这一版本中，我们暂时放缓了视觉特效的开发，转而专注于解决网站的<b>“可用性”</b>和<b>“连接性”</b>问题。无论是联系方式的便捷性，还是网页的加载速度，都是用户体验的核心。</p>
+
+                        <h2 id="v5-1">1. 邮件交互优化 (Mailto Protocol)</h2>
+                        <p>为了简化访客联系我的流程，我对左下角的“发送邮件”按钮进行了原生协议绑定。</p>
+                        <p><b>改进前：</b> 用户需要手动复制邮箱地址，切换应用发送。</p>
+                        <p><b>改进后：</b> 利用 <code>mailto:</code> 协议，点击按钮即可直接唤起系统默认的邮件客户端（如 Outlook, Mail App），并自动填好收件人地址。</p>
+                        <div class="code-block">
+                            &lt;a href="mailto:xx@qq.com"&gt; 
+                                ✉️ 发送邮件 / Email 
+                            &lt;/a&gt;
+                        </div>
+
+                        <h2 id="v5-2">2. 域名绑定与访问加速</h2>
+                        <p>本站托管于 <span class="badge">GitHub Pages</span>。虽然稳定，但由于服务器位于海外，国内网络环境下经常遇到加载缓慢甚至无法打开的情况。</p>
+                        <p>为了彻底解决访问速度问题，我执行了以下操作：</p>
+                        <ul>
+                            <li><b>注册独立域名：</b> 购买并注册了专属域名</li>
+                            <li><b>域名验证：</b> 完成阿里云的认证后才可以修改默认DNS</li>
+                            <li><b>DNS 解析配置：</b> 在域名服务商处添加 <code>CNAME</code> 记录，将其指向 GitHub 的源地址。</li>
+                            <li><b>仓库绑定：</b> 在 GitHub 仓库设置中开启 Custom Domain，完成握手验证。</li>
+                        </ul>
+                        <p>经过一系列配置，现在国内访客可以通过新域名享受到更快的响应速度，无需再忍受龟速加载。</p>
+
+                        <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                        <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                            Global Connection Ready. <br> 
+                            © 2025 无音desu
+                        </p>
+                    </div>
+                </div>
+                <!-- ==================== ⚪ 第四版内容 (功能觉醒) ==================== -->
+                <div id="content-v4" class="version-content" style="display: none;">
+                    <div class="note-header">
+                        <span class="note-tag" style="background:#999;">v4.0 Functionality</span>
+                        <span class="note-date">📅 2025-11-23</span>
+                    </div>
+
+                    <h1>⚡ v4.0：功能觉醒 - 留言板实装与音频系统重构</h1>
+                    
+                    <!-- 封面图：用一张稍微抽象一点的科技图，或者原本的图片 -->
+                    <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1516110833967-0b5716ca1387?w=800&q=80');">
+                        <div class="note-banner-text">System Online</div>
+                    </div>
+
+                    <div class="note-body">
+                        <p>如果说前几个版本是在“装修房子”，那么 v4.0 就是在“接通水电”。在这一版中，我们让静态的网页拥有了真正的<b>数据交互能力</b>和<b>复杂的媒体控制逻辑</b>。</p>
+
+                        <h2 id="v4-1">1. 留言板实装：从“装饰”到“通讯”</h2>
+                        <p>在旧版本中，留言板只是一个本地的 UI 玩具，刷新页面后数据就会消失。为了实现真正的匿名留言功能，我引入了 Serverless 方案。</p>
+                        <ul>
+                            <li><b>技术选型：</b> 接入了 <span class="badge">Formspree</span> API 服务。</li>
+                            <li><b>实现方式：</b> 使用 JavaScript 的 <code>fetch()</code> 方法拦截表单提交，实现了 <b>AJAX 无刷新发送</b>。</li>
+                        </ul>
+                        <p>现在，访客在留言板提交的信息会直接推送到我的个人邮箱，实现了真正的即时通讯。</p>
+                        <div class="code-block">
+                            // AJAX 核心逻辑
+                            fetch("https://formspree.io/f/xxxx", {
+                                method: "POST",
+                                body: data,
+                                headers: { 'Accept': 'application/json' }
+                            }).then(...)
+                        </div>
+
+                        <h2 id="v4-2">2. BGM 按钮交互反馈优化</h2>
+                        <p>修复了一个存在的问题：右上角的 BGM 按钮。之前点击按钮虽然能切歌，但 UI 上永远显示 "OFF"。</p>
+                        <p><b>优化后：</b> 加入了状态监听。当音乐播放时，按钮会变色并显示 <b style="color:var(--primary-red)">🎵 ON</b>；暂停时变回灰白色 <b style="color:#999">OFF</b>。操作反馈更加直观。</p>
+
+                        <h2 id="v4-3">3. 独立播放器与音频互斥逻辑</h2>
+                        <p>本版新增了一个功能强大的<b>“内置音乐播放器”</b>，包含专辑封面、切歌控制和播放列表。</p>
+                        <p>但这也带来了新问题：如果 BGM 和播放器同时响，声音会打架。为此我编写了一套<b>音频互斥（Audio Mutex）逻辑</b>：</p>
+                        <div class="code-block">
+                            if (player.play()) {
+                                // 当播放器开始时，强制关掉全局 BGM
+                                bgm.pause();
+                                updateBgmButtonState("OFF");
+                            }
+                        </div>
+                        <p>现在，当你点开播放器的一瞬间，背景音乐会自动静音让路，享受纯净的听歌体验。</p>
+
+                        <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                        <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                            Functions Activated. <br> 
+                            © 2025 无音desu
+                        </p>
+                    </div>
+                </div>
+                <!-- ==================== ⚪ 第三版内容 (氛围与框架) ==================== -->
+                <div id="content-v3" class="version-content" style="display: none;">
+                    <div class="note-header">
+                        <span class="note-tag" style="background:#999;">v3.0 Atmosphere</span>
+                        <span class="note-date">📅 2025-11-22</span>
+                    </div>
+
+                    <h1>🎨 v3.0：初具雏形 - 氛围感与基础框架</h1>
+                    
+                    <!-- 封面图 -->
+                    <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?w=800&q=80');">
+                        <div class="note-banner-text">Setting the Mood</div>
+                    </div>
+
+                    <div class="note-body">
+                        <p>在搭建好基本的 HTML 骨架后，v3.0 的重点在于赋予网页“灵魂”。通过加入音乐和光影变化，让访问者进入网页时能感受到独特的个人风格。</p>
+
+                        <h2 id="v3-1">1. 背景音乐 (BGM) 实装</h2>
+                        <p>网页不再是静默的。我利用 HTML5 的 <code>&lt;audio&gt;</code> 标签引入了背景音乐功能。</p>
+                        <ul>
+                            <li><b>自动/手动播放：</b> 考虑到浏览器策略，虽然设置了自动播放，但增加了手动开关按钮。</li>
+                            <li><b>循环播放：</b> 添加了 <code>loop</code> 属性，确保音乐不会中断。</li>
+                        </ul>
+
+                        <h2 id="v3-2">2. 日夜模式切换 (Day/Night Toggle)</h2>
+                        <p>为了增加互动性和视觉层次，我制作了一套<b>“黑夜模式”</b>的 CSS 样式。</p>
+                        <p>点击右上角的切换按钮，通过 JS 修改 <code>body</code> 的类名，从而触发 CSS 变量的改变（如背景色、文字颜色），实现一键从清新的白天切换到深邃的黑夜。</p>
+
+                        <h2 id="v3-3">3. 留言板 UI 框架搭建</h2>
+                        <p>在这个版本中，我设计并实现了一个<b>侧滑式留言板</b>的 UI 界面。</p>
+                        <ul>
+                            <li><b>交互方式：</b> 点击悬浮按钮，留言板从屏幕右侧滑出。</li>
+                            <li><b>功能现状：</b> <span class="badge" style="background:#ffeaa7; color:#d35400;">暂未实装</span> 目前仅完成了前端界面的搭建（输入框、发送按钮），点击发送后暂时只能在本地模拟效果，尚未接入后端通讯服务。</li>
+                        </ul>
+                        <p>虽然还不能真的发邮件，但这个漂亮的侧滑抽屉为 v4.0 的功能实装打下了坚实的基础。</p>
+
+                        <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                        <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                            Framework Initialized. <br> 
+                            © 2025 无音desu
+                        </p>
+                    </div>
+                </div>
+                <!-- ==================== ⚪ 第二版内容 (内容与本地化) ==================== -->
+                <div id="content-v2" class="version-content" style="display: none;">
+                    <div class="note-header">
+                        <span class="note-tag" style="background:#999;">v2.0 Content & Performance</span>
+                        <span class="note-date">📅 2025-11-21</span>
+                    </div>
+
+                    <h1>📦 v2.0：内容填充 - 内容实装与资源本地化</h1>
+                    
+                    <!-- 封面图 -->
+                    <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80');">
+                        <div class="note-banner-text">Assets Loaded</div>
+                    </div>
+
+                    <div class="note-body">
+                        <p>有了 v1.0 的 HTML 骨架后，v2.0 的主要任务是“装修”。我为网站填充了具体的个性化内容，并在开发过程中发现了严重的加载延迟问题，通过“本地化策略”成功解决了它。</p>
+
+                        <h2 id="v2-1">1. 内容填充与丰富</h2>
+                        <ul>
+                            <li><b>游戏收藏 (Collection)：</b> 添加了一些游戏封面。</li>
+                            <li><b>模型库 (Inventory)：</b> 准备了一些 GLB 模型文件。</li>
+                            <li><b>作品集 (Portfolio)：</b> 上传了一些图片。</li>
+                        </ul>
+
+                        <h2 id="v2-2">2. 3D 引擎代码优化 (Model Viewer)</h2>
+                        <p>为了在网页上展示 3D 模型，我使用了 Google 的 <code>&lt;model-viewer&gt;</code> 组件。</p>
+                        <p><b>问题：</b> 最初直接引用了 Google 的 CDN 链接，导致每次刷新都要去请求远程服务器，一旦网络波动，模型就无法加载。</p>
+                        <p><b>优化：</b> 我将核心 JS 库 <code>model-viewer.min.js</code> <b>下载至项目本地</b>进行引用。这不仅减少了 DNS 解析时间，还保证了离线开发时的稳定性。</p>
+                        <div class="code-block">
+                            &lt;!-- 优化前：依赖远程 CDN --&gt;
+                            &lt;script src="https://ajax.googleapis.com/.../model-viewer.min.js"&gt;&lt;/script&gt;
+                            
+                            &lt;!-- 优化后：本地直接加载，飞快！ --&gt;
+                            &lt;script src="./model-viewer.min.js"&gt;&lt;/script&gt;
+                        </div>
+
+                        <h2 id="v2-3">3. 资源路径优化 (Local Assets)</h2>
+                        <p>在填充图片和模型时，我最初尝试直接链接 GitHub 仓库里的文件地址。</p>
+                        <p><b>遭遇瓶颈：</b> 发现图片加载极其缓慢，这是因为 GitHub 的原始文件服务器在国外，且对直链流量有限制。</p>
+                        <p><b>解决方案：</b> 放弃远程引用，改用<b>相对路径 (Relative Path)</b>。我将所有图片放入 <code>images/</code> 文件夹，模型放入 <code>3d model/</code> 文件夹，直接读取本地文件。</p>
+                        <div class="code-block">
+                            background-image: url('images/绫小路.jpg');
+                        </div>
+
+                        <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                        <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                            Performance Optimized. <br> 
+                            © 2025 无音desu
+                        </p>
+                    </div>
+                </div>
+                <!-- ==================== ⚪ 第一版内容 (起源) ==================== -->
+                <div id="content-v1" class="version-content" style="display: none;">
+                    <div class="note-header">
+                        <span class="note-tag" style="background:#333; color:#fff;">v1.0 Genesis</span>
+                        <span class="note-date">📅 2025-11-20</span>
+                    </div>
+
+                    <h1>🌱 v1.0：起源 - Hello World 与 独特构想</h1>
+                    
+                    <!-- 封面图 -->
+                    <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&q=80');">
+                        <div class="note-banner-text">Hello World</div>
+                    </div>
+
+                    <div class="note-body">
+                        <p>这是梦开始的地方。在浏览了市面上无数千篇一律的 Bootstrap 模板和 WordPress 主题后，我决定抛弃所有现成的轮子，从零开始写第一行代码，打造一个完全属于我的、独一无二的数字秘密基地。</p>
+
+                        <h2 id="v1-1">1. 拒绝模板：游戏化 UI 设计理念</h2>
+                        <p>我想让它看起来有趣点。受到 RPG 游戏的启发，我构思了一种<b>“玩家属性面板”</b>风格的视觉语言：</p>
+                        <ul>
+                            <li><b>角色卡：</b> 头像不是简单的照片，而是带有 HP（精力）和 MP（灵感）条的玩家状态栏。</li>
+                            <li><b>背包栏：</b> 展示技能和模型的地方，被称为“Inventory”。</li>
+                            <li><b>任务书：</b> 博客和项目经历，被设计成“已解密的任务档案”。</li>
+                        </ul>
+
+                        <h2 id="v1-2">2. 架构核心：三栏式布局 (The Grid)</h2>
+                        <p>为了容纳这些丰富的信息，我确定了市面很少主页模板使用的<b>“左-中-右”三栏结构</b></p>
+                        <div class="code-block">
+                            #main-dashboard {
+                                display: grid;
+                                /* 左侧 300px | 中间自适应 | 右侧 340px */
+                                grid-template-columns: 300px 1fr 340px; 
+                                gap: 25px;
+                            }
+                        </div>
+                        <p>这种布局既稳定又灵活，左侧固定展示个人信息，右侧固定展示作品入口，中间则是流动的核心内容区。</p>
+
+                        <h2 id="v1-3">3. 技术选型与地基搭建</h2>
+                        <p>作为第一版，虽然没有复杂的交互，但扎实的框架得搭建好的：</p>
+                        <ul>
+                            <li><b>HTML5 语义化标签：</b> 使用 <code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;nav&gt;</code> 而非全是 div。</li>
+                            <li><b>CSS3 变量系统：</b> 在 <code>:root</code> 中定义了 <code>--primary-red</code>, <code>--sky-blue</code> 等主题色，为之后要添加的日夜切换打下基础。</li>
+                            <li><b>字体美学：</b> 引入了 Google Fonts 的 <code>Fredoka One</code>（圆润标题）和 <code>Nunito</code>。</li>
+                            <li><b>Flexbox & Grid：</b> 混合使用两大布局利器，实现了卡片内部的完美居中。</li>
+                        </ul>
+
+                        <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                        <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                            It all started here. <br> 
+                            © 2025 无音desu
+                        </p>
+                    </div>
+                </div>
+
+        </main>
+    </div>
+
+<script>
+            // === 1. 自动读取主题 (放在最前面) ===
+        (function checkTheme() {
+            const savedTheme = localStorage.getItem('site_theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+        // 1. 简单的访问计数器读取 (和主页同步)
+        const key = 'my_website_visits';
+        const count = localStorage.getItem(key) || 100;
+        const countEl = document.getElementById('visit-count');
+        if(countEl) countEl.innerText = count;
+
+        // 2. 切换版本核心逻辑
+        function switchVersion(verID) {
+            // --- A. 切换右侧文章内容 ---
+            // 先隐藏所有文章
+            document.querySelectorAll('.version-content').forEach(el => el.style.display = 'none');
+            // 显示目标文章
+            const targetContent = document.getElementById('content-' + verID);
+            if(targetContent) targetContent.style.display = 'block';
+
+            // --- B. 切换左侧按钮高亮 ---
+            // 先移除所有高亮
+            document.querySelectorAll('.version-item').forEach(el => el.classList.remove('active'));
+            // 给当前点击的按钮加高亮
+            const targetBtn = document.getElementById('btn-' + verID);
+            if(targetBtn) targetBtn.classList.add('active');
+
+            // --- C. 切换左侧目录 (TOC) ---
+            // 先隐藏所有目录
+            document.querySelectorAll('.version-toc').forEach(el => el.style.display = 'none');
+            // 显示目标目录
+            const targetToc = document.getElementById('toc-' + verID);
+            if(targetToc) targetToc.style.display = 'block';
+
+            // --- D. 滚回顶部 (优化体验) ---
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+                switchVersion('v7');
+    </script>
+</body>
+</html>
