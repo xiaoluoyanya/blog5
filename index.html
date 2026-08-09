@@ -382,7 +382,7 @@
         max-height: 0; opacity: 0; border-width: 0;
         transition: max-height 0.45s ease, opacity 0.4s ease, margin 0.4s ease;
     }
-    .playlist-box.show-list { max-height: 320px; opacity: 1; border-width: 1px; }
+    .playlist-box.show-list { max-height: min(60vh, 460px); opacity: 1; border-width: 1px; overflow-y: auto; }
     .track-item {
         display: flex; justify-content: space-between; align-items: center;
         padding: 13px 18px; cursor: pointer;
@@ -897,7 +897,7 @@
                             <button class="ctrl" onclick="prevTrack()" title="上一首">⏮</button>
                             <button class="ctrl main" id="play-pause-btn" onclick="toggleTrackPlay()" title="播放 / 暂停">▶</button>
                             <button class="ctrl" onclick="nextTrack()" title="下一首">⏭</button>
-                            <button class="ctrl wide" onclick="togglePlaylist()" title="播放列表">LIST · 6</button>
+                            <button class="ctrl wide" onclick="togglePlaylist()" title="播放列表">LIST · <span id="playlist-count">6</span></button>
                         </div>
                     </div>
                 </div>
@@ -1230,6 +1230,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         loadTrack(currentTrackIndex);
         renderPlaylist();
+        document.getElementById('playlist-count').innerText = trackList.length;
     });
 
     function loadTrack(index) {
