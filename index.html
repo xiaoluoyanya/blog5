@@ -3,1948 +3,1265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Adventure Profile</title>
-    <!-- 引入圆润可爱的字体 -->
-    <link href="https://fonts.loli.net/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
-    <!-- 引入 Google 的 Model Viewer 组件 -->
+    <title>无音desu — 个人主页</title>
+    <!-- 衬线标题 + 现代正文 -->
+    <link rel="preconnect" href="https://fonts.loli.net">
+    <link href="https://fonts.loli.net/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Model Viewer -->
     <script type="module" src="./model-viewer.min.js"></script>
-    
+
     <style>
+    /* ============================================================
+       🎨 设计令牌 — 高级简约 (Refined Minimal)
+       ============================================================ */
     :root {
-        --primary-red: #E60012;
-        --sky-blue: #4facfe;
-        --bg-gradient: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
-        --panel-bg: rgba(255, 255, 255, 0.95);
-        --text-dark: #4a4a4a;
-        --accent-yellow: #FFD700;
-        --shadow: 0 8px 20px rgba(0,0,0,0.15);
+        --font-serif: 'DM Serif Display', 'Noto Serif SC', Georgia, 'Songti SC', serif;
+        --font-sans: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+        /* 亮色 · 米白纸面 */
+        --bg: #FAFAF7;
+        --bg-soft: #F3F1EB;
+        --card: #FFFFFF;
+        --ink: #16161A;
+        --ink-soft: #5C5C66;
+        --ink-faint: #9C9CA6;
+        --line: #E7E5DE;
+        --accent: #002FA7;               /* 克莱因蓝 */
+        --accent-ink: #002FA7;
+        --accent-soft: rgba(0, 47, 167, 0.07);
+        --shadow-card: 0 1px 2px rgba(22, 22, 26, 0.04), 0 12px 32px rgba(22, 22, 26, 0.06);
+        --shadow-hover: 0 2px 4px rgba(22, 22, 26, 0.05), 0 24px 48px rgba(22, 22, 26, 0.10);
     }
-/* 默认是白天，这里定义黑夜模式的变量覆盖 */
-[data-theme="dark"] {
-    --primary-red: #ff0055; /* 霓虹红 */
-    --sky-blue: #00f2fe;    /* 霓虹蓝 */
-    --bg-gradient: linear-gradient(180deg, #2b1055 0%, #7597de 100%); /* 深紫色夜空 */
-    --panel-bg: rgba(20, 20, 30, 0.95); /* 深色面板 */
-    --text-dark: #ffffff;   /* 文字变白 */
-    --accent-yellow: #f9ca24; 
-    --shadow: 0 8px 20px rgba(0,242,254, 0.3); /* 发光的阴影 */
-}
 
-/* 夜间模式下的一些微调 */
-body[data-theme="dark"] {
-    /* 星空背景图 */
-   background-image: 
-        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
-        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px) !important;
-   background-size: 550px 550px, 350px 350px, 250px 250px; 
-   background-position: 0 0, 40px 60px, 130px 270px;
-   background-color: #121212 !important; /* 确保底色是黑的 */
-}
+    /* 暗色 · 墨夜 */
+    body[data-theme="dark"] {
+        --bg: #0E0E10;
+        --bg-soft: #151518;
+        --card: #17171B;
+        --ink: #EDECE8;
+        --ink-soft: #A4A3AC;
+        --ink-faint: #6C6B75;
+        --line: #26262C;
+        --accent: #5C7CFF;
+        --accent-ink: #8FA4FF;
+        --accent-soft: rgba(92, 124, 255, 0.12);
+        --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+        --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.4), 0 24px 48px rgba(0, 0, 0, 0.5);
+    }
 
-[data-theme="dark"] .panel {
-    border-color: #444; /* 边框变暗 */
-}
-
-[data-theme="dark"] h2 {
-    color: #fff;
-    text-shadow: 0 0 10px var(--sky-blue); /* 标题发光 */
-}
-
-[data-theme="dark"] .card-title { color: #333; } /* 卡片内部还是白底，字要黑 */
-[data-theme="dark"] .article-item { color: #333; }
+    /* ============================================================
+       🔧 基础
+       ============================================================ */
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
-        font-family: 'Nunito', sans-serif;
-        background: var(--bg-gradient);
-                /* 👇 关键修改：允许垂直滚动，禁止水平滚动 */
-        overflow-y: auto; 
-        overflow-x: hidden; 
-        color: var(--text-dark);
-        /* 像素鼠标 */
-        cursor: url('https://cur.cursors-4u.net/games/gam-13/gam1282.cur'), auto;
-        /* 动态背景图 */
-        background-image: 
-            radial-gradient(circle 20px at 10% 10%, rgba(255,255,255,0.4) 100%, transparent),
-            radial-gradient(circle 30px at 80% 20%, rgba(255,255,255,0.4) 100%, transparent);
-        background-size: 100% 100%;
+        font-family: var(--font-sans);
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.75;
+        overflow-x: hidden;
+        transition: background 0.5s ease, color 0.5s ease;
     }
 
-    /* 按钮鼠标手势 */
-    a, button { cursor: url('https://cur.cursors-4u.net/games/gam-13/gam1283.cur'), pointer; }
+    ::selection { background: var(--accent); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; border: 2px solid var(--bg); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
 
-    /* --- 1. 初始画面 --- */
-    #intro-scene {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: var(--bg-gradient);
-        z-index: 999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        transition: transform 0.6s ease-in-out;
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+    /* ---------- 入场动效 ---------- */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.22, 1, 0.36, 1); }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: 0.08s; }
+    .reveal.d2 { transition-delay: 0.16s; }
+    .reveal.d3 { transition-delay: 0.24s; }
+
+    /* ============================================================
+       🧭 导航
+       ============================================================ */
+    .topbar {
+        position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+        background: color-mix(in srgb, var(--bg) 82%, transparent);
+        backdrop-filter: blur(16px) saturate(150%);
+        -webkit-backdrop-filter: blur(16px) saturate(150%);
+        border-bottom: 1px solid var(--line);
+        transition: background 0.4s ease;
+    }
+    .topbar-inner {
+        max-width: 1080px; margin: 0 auto; padding: 0 28px;
+        height: 66px;
+        display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand {
+        font-family: var(--font-serif); font-size: 1.25rem; letter-spacing: 0.5px;
+        color: var(--ink); text-decoration: none; white-space: nowrap;
+    }
+    .brand em { font-style: normal; color: var(--accent-ink); }
+
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+        color: var(--ink-soft); text-decoration: none;
+        font-size: 0.88rem; font-weight: 500; letter-spacing: 0.3px;
+        position: relative; transition: color 0.2s ease;
+    }
+    .nav-links a::after {
+        content: ''; position: absolute; left: 0; bottom: -4px;
+        width: 100%; height: 1.5px; background: var(--accent);
+        transform: scaleX(0); transform-origin: left; transition: transform 0.28s ease;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .nav-actions { display: flex; gap: 8px; }
+    .icon-pill {
+        height: 34px; padding: 0 14px;
+        display: inline-flex; align-items: center; gap: 6px;
+        border: 1px solid var(--line); border-radius: 999px;
+        background: transparent; color: var(--ink-soft);
+        font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1px;
+        cursor: pointer; transition: all 0.22s ease; white-space: nowrap;
+    }
+    .icon-pill:hover { border-color: var(--accent); color: var(--accent-ink); }
+    .icon-pill.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ============================================================
+       🏛️ Hero
+       ============================================================ */
+    .hero { padding: 176px 0 96px; }
+    .eyebrow {
+        font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 3px;
+        color: var(--accent-ink); text-transform: uppercase;
+        display: inline-flex; align-items: center; gap: 10px;
+        margin-bottom: 26px;
+    }
+    .eyebrow::before { content: ''; width: 28px; height: 1.5px; background: var(--accent); }
+
+    .hero h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(2.6rem, 6.4vw, 4.6rem);
+        line-height: 1.18; letter-spacing: 0.5px;
+        font-weight: 400;
+        max-width: 16em;
+    }
+    .hero h1 .accent { color: var(--accent-ink); font-style: italic; }
+
+    .hero-desc {
+        margin-top: 28px; max-width: 580px;
+        color: var(--ink-soft); font-size: 1.02rem; line-height: 1.95;
     }
 
-    .logo-title {
-        font-family: 'Fredoka One', cursive;
-        font-size: 5rem;
-        color: var(--primary-red);
-        -webkit-text-stroke: 3px #fff;
-        text-shadow: 5px 5px 0px rgba(0,0,0,0.1);
-        animation: bounce 2s infinite;
+    .hero-cta { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 13px 26px; border-radius: 999px;
+        font-size: 0.92rem; font-weight: 500; letter-spacing: 0.5px;
+        text-decoration: none; border: 1px solid transparent;
+        transition: all 0.24s ease; cursor: pointer;
     }
+    .btn-solid { background: var(--accent); color: #fff; }
+    .btn-solid:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 47, 167, 0.28); }
+    body[data-theme="dark"] .btn-solid:hover { box-shadow: 0 12px 28px rgba(92, 124, 255, 0.3); }
+    .btn-ghost { border-color: var(--line); color: var(--ink); background: transparent; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent-ink); transform: translateY(-2px); }
 
-    .start-btn {
-        font-family: 'Fredoka One', cursive;
-        font-size: 1.5rem;
-        background: #fff;
-        color: var(--sky-blue);
-        padding: 15px 50px;
-        border-radius: 50px;
-        border: none;
-        box-shadow: 0 10px 0 #ddd;
-        margin-top: 50px;
-        cursor: pointer;
-        transition: transform 0.1s;
+    /* 统计条 */
+    .hero-stats {
+        margin-top: 72px; padding-top: 26px;
+        border-top: 1px solid var(--line);
+        display: flex; gap: 56px; flex-wrap: wrap;
     }
-    .start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #ddd; }
-
-/* --- 2. 全屏主界面 (最终稳健版) --- */
-    #main-dashboard {
-        position: fixed; /* 锁定 */
-        top: 0; 
-        
-        /* 👇 核心修改：使用左右拉伸 + margin自动 的方式居中 */
-        left: 0;
-        right: 0;
-        margin: 0 auto; /* 水平自动居中 */
-        
-        width: 100%;
-        max-width: 1480px; /* 限制最大宽度 */
-        height: 100vh;
-        
-        /* 布局设定 */
-        display: grid;
-        grid-template-columns: 300px 1fr 340px; 
-        gap: 25px;
-        padding: 80px 20px 20px 20px; /* 加上左右内边距，防止贴边 */
-        
-        /* 初始不可见，防止闪烁 */
-        opacity: 0; 
-        pointer-events: none; 
-        z-index: 10;
+    .stat .num {
+        font-family: var(--font-serif); font-size: 1.9rem; letter-spacing: 0.5px; line-height: 1.2;
     }
-
-    /* 👇 预先隐藏这些栏目，消灭“鬼影” */
-    .mid-col { opacity: 0; transform: translateY(100vh); } 
-    .right-col { opacity: 0; transform: translateX(100vw); }
-
-    /* 📱 手机适配 (保持不变) */
-    @media (max-width: 1200px) {
-        #scroll-track { display: none; }
-        #main-dashboard {
-            position: relative;
-            left: auto; right: auto; /* 手机上取消固定居中 */
-            height: auto;
-            opacity: 1 !important;
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            overflow-y: visible;
-            pointer-events: auto;
-            padding-top: 20px;
-        }
-        /* 手机上强制显示 */
-        .mid-col, .right-col { opacity: 1 !important; transform: none !important; filter: none !important; }
-        .left-col, .mid-col, .right-col { width: 100%; max-width: 500px; }
+    .stat .lbl {
+        font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 2px;
+        color: var(--ink-faint); text-transform: uppercase; margin-top: 2px;
     }
+    .stat .num .live { color: var(--accent-ink); }
 
-    /* 通用面板样式 */
-    .panel {
-        background: var(--panel-bg);
-        border-radius: 25px;
-        box-shadow: var(--shadow);
-        border: 4px solid #fff;
-        padding: 20px;
-        overflow-y: auto; /* 内容多了可以滚动 */
-        backdrop-filter: blur(10px);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
+    /* ============================================================
+       📐 通用 Section
+       ============================================================ */
+    section.block { padding: 96px 0; }
+    .sec-head { margin-bottom: 48px; }
+    .sec-kicker {
+        font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 3px;
+        color: var(--ink-faint); text-transform: uppercase;
+        display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
     }
+    .sec-kicker .no { color: var(--accent-ink); }
+    .sec-title {
+        font-family: var(--font-serif); font-weight: 400;
+        font-size: clamp(1.8rem, 3.6vw, 2.5rem);
+        letter-spacing: 0.5px; line-height: 1.3;
+    }
+    .sec-sub { margin-top: 10px; color: var(--ink-soft); font-size: 0.94rem; max-width: 520px; }
 
-    .panel::-webkit-scrollbar { width: 0px; }
+    .hairline { border-top: 1px solid var(--line); }
 
-    /* 各栏动画 */
-        .left-col { 
-        animation: slideInLeft 0.8s ease backwards; 
-        /* ✨ 新增：让卡片变宽时，里面的头像和文字强制居中 */
-        align-items: center; 
-        text-align: center;
+    /* ============================================================
+       👤 关于
+       ============================================================ */
+    .about-grid {
+        display: grid; grid-template-columns: 300px 1fr; gap: 64px; align-items: center;
     }
-    /* 👇 顺便加个保险：让左侧栏里的所有子元素宽度占满，防止变宽时排版乱掉 */
-    .left-col > div {
-        width: 100%;
-    }
-
-    /* 原来的 mid-col 和 right-col 保持在下面不动 */
-    .mid-col { animation: zoomIn 0.8s ease backwards 0.2s; border: 8px solid #fff; }
-    .right-col { animation: slideInRight 0.8s ease backwards 0.4s; }
-    .mid-col { animation: zoomIn 0.8s ease backwards 0.2s; border: 8px solid #fff; }
-    .right-col { animation: slideInRight 0.8s ease backwards 0.4s; }
-
-/* 内部元素样式 - 修正版 */
-    .avatar-container {
-        width: 150px; 
-        height: 150px;
-        margin: 0 auto;
-        background: #ffecb3;
-        border-radius: 50%;
-        border: 5px solid #fff;
-        box-shadow: 0 0 0 3px var(--accent-yellow);
-        overflow: hidden;
-        
-        /* 👇 关键修正：禁止被挤压变形 */
-        flex-shrink: 0; 
-        
-        /* 保持图片比例 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .avatar-container img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover; /* 保证图片本身比例正常 */
-    }
-
-    /* 修正左侧栏的对齐方式，防止变宽时内容乱跑 */
-    .left-col { 
-        /* 保持 Flex 布局 */
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* 内容强制居中 */
-        justify-content: center; /* 垂直也居中 */
-        
-        /* 这是一个保险，防止内容撑破 */
-        overflow: hidden; 
-    }
-    
-    /* 让按钮保持固定宽度，不要跟着盒子变宽 */
-    .left-col .action-btn {
-        width: 260px; /* 固定宽度，精致一点 */
-        max-width: 100%;
-    }
-
-    /* 卡带样式 (Inventory) */
-    .cartridge {
-        background: #333;
-        color: #fff;
-        border-radius: 10px;
-        padding: 10px;
-        /* margin-bottom: 15px; */
-        cursor: pointer;
-        transition: transform 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .cartridge:hover { transform: translateX(-5px); background: var(--primary-red); }
-    .cartridge-icon { 
-        width: 40px; height: 40px; background: #555; border-radius: 5px; 
-        display:flex; align-items:center; justify-content:center; font-weight:bold;
-    }
-
-    /* === 响应式：小屏幕变单列 === */
-    @media (max-width: 1200px) {
-        #main-dashboard {
-            grid-template-columns: 1fr; /* 变成一列 */
-            grid-template-rows: auto;
-            height: auto;
-            overflow-y: scroll;
-            max-width: 100%;
-        }
-        body { overflow: auto; height: auto; }
-        .panel { height: auto; margin-bottom: 20px; }
-    }
-
-    /* 动画定义 */
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    .visible { opacity: 1 !important; transform: scale(1) !important; }
-    .hidden { transform: translateY(-100%); }
-
-    /* === 音乐播放器样式 === */
-    .music-player-card {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    .about-photo { position: relative; }
+    .about-photo img {
+        width: 100%; aspect-ratio: 1; object-fit: cover;
         border-radius: 20px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        color: #fff;
-        box-shadow: 0 10px 20px rgba(255, 105, 180, 0.3);
-        transition: transform 0.2s;
+        box-shadow: var(--shadow-card);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
     }
-    .music-player-card:hover { transform: scale(1.02); }
+    .about-photo:hover img { transform: translateY(-6px) rotate(-1deg); box-shadow: var(--shadow-hover); }
+    .lv-chip {
+        position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+        background: var(--card); border: 1px solid var(--line);
+        border-radius: 999px; padding: 7px 18px;
+        font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 2px;
+        color: var(--ink); white-space: nowrap;
+        box-shadow: var(--shadow-card);
+    }
+    .lv-chip b { color: var(--accent-ink); }
 
-    .album-cover {
-        width: 80px; height: 80px;
-        background: #000;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    .about-text h3 {
+        font-family: var(--font-serif); font-weight: 400;
+        font-size: 1.7rem; letter-spacing: 0.5px; margin-bottom: 16px;
+    }
+    .about-text p { color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 26px; }
+
+    .meters { display: flex; flex-direction: column; gap: 18px; margin-bottom: 30px; max-width: 460px; }
+    .meter-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+    .meter-row .m-name { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 2px; color: var(--ink-faint); }
+    .meter-row .m-val { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); }
+    .meter-track { height: 5px; border-radius: 99px; background: var(--bg-soft); overflow: hidden; }
+    body[data-theme="dark"] .meter-track { background: var(--line); }
+    .meter-fill {
+        height: 100%; border-radius: 99px; background: var(--accent);
+        transform-origin: left; animation: meterGrow 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes meterGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    .social-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ============================================================
+       📂 作品集
+       ============================================================ */
+    .works-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .work-card {
+        background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+        overflow: hidden; display: flex; flex-direction: column;
+        box-shadow: var(--shadow-card);
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+    .work-card:hover { transform: translateY(-7px); box-shadow: var(--shadow-hover); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+    .work-cover { height: 170px; background-size: cover; background-position: center; position: relative; overflow: hidden; }
+    .work-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.22)); }
+    .work-body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+    .work-tag {
+        font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 2px;
+        color: var(--accent-ink); text-transform: uppercase; margin-bottom: 10px;
+    }
+    .work-title { font-family: var(--font-serif); font-weight: 400; font-size: 1.28rem; letter-spacing: 0.3px; margin-bottom: 8px; }
+    .work-desc { color: var(--ink-soft); font-size: 0.85rem; line-height: 1.8; flex: 1; margin-bottom: 18px; }
+    .work-link {
+        align-self: flex-start; color: var(--ink); text-decoration: none;
+        font-size: 0.86rem; font-weight: 700; letter-spacing: 0.5px;
+        display: inline-flex; align-items: center; gap: 7px;
+        border-bottom: 1.5px solid var(--accent); padding-bottom: 2px;
+        transition: gap 0.22s ease, color 0.22s ease;
+        background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;
+    }
+    .work-link:hover { gap: 12px; color: var(--accent-ink); }
+
+    /* ============================================================
+       🎮 游戏收藏
+       ============================================================ */
+    .games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+    .game-item { text-align: left; }
+    .game-cover {
+        border-radius: 14px; overflow: hidden; aspect-ratio: 3/4;
+        box-shadow: var(--shadow-card);
         position: relative;
-        overflow: hidden;
     }
-    .album-cover img { width: 100%; height: 100%; object-fit: cover; }
-    .playing-icon {
-        display: flex; gap: 3px; align-items: flex-end; height: 20px; margin-top: 10px;
+    .game-cover img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+        transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .bar {
-        width: 4px; background: #fff;
-        animation: equalizer 0.5s infinite alternate;
-    }
-    .bar:nth-child(2) { animation-delay: 0.1s; }
-    .bar:nth-child(3) { animation-delay: 0.2s; }
-    .bar:nth-child(4) { animation-delay: 0.3s; }
+    .game-item:hover .game-cover img { transform: scale(1.06); }
+    .game-name { margin-top: 12px; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.3px; }
+    .game-sub { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 1.5px; color: var(--ink-faint); margin-top: 2px; }
 
-/* === 新增：播放器控制区 === */
-    .player-controls {
-        display: flex; align-items: center; gap: 10px; margin-top: 10px;
+    /* ============================================================
+       🧊 3D 模型
+       ============================================================ */
+    .models-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .model-card {
+        background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+        padding: 30px 26px; cursor: pointer; text-align: left; width: 100%;
+        display: flex; flex-direction: column; gap: 4px;
+        box-shadow: var(--shadow-card);
+        transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        font-family: inherit; color: inherit;
     }
-    .player-controls button {
-        background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
-        color: #fff; border-radius: 50%; width: 35px; height: 35px;
-        cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
-    }
-    .player-controls button:hover {
-        background: #fff; color: #ff6b6b; transform: scale(1.1);
-    }
-
-    /* === 新增：播放列表样式 === */
-    .playlist-container {
-        background: #fff;
-        border-radius: 15px;
-        margin-top: 10px;
-        padding: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        overflow: hidden;
-        transition: max-height 0.4s ease, opacity 0.4s ease;
-    }
-    
-    /* 列表展开/收起逻辑 */
-    .hidden-list {
-        max-height: 0; opacity: 0; padding: 0 10px; border: none; margin: 0;
-    }
-    .show-list {
-        max-height: 300px; opacity: 1; padding: 10px; overflow-y: auto;
-    }
-
-    /* 单个歌曲行 */
-    .track-item {
-        display: flex; justify-content: space-between; padding: 8px;
-        border-bottom: 1px dashed #eee; cursor: pointer; font-size: 0.85rem;
-        color: #555; border-radius: 5px;
-    }
-    .track-item:hover { background: #f0f8ff; color: var(--sky-blue); }
-    .track-item:last-child { border-bottom: none; }
-    
-    /* 当前正在播放的歌高亮 */
-    .track-item.active {
-        background: #ffecb3; color: #e67e22; font-weight: bold;
-    }
-    /* === 游戏收藏架样式 === */
-    .game-shelf {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
-    }
-    .game-box {
-        aspect-ratio: 3/4;
-        background: #ddd;
-        border-radius: 10px;
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .game-box:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        z-index: 10;
-    }
-    .game-box img { width: 100%; height: 100%; object-fit: cover; }
-    .game-title {
-        position: absolute; bottom: 0; left: 0; width: 100%;
-        background: rgba(0,0,0,0.7); color: #fff;
-        font-size: 0.6rem; padding: 5px; text-align: center;
-        opacity: 0; transition: opacity 0.2s;
-    }
-    .game-box:hover .game-title { opacity: 1; }
-
-    /* === 右侧栏：作品集卡片样式 (新增) === */
-    .portfolio-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        overflow-y: auto;
-        padding: 5px;
-        flex: 1;
-    }
-    .portfolio-container::-webkit-scrollbar { width: 0; }
-
-    .portfolio-card {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    .model-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+    .model-icon {
+        width: 52px; height: 52px; border-radius: 14px;
+        background: var(--accent-soft);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; margin-bottom: 16px;
         transition: transform 0.3s ease;
-        border: 1px solid #eee;
-        display: flex;
-        flex-direction: column;
-        min-height: 200px;
     }
-    .portfolio-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-
-    .card-img {
-        width: 100%;
-        height: 110px;
-        background-color: #eee;
-        background-size: cover;
-        background-position: center;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    .card-content { padding: 15px; display: flex; flex-direction: column; flex: 1; }
-    
-    .card-tag {
-        display: inline-block;
-        font-size: 0.6rem;
-        font-weight: 800;
-        background: var(--sky-blue);
-        color: #fff;
-        padding: 3px 8px;
-        border-radius: 20px;
-        margin-bottom: 8px;
-        align-self: flex-start;
-    }
-    .card-title { font-size: 1rem; margin: 0 0 5px 0; color: #333; font-weight: 800; }
-    .card-desc { font-size: 0.75rem; color: #888; line-height: 1.5; margin-bottom: 15px; flex: 1; }
-    
-    .card-btn {
-        display: block; text-align: center; background: #f8f9fa; color: #555;
-        text-decoration: none; padding: 8px; border-radius: 8px;
-        font-size: 0.8rem; font-weight: bold; transition: 0.2s; border: 1px solid #eee;
-    }
-    .card-btn:hover { background: var(--text-dark); color: #fff; border-color: var(--text-dark); }
-
-    /* === 弹窗 & 留言板样式保持不变 === */
-    @keyframes equalizer { 0% { height: 5px; } 100% { height: 20px; } }
-
-    .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.8); z-index: 2000;
-        display: flex; justify-content: center; align-items: center;
-        backdrop-filter: blur(5px); transition: opacity 0.3s;
-    }
-    .model-window {
-        width: 90%; max-width: 600px; background: #fff; border-radius: 25px;
-        padding: 20px; border: 5px solid var(--sky-blue);
-        box-shadow: 0 0 30px rgba(79, 172, 254, 0.6); position: relative;
-        transform: scale(1); transition: transform 0.3s;
-        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .close-btn {
-        position: absolute; top: -20px; right: -10px;
-        background: var(--primary-red); color: white;
-        border: 3px solid #fff; padding: 5px 15px; border-radius: 20px;
-        cursor: pointer; font-weight: bold; box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-    }
-    .close-btn:hover { transform: scale(1.1); }
-    @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-    /* 留言板样式 */
-    .floating-btn {
-        background: #fff; border: 2px solid #eee; padding: 10px 20px;
-        border-radius: 20px; font-family: 'Fredoka One';
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer;
-    }
-    .floating-btn:hover { transform: scale(1.1) rotate(-3deg); color: var(--sky-blue); }
-
-/* === 🟢 粘贴这段新的样式 === */
-    .side-drawer {
-        position: fixed;
-        top: 0; 
-        right: -360px; /* 默认隐藏在右侧外面 */
-        width: 350px; /* 宽度适中 */
-        max-width: 85vw; /* 关键：手机上最多占屏幕宽度的85%，不会撑破屏幕 */
-        height: 100%;
-        
-        /* 视觉美化 */
-        background: rgba(255, 255, 255, 0.9); /*稍微透明一点 */
-        backdrop-filter: blur(15px); /* 毛玻璃模糊特效 */
-        box-shadow: -10px 0 30px rgba(0,0,0,0.1); /* 左侧阴影 */
-        border-left: 4px solid #fff; /* 左侧白边 */
-        
-        z-index: 1001;
-        transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* 顺滑的动画 */
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* 打开状态 */
-    .side-drawer.open { right: 0; }
-    /* === 表单输入区域美化 === */
-    .input-area {
-        display: flex; 
-        flex-direction: column; 
-        gap: 15px; /* 增加间距 */
-        margin-top: 20px;
-    }
-    
-    .input-area input, .input-area textarea {
-        width: 100%; 
-        padding: 12px; 
-        border-radius: 12px;
-        border: 2px solid #eee; 
-        outline: none; 
-        font-family: 'Nunito';
-        background: rgba(255,255,255,0.8);
-        transition: 0.3s;
-    }
-    
-    /* 输入框聚焦时变蓝 */
-    .input-area input:focus, .input-area textarea:focus {
-        border-color: var(--sky-blue);
-        background: #fff;
-        box-shadow: 0 4px 10px rgba(79, 172, 254, 0.1);
-    }
-    
-    /* 发送按钮 */
-    .input-area button {
-        background: var(--primary-red); 
-        color: #fff; 
-        border: none;
-        padding: 12px; 
-        border-radius: 12px; 
-        font-weight: bold;
-        cursor: pointer; 
-        transition: 0.2s;
-        font-size: 1rem;
-        margin-top: 10px;
-    }
-    
-    .input-area button:hover { 
-        background: var(--sky-blue); 
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    /* 禁用状态 (发送中) */
-    .input-area button:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        transform: none;
-    }
-    
-    .message-list-area {
-        flex: 1; overflow-y: auto; margin-bottom: 20px;
-        border: 2px dashed #eee; border-radius: 10px;
-        padding: 10px; background: rgba(255,255,255,0.5);
-    }
-    .msg-card {
-        background: #fff; border-radius: 10px; padding: 10px; margin-bottom: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid var(--sky-blue);
-        font-size: 0.9rem; animation: slideInRight 0.3s ease;
-    }
-    .msg-header {
-        font-weight: bold; color: var(--primary-red); font-size: 0.8rem;
-        display: flex; justify-content: space-between; margin-bottom: 5px;
-    }
-    .msg-time { color: #ccc; font-size: 0.7rem; font-weight: normal;}
-    .input-area { display: flex; flex-direction: column; gap: 10px; }
-    .input-area input, .input-area textarea {
-        width: 100%; padding: 10px; border-radius: 10px;
-        border: 2px solid #eee; outline: none; font-family: 'Nunito';
-    }
-    .input-area input:focus, .input-area textarea:focus { border-color: var(--sky-blue); }
-    .input-area button {
-        background: var(--primary-red); color: #fff; border: none;
-        padding: 10px; border-radius: 10px; font-weight: bold;
-        cursor: pointer; transition: 0.2s;
-    }
-    .input-area button:hover { background: var(--sky-blue); transform: translateY(-2px); }
-    .empty-tip { text-align: center; color: #999; margin-top: 50px; font-size: 0.8rem; }
-
-    /* === 全屏画廊专用样式 === */
-    .gallery-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #000; /* 纯黑背景，沉浸感 */
-        z-index: 6000; /* 保证在最顶层 */
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        transition: opacity 0.5s ease;
+    .model-card:hover .model-icon { transform: scale(1.1) rotate(-4deg); }
+    .model-name { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 400; letter-spacing: 0.3px; }
+    .model-sub { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 2px; color: var(--ink-faint); }
+    .model-open {
+        margin-top: 16px; font-size: 0.8rem; font-weight: 700; color: var(--accent-ink);
+        display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* 图片容器：利用相对定位 */
-    .gallery-container {
-        position: relative;
-        width: 90%; height: 80%;
-        display: flex; justify-content: center; align-items: center;
+    /* ============================================================
+       🎵 音乐
+       ============================================================ */
+    .music-card {
+        background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+        padding: 30px 32px;
+        box-shadow: var(--shadow-card);
+        display: flex; align-items: center; gap: 28px;
     }
-
-    /* 核心：图片的淡入淡出逻辑 */
-    .gallery-slide {
-        position: absolute; /* 让所有图片重叠在一起 */
-        max-width: 100%; max-height: 100%;
-        object-fit: contain; /* 保持比例完整显示 */
-        opacity: 0; /* 默认透明 */
-        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* 0.8秒缓慢渐变 */
-        pointer-events: none; /* 避免点到隐藏的图 */
+    .cover-wrap { flex-shrink: 0; }
+    .cover-wrap img {
+        width: 108px; height: 108px; object-fit: cover; border-radius: 14px; display: block;
+        box-shadow: var(--shadow-card);
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    .music-card.playing .cover-wrap img { transform: scale(1.04); }
 
-    /* 只有加了 active 类的图片才会显示 */
-    .gallery-slide.active {
-        opacity: 1;
-        pointer-events: auto;
-        z-index: 2;
+    .track-info { flex: 1; min-width: 0; }
+    .now-label {
+        font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 2.5px;
+        color: var(--accent-ink); text-transform: uppercase;
+        display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
     }
+    .eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 10px; }
+    .eq i { width: 2.5px; background: var(--accent); border-radius: 2px; height: 4px; }
+    .music-card.playing .eq i { animation: eqBounce 0.9s ease-in-out infinite; }
+    .music-card.playing .eq i:nth-child(2) { animation-delay: 0.15s; }
+    .music-card.playing .eq i:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes eqBounce { 0%, 100% { height: 4px; } 50% { height: 10px; } }
 
-    /* 左右切换箭头 */
-    .nav-btn {
-        position: absolute; top: 50%; transform: translateY(-50%);
-        background: rgba(255,255,255,0.1); color: #fff; border: none;
-        font-size: 3rem; padding: 10px 20px; cursor: pointer; border-radius: 10px;
-        transition: 0.3s; user-select: none; z-index: 10;
+    .track-title {
+        font-family: var(--font-serif); font-weight: 400; font-size: 1.35rem; letter-spacing: 0.3px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .nav-btn:hover { background: rgba(255,255,255,0.3); }
-    .nav-btn.prev { left: 20px; }
-    .nav-btn.next { right: 20px; }
+    .track-artist { color: var(--ink-soft); font-size: 0.85rem; margin-top: 4px; }
 
-    /* 独立的关闭按钮 */
-    .close-btn-gallery {
-        position: absolute; top: 20px; right: 30px;
-        background: transparent; border: 2px solid rgba(255,255,255,0.5);
-        color: #fff; padding: 8px 20px; border-radius: 30px;
-        cursor: pointer; font-weight: bold; z-index: 10; transition: 0.3s;
+    .controls { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+    .ctrl {
+        width: 40px; height: 40px; border-radius: 50%;
+        border: 1px solid var(--line); background: transparent; color: var(--ink);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;
     }
-    .close-btn-gallery:hover { background: #fff; color: #000; }
-
-    /* 底部指示器 */
-    .gallery-indicator {
-        position: absolute; bottom: 30px; color: #888; font-family: 'Fredoka One'; letter-spacing: 2px;
+    .ctrl:hover { border-color: var(--accent); color: var(--accent-ink); transform: scale(1.08); }
+    .ctrl.main {
+        width: 48px; height: 48px; font-size: 1rem;
+        background: var(--accent); border-color: var(--accent); color: #fff;
     }
-    /* === 博客文章列表样式 === */
-        .article-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            
-            /* 👇 关键修改在这里 */
-            max-height: 300px;  /* 限制最大高度，超过就滚动 */
-            overflow-y: auto;   /* y轴(垂直方向)：允许滚动 */
-            overflow-x: hidden; /* x轴(水平方向)：❌ 强制隐藏！删掉向右滑的键 */
-            
-            width: 100%;        /* 确保宽度只有100%，不溢出 */
-            box-sizing: border-box; /* 加上这个，防止padding撑大容器 */
-        }
+    .ctrl.main:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(0, 47, 167, 0.3); }
+    body[data-theme="dark"] .ctrl.main:hover { box-shadow: 0 8px 20px rgba(92, 124, 255, 0.35); }
+    .ctrl.wide { width: auto; padding: 0 16px; border-radius: 999px; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 1.5px; }
 
-    /* 每一行文章的样式 */
-    .article-item {
-        display: flex;
-        align-items: center;
-        padding: 15px;
-        background: #f9f9f9;
-        border-radius: 10px;
-        text-decoration: none; /* 去掉下划线 */
-        color: #333;
-        transition: all 0.2s;
-        border: 2px solid transparent; /* 预留边框位置 */
-    }
-
-    /* 鼠标悬停效果：变白、浮起、变蓝边框 */
-    .article-item:hover {
-        background: #fff;
-        border-color: var(--sky-blue);
-        transform: translateX(5px); /* 微微右移 */
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-
-    .article-date {
-        font-size: 0.7rem;
-        color: #999;
-        font-weight: bold;
-        margin-right: 15px;
-        font-family: 'Nunito';
-    }
-
-    .article-title {
-        flex: 1; /* 占满剩余空间 */
-        font-size: 0.9rem;
-        font-weight: bold;
-        white-space: nowrap; /* 不换行 */
+    .playlist-box {
+        margin-top: 18px;
+        border: 1px solid var(--line); border-radius: 14px;
         overflow: hidden;
-        text-overflow: ellipsis; /* 超出显示省略号 */
+        max-height: 0; opacity: 0; border-width: 0;
+        transition: max-height 0.45s ease, opacity 0.4s ease, margin 0.4s ease;
     }
-
-    .article-arrow {
-        color: #ccc;
-        font-weight: bold;
-    }
-    .article-item:hover .article-arrow { color: var(--sky-blue); }
-    
-    /* === 左侧栏交互按钮样式 === */
-    .action-btn {
-        display: block;
-        text-align: center;
-        background: #fff; /* 默认白底 */
-        padding: 12px;
-        border-radius: 12px;
-        text-decoration: none;
-        color: #555;
-        font-weight: 800; /* 字体加粗 */
-        border: 2px solid #eee; /* 浅灰边框 */
-        transition: all 0.2s ease; /* 0.2秒平滑过渡 */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        font-family: 'Fredoka One', 'Nunito', sans-serif;
-    }
-
-    /* 🖱️ 鼠标悬停时的特效 (关键！) */
-    .action-btn:hover {
-        transform: translateY(-3px); /* 向上浮起 */
-        color: #fff; /* 文字变白 */
-        border-color: transparent;
-    }
-
-    /* 📺 B站/社交按钮专用颜色 (粉色) */
-    .bilibili-style:hover {
-        background: #fb7299; /* B站粉 */
-        box-shadow: 0 8px 15px rgba(251, 114, 153, 0.4); /* 粉色光晕 */
-    }
-
-    /* ✉️ 邮件按钮专用颜色 (黑色/深色) */
-    .email-style:hover {
-        background: #333;
-        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-    }
-/* 🌙 修复：黑夜模式下让整个网页背景变黑 */
-        /* 注意：这里改成了 body[data-theme="dark"] 以匹配你的 JS 逻辑 */
-        body[data-theme="dark"] {
-            /* 强制覆盖原来的渐变背景，使用纯深色 */
-            background: #121212 !important; 
-            background-image: none !important; /* 暂时去掉背景图，确保变黑 */
-            
-            /* 让文字颜色也统一变成浅灰 */
-            color: #e0e0e0; 
-        }
-
-        /* 让背景颜色的切换有一个丝滑的过渡动画 */
-        body {
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
-    /* === 🛡️ 修正：强制锁定左侧栏内部元素的大小 === */
-
-    /* 1. 确保左侧栏是居中对齐的 */
-    .left-col {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important; /* 关键：让内部元素水平居中 */
-    }
-
-    /* 2. 给左侧栏里的【所有直属块级元素】加个紧身衣 */
-    /* 这样不管外面的卡片变多宽，里面的内容最大只有 260px */
-    .left-col > div {
-        width: 100%;
-        max-width: 260px !important; /* 🔒 锁死最大宽度 */
-    }
-
-    /* 3. 特别照顾头像：绝对禁止变形 */
-    .avatar-container {
-        width: 150px !important;     /* 强制宽度 */
-        height: 150px !important;    /* 强制高度 */
-        max-width: 150px !important; /* 双重保险 */
-        flex-shrink: 0 !important;   /* 禁止被压扁 */
-        border-radius: 50% !important; /* 保持圆形 */
-    }
-    
-    /* 4. 修复血条容器 */
-    /* 你的血条原本是在一个无名div里的，上面的第2步已经限制了它的宽度 */
-    /* 这里只做微调，确保它们看起来整齐 */
-    .left-col div[style*="margin-top"] {
-        width: 100%; 
-        max-width: 260px; /* 再次确认锁死 */
-    }
-/* === 🛡️ 修正：禁止文字换行，确保高度锁死 === */
-    .left-col {
-        /* 禁止文字折行，防止盒子高度发生微小抖动 */
-        white-space: nowrap; 
-    }
-    
-    /* 确保内容垂直方向也是紧凑的 */
-    .left-col > div {
-        flex-shrink: 0;
-    }
-    /* =========================================
-       🚀 新增功能：顶部导航栏 (Navbar)
-       ========================================= */
-    .top-navbar {
-        position: fixed;       /* 固定在顶部不动 */
-        top: 0; 
-        left: 0; 
-        width: 100%;           /* 占满整行 */
-        height: 60px;          /* 导航栏高度 */
-        
-        /* 视觉风格：毛玻璃效果 */
-        background: rgba(255, 255, 255, 0.7); 
-        backdrop-filter: blur(10px); 
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        
-        /* 布局：左右分开排列 */
-        display: flex;
-        justify-content: space-between; 
-        align-items: center;
-        padding: 0 25px;       /* 左右留点空隙 */
-        
-        z-index: 5000;         /* 保证层级最高，盖住所有内容 */
-        transition: background 0.3s; /* 切换黑夜模式时的过渡 */
-    }
-
-    /* 左侧的菜单链接区 */
-    .nav-menu {
-        display: flex;
-        gap: 25px; /* 按钮之间的距离 */
-    }
-
-    /* 单个菜单项样式 */
-    .nav-item {
-        text-decoration: none; /* 去掉下划线 */
-        color: var(--text-dark);
-        font-family: 'Fredoka One', sans-serif;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 5px; /* 图标和文字的间距 */
-    }
-
-    /* 鼠标移上去的效果 */
-    .nav-item:hover {
-        color: var(--sky-blue);
-        transform: translateY(-2px); /* 微微上浮 */
-    }
-
-    /* 🌙 黑夜模式适配：导航栏变黑 */
-    body[data-theme="dark"] .top-navbar {
-        background: rgba(20, 20, 30, 0.8); /* 深色半透明 */
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    /* 🌙 黑夜模式适配：文字变白 */
-    body[data-theme="dark"] .nav-item {
-        color: #eee;
-    }
-    body[data-theme="dark"] .nav-item:hover {
-        color: var(--sky-blue); /* 悬停还是蓝色 */
-    }
-
-    /* === 📝 全屏笔记页样式 (仿 Zyyo) === */
-    .note-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #f5f6f7; /* 浅灰底色，突出白卡片 */
-        z-index: 6000; 
-        overflow-y: auto; /* 允许页面滚动 */
-        display: flex; flex-direction: column;
-        animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-    /* 顶部导航 */
-    .note-navbar {
-        background: #fff; padding: 15px 30px;
+    .playlist-box.show-list { max-height: 320px; opacity: 1; border-width: 1px; }
+    .track-item {
         display: flex; justify-content: space-between; align-items: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        position: sticky; top: 0; z-index: 100;
+        padding: 13px 18px; cursor: pointer;
+        font-size: 0.86rem; color: var(--ink-soft); font-weight: 500;
+        border-bottom: 1px solid var(--line);
+        transition: background 0.18s ease, color 0.18s ease;
+        background: var(--card);
     }
-    .note-close-btn {
-        background: #f0f2f5; border: none; padding: 8px 20px;
-        border-radius: 20px; font-weight: bold; color: #666; cursor: pointer;
-        transition: 0.2s;
+    .track-item:last-child { border-bottom: none; }
+    .track-item:hover { background: var(--accent-soft); color: var(--ink); }
+    .track-item.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
+    .track-item .tk-num {
+        font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-faint);
+        margin-right: 14px; display: inline-block; width: 18px;
     }
-    .note-close-btn:hover { background: var(--primary-red); color: #fff; }
+    .track-item.active .tk-num { color: var(--accent-ink); }
+    .track-item .tk-artist { font-size: 0.74rem; color: var(--ink-faint); }
 
-    /* 核心布局：左右分栏 */
-    .note-container {
-        max-width: 1200px; width: 90%; margin: 30px auto;
-        display: grid; 
-        grid-template-columns: 280px 1fr; /* 左侧固定，右侧自适应 */
-        gap: 20px;
-        align-items: start; /* 顶部对齐 */
+    /* ============================================================
+       ✉️ 留言 / 联系
+       ============================================================ */
+    .contact-wrap { max-width: 560px; }
+    .contact-form { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .contact-form input, .contact-form textarea {
+        width: 100%; padding: 15px 18px;
+        border: 1px solid var(--line); border-radius: 12px;
+        background: var(--card); color: var(--ink);
+        font-family: var(--font-sans); font-size: 0.94rem;
+        outline: none; resize: none;
+        transition: border-color 0.22s ease, box-shadow 0.22s ease;
     }
+    .contact-form input::placeholder, .contact-form textarea::placeholder { color: var(--ink-faint); }
+    .contact-form input:focus, .contact-form textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .send-btn {
+        align-self: flex-start;
+        background: var(--accent); color: #fff; border: none;
+        padding: 14px 34px; border-radius: 999px;
+        font-size: 0.92rem; font-weight: 700; letter-spacing: 1px;
+        cursor: pointer; transition: all 0.24s ease;
+        font-family: var(--font-sans);
+    }
+    .send-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 47, 167, 0.28); }
+    body[data-theme="dark"] .send-btn:hover { box-shadow: 0 12px 28px rgba(92, 124, 255, 0.3); }
+    .send-btn:disabled { background: var(--ink-faint); cursor: not-allowed; transform: none; box-shadow: none; }
+    #form-status { font-size: 0.82rem; color: var(--ink-soft); }
+    .contact-mail {
+        margin-top: 26px; color: var(--ink-faint); font-size: 0.84rem;
+        font-family: var(--font-mono); letter-spacing: 0.5px;
+    }
+    .contact-mail a { color: var(--accent-ink); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 1px; }
 
-    /* 左侧栏卡片 */
-    .note-author-card, .note-toc-card {
-        background: #fff; border-radius: 15px; padding: 20px;
-        text-align: center; margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    /* ============================================================
+       🦶 Footer
+       ============================================================ */
+    footer {
+        border-top: 1px solid var(--line);
+        padding: 34px 0 44px;
     }
-    .note-avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #f0f2f5; }
-    .note-stats { 
-        display: flex; justify-content: space-around; margin-top: 15px; 
-        border-top: 1px solid #eee; padding-top: 15px; 
+    .footer-inner {
+        display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+        font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 1.5px;
+        color: var(--ink-faint);
     }
-    
-    .note-toc-card { text-align: left; position: sticky; top: 90px; }
-    .toc-list { list-style: none; padding: 0; }
-    .toc-list li { margin-bottom: 8px; }
-    .toc-list a { 
-        text-decoration: none; color: #666; font-size: 0.9rem; transition: 0.2s; display: block; padding: 5px; border-radius: 5px;
-    }
-    .toc-list a:hover { background: #f0f2f5; color: var(--sky-blue); }
+    .footer-inner .ok { color: var(--accent-ink); }
 
-    /* 右侧内容卡片 */
-    .note-content-card {
-        background: #fff; border-radius: 15px; padding: 40px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        min-height: 80vh;
+    /* ============================================================
+       🪟 弹窗通用
+       ============================================================ */
+    .modal-overlay {
+        position: fixed; inset: 0; z-index: 2000;
+        background: rgba(14, 14, 16, 0.6);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        display: none; justify-content: center; align-items: center;
+        padding: 24px;
     }
+    .modal-card {
+        position: relative; width: 100%; max-width: 620px;
+        background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+        padding: 30px;
+        box-shadow: var(--shadow-hover);
+        animation: modalIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes modalIn { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal-close {
+        position: absolute; top: 18px; right: 18px;
+        width: 34px; height: 34px; border-radius: 50%;
+        border: 1px solid var(--line); background: var(--card); color: var(--ink-soft);
+        cursor: pointer; font-size: 0.9rem; line-height: 1;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s ease; z-index: 5;
+    }
+    .modal-close:hover { border-color: var(--accent); color: var(--accent-ink); transform: rotate(90deg); }
+    .modal-kicker {
+        font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 2.5px;
+        color: var(--accent-ink); text-transform: uppercase; margin-bottom: 6px;
+    }
+    .modal-title { font-family: var(--font-serif); font-weight: 400; font-size: 1.5rem; letter-spacing: 0.3px; }
+    .modal-sub { color: var(--ink-faint); font-size: 0.82rem; margin: 6px 0 20px; }
 
-    .note-header { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
-    .note-tag { background: var(--sky-blue); color: #fff; padding: 2px 8px; border-radius: 5px; font-size: 0.8rem; }
-    .note-date { color: #999; font-size: 0.9rem; }
-
-    .note-banner {
-        width: 100%; height: 200px; 
-        background-size: cover; background-position: center;
-        border-radius: 10px; margin: 20px 0;
-        position: relative; overflow: hidden;
+    /* 3D 模型弹窗 */
+    #model-viewer-entity {
+        width: 100%; height: 400px; border-radius: 14px;
+        background: var(--bg-soft);
+        border: 1px solid var(--line);
     }
-    .note-banner::after {
-        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
-    }
-    .note-banner-text {
-        position: absolute; bottom: 20px; left: 20px; color: #fff; 
-        font-size: 1.5rem; font-weight: bold; z-index: 2;
-    }
-
-    /* 正文排版 */
-    .note-body h2 { border-left: 5px solid var(--primary-red); padding-left: 10px; margin-top: 40px; font-size: 1.4rem; }
-    .note-body p { line-height: 1.8; color: #444; margin-bottom: 15px; }
-    .code-block {
-        background: #2d3436; color: #a29bfe; padding: 15px; 
-        border-radius: 8px; font-family: monospace; margin: 15px 0;
-    }
-    .badge { background: #eee; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;}
-
-    /* 📱 手机适配：变成单列 */
-    @media (max-width: 900px) {
-        .note-container { grid-template-columns: 1fr; }
-        .note-sidebar { display: none; /* 手机上太窄，暂时隐藏侧边栏 */ }
-        .note-content-card { padding: 20px; }
-    }
-    /* === 🕒 版本列表样式 === */
-    .version-list { list-style: none; padding: 0; }
-    .version-item {
-        padding: 10px; border-radius: 8px; cursor: pointer;
-        transition: 0.2s; border-bottom: 1px dashed #eee;
-        font-size: 0.9rem; color: #666; display: flex; align-items: center; gap: 8px;
-    }
-    .version-item:hover { background: #f9f9f9; color: var(--sky-blue); }
-    
-    /* 选中状态：高亮显示 */
-    .version-item.active {
-        background: #e3f2fd; color: var(--sky-blue); font-weight: bold;
-        border-left: 3px solid var(--sky-blue);
-    }
-
-    .v-tag {
-        background: var(--primary-red); color: #fff; 
-        font-size: 0.6rem; padding: 2px 5px; border-radius: 4px;
-    }
-    
-    /* 用于切换内容的动画 */
-    .version-content {
-        animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-/* ============================================
-       📱 手机端体验修复补丁 (Mobile Fixes)
-       ============================================ */
-
-    /* --- 修复 1：优化笔记版本切换 --- */
-    @media (max-width: 900px) {
-        /* 1. 恢复显示侧边栏 (让版本按钮回来) */
-        .note-sidebar {
-            display: block !important; 
-            margin-bottom: 20px;
-        }
-
-        /* 2. 为了节省手机空间，把上面的“头像卡片”藏起来 */
-        /* 这样用户一进来就能直接看到 目录 和 版本切换按钮 */
-        .note-author-card {
-            display: none !important;
-        }
-
-        /* 3. 调整布局顺序 */
-        .note-container {
-            display: flex;
-            flex-direction: column; /* 从上往下排 */
-        }
+    .model-hint {
+        text-align: center; color: var(--ink-faint); font-size: 0.74rem;
+        font-family: var(--font-mono); letter-spacing: 1px; margin-top: 14px;
     }
 
-    /* --- 修复 2：3D模型弹窗遮挡问题 --- */
-    
-    /* 1. 提升弹窗层级：让它必须盖过顶部的白色导航栏 (5000) */
-    #model-modal {
-        z-index: 6000 !important;
+    /* 视频弹窗 */
+    .video-card { max-width: 760px; background: #0B0B0D; border-color: #26262C; }
+    #video-player { width: 100%; border-radius: 14px; background: #000; display: block; }
+    .video-card .modal-title, .video-card .modal-kicker { color: #EDECE8; }
+    .video-card .modal-kicker { color: #8FA4FF; }
+    .video-card .modal-close { background: #17171B; border-color: #33333C; color: #A4A3AC; }
+
+    /* 博客列表 */
+    .article-list { list-style: none; display: flex; flex-direction: column; max-height: 340px; overflow-y: auto; padding-right: 4px; }
+    .article-item {
+        display: flex; align-items: center; gap: 16px;
+        padding: 15px 8px; text-decoration: none;
+        border-bottom: 1px solid var(--line);
+        transition: background 0.18s ease, padding 0.18s ease;
+        border-radius: 8px;
+    }
+    .article-item:hover { background: var(--accent-soft); padding-left: 14px; }
+    .article-date {
+        font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.5px;
+        color: var(--ink-faint); flex-shrink: 0; width: 76px;
+    }
+    .article-title {
+        flex: 1; font-size: 0.9rem; font-weight: 500; color: var(--ink);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .article-arrow { color: var(--ink-faint); transition: transform 0.2s ease, color 0.2s ease; }
+    .article-item:hover .article-arrow { color: var(--accent-ink); transform: translateX(3px); }
+
+    /* ============================================================
+       🖼️ 全屏画廊
+       ============================================================ */
+    .gallery-overlay {
+        position: fixed; inset: 0; z-index: 6000;
+        background: #0B0B0D;
+        display: none; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .gallery-container {
+        position: relative; width: 90%; height: 78%;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .gallery-slide {
+        position: absolute; max-width: 100%; max-height: 100%;
+        object-fit: contain; opacity: 0;
+        transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none; border-radius: 8px;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+    }
+    .gallery-slide.active { opacity: 1; pointer-events: auto; }
+    .g-nav {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 52px; height: 52px; border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #fff; font-size: 1.5rem; cursor: pointer; z-index: 10;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.25s ease; user-select: none;
+    }
+    .g-nav:hover { background: rgba(255, 255, 255, 0.16); }
+    .g-nav.prev { left: 26px; }
+    .g-nav.next { right: 26px; }
+    .g-close {
+        position: absolute; top: 24px; right: 30px;
+        background: transparent; border: 1px solid rgba(255, 255, 255, 0.28);
+        color: #fff; padding: 9px 22px; border-radius: 999px;
+        font-size: 0.78rem; letter-spacing: 2px; cursor: pointer; z-index: 10;
+        font-family: var(--font-mono); transition: all 0.25s ease;
+    }
+    .g-close:hover { background: #fff; color: #0B0B0D; }
+    .g-indicator {
+        position: absolute; bottom: 32px;
+        font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 3px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    .g-indicator b { color: #fff; }
+
+    /* ============================================================
+       📖 阅读器
+       ============================================================ */
+    .reader-window {
+        width: 100%; max-width: 1080px; height: 90vh;
+        background: #F7F6F2; border-radius: 18px; overflow: hidden;
+        display: flex; flex-direction: column;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+        animation: modalIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reader-topbar {
+        padding: 15px 22px; background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid #E7E5DE;
+        display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    }
+    #reader-title {
+        font-family: var(--font-serif); font-weight: 400; font-size: 1.05rem; color: #16161A;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .reader-close {
+        width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+        border: 1px solid #E7E5DE; background: #fff; color: #5C5C66;
+        cursor: pointer; font-size: 1rem; line-height: 1;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .reader-close:hover { border-color: #002FA7; color: #002FA7; transform: rotate(90deg); }
+    #reader-container { flex: 1; overflow-y: auto; text-align: center; }
+    #reader-container img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+    /* ============================================================
+       📱 响应式
+       ============================================================ */
+    @media (max-width: 960px) {
+        .works-grid, .models-grid { grid-template-columns: 1fr 1fr; }
+        .games-grid { grid-template-columns: repeat(2, 1fr); }
+        .about-grid { grid-template-columns: 1fr; gap: 44px; }
+        .about-photo { max-width: 280px; }
+    }
+    @media (max-width: 640px) {
+        .container { padding: 0 20px; }
+        .topbar-inner { padding: 0 16px; height: 60px; }
+        .nav-links { display: none; }
+        .hero { padding: 130px 0 72px; }
+        section.block { padding: 68px 0; }
+        .works-grid, .models-grid { grid-template-columns: 1fr; }
+        .music-card { flex-direction: column; text-align: center; padding: 26px 22px; }
+        .track-info { width: 100%; }
+        .controls { justify-content: center; }
+        .hero-stats { gap: 32px; }
+        .g-nav.prev { left: 8px; }
+        .g-nav.next { right: 8px; }
+        .g-nav { width: 42px; height: 42px; font-size: 1.2rem; }
     }
 
-    /* 2. 调整手机上的关闭按钮位置 */
-    @media (max-width: 600px) {
-        /* 让弹窗稍微往下挪一点，别顶着天花板 */
-        .model-window {
-            margin-top: 60px !important; 
-            width: 95% !important; /* 宽度稍微宽一点 */
-        }
+    /* ============================================================
+       🌌 动态视觉层 (Canvas)
+       ============================================================ */
+    #bg-canvas, #cursor-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none;
+        z-index: 0;
+    }
+    #bg-canvas { z-index: -2; }
+    #cursor-canvas {
+        z-index: 9999;
+        mix-blend-mode: screen;
+    }
+    body[data-theme="dark"] #cursor-canvas { mix-blend-mode: screen; }
 
-        /* 把关闭按钮从“右上角外面”挪到“右上角里面” */
-        /* 防止手机屏幕太窄，按钮跑到屏幕外面去了 */
-        #model-modal .close-btn {
-            top: 10px !important;
-            right: 10px !important;
-            background: rgba(230, 0, 18, 0.9) !important; /* 加深颜色确保看见 */
-            box-shadow: 0 0 10px rgba(255,255,255,0.5) !important;
-        }
+    /* 主内容提到 canvas 之上 */
+    main, footer, .topbar, .modal-overlay, .gallery-overlay { position: relative; z-index: 1; }
+    .topbar { z-index: 1000; }
+    .modal-overlay { z-index: 2000; }
+    .gallery-overlay { z-index: 6000; }
+
+    /* 让 body 背景透明一点，让 canvas 极光透出来 */
+    body {
+        background: transparent;
+        position: relative;
+    }
+    body::before {
+        content: '';
+        position: fixed; inset: 0; z-index: -3;
+        background: var(--bg);
+        transition: background 0.5s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        .reveal { opacity: 1; transform: none; }
+        #bg-canvas, #cursor-canvas { display: none; }
+        body { background: var(--bg); }
+        body::before { display: none; }
     }
     </style>
 </head>
 <body>
-<!-- 1. 顶部导航栏 (整合了原来的开关，新增了首页和笔记) -->
-    <nav class="top-navbar">
-        
-        <!-- 左侧：功能菜单 -->
-        <div class="nav-menu">
-        <!-- 🏠 首页：点击直接跳转到最终形态 -->
-            <a href="javascript:void(0)" onclick="skipToHome()" class="nav-item">
-                🏠 首页 / HOME
-            </a>
-            
-            <!-- 📝 优化笔记：直接打开博客列表 -->
-            <a href="devlog.html" class="nav-item">
-                📝 优化笔记 / NOTES
-            </a>
-            
-            <!-- ✨ 可以在这里继续加新的按钮，复制上面的<a>标签即可 -->
-        </div>
 
-        <!-- 右侧：系统开关 (黑夜模式 + 音乐) -->
-        <div style="display:flex; gap:10px;">
-             <!-- 🌙 夜间模式按钮 -->
-            <button onclick="toggleTheme()" id="theme-btn" style="background:transparent; border:2px solid #ccc; padding:5px 15px; border-radius:20px; font-family:'Fredoka One'; cursor:pointer; color:#555; font-size:0.8rem; transition:0.3s;">
-                ☀️ DAY
-            </button>
-            <!-- 🎵 音乐按钮 -->
-            <button id="music-btn" onclick="toggleMusic()" style="background:transparent; border:2px solid #ccc; padding:5px 15px; border-radius:20px; font-family:'Fredoka One'; cursor:pointer; color:#555; font-size:0.8rem; transition:0.3s;">
-                🎵 BGM: OFF
-            </button>
+    <!-- ==================== 🌌 动态视觉层 ==================== -->
+    <canvas id="bg-canvas"></canvas>
+    <canvas id="cursor-canvas"></canvas>
+
+    <!-- ==================== 🧭 导航 ==================== -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="#top" class="brand">无音<em>desu</em></a>
+            <nav class="nav-links">
+                <a href="#about">关于</a>
+                <a href="#works">作品</a>
+                <a href="#games">游戏</a>
+                <a href="#models">3D</a>
+                <a href="#music">音乐</a>
+                <a href="devlog.html">笔记</a>
+                <a href="#contact">联系</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-pill" id="music-btn" onclick="toggleMusic()">♪ BGM</button>
+                <button class="icon-pill" id="theme-btn" onclick="toggleTheme()">◐ THEME</button>
+            </div>
         </div>
-    </nav>
+    </header>
+
     <audio id="bgm" loop src="music/bgm.mp3"></audio>
 
-    <!-- 2. 初始开始画面 -->
-    <div id="intro-scene">
-        <h1 class="logo-title">PLAYER ONE</h1>
-        <p style="color:#fff; font-size:1.2rem;">READY PLAYER ONE?</p>
-        <button class="start-btn" onclick="startGame()">PRESS START</button>
-    </div>
+    <main id="top">
 
-    <!-- 3. 留言板按钮 -->
-    <div style="position:fixed; top:80px; right:20px; z-index:1000;">
-        <button onclick="toggleMessageBoard()" class="floating-btn">
-            💬 留言板
-        </button>
-    </div>
-
-<!-- 4. 留言板侧滑抽屉 (完美原生样式 + 真实发送) -->
-    <div id="message-board-panel" class="side-drawer">
-        <h3 style="font-family:'Fredoka One'; color:var(--primary-red);">📮 PRIVATE BOX</h3>
-        <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">
-            Send a secret message to me.<br>
-            您的留言将直接发送到我的邮箱。
-        </p>
-        
-        <!-- 这里的 ID 很重要，JS 要用 -->
-        <form id="my-game-form" class="input-area">
-            
-            <!-- 名字输入框 (加了 name="name") -->
-            <input type="text" name="name" placeholder="你的昵称 / Name" required>
-            
-            <!-- 内容输入框 (加了 name="message") -->
-            <textarea name="message" placeholder="写点什么吧... / Message..." rows="3" required></textarea>
-            
-            <!-- 发送按钮 (type="submit") -->
-            <button type="submit" id="send-btn">🚀 发送 / SEND</button>
-            
-            <!-- 状态提示文字 -->
-            <p id="form-status" style="font-size:0.8rem; color:#888; text-align:center; margin-top:5px;"></p>
-        </form>
-    </div>
-
-    <!-- 5. 主界面 (三栏布局) -->
-    <div id="main-dashboard">
-        
-        <!-- 🏢 左侧栏：玩家属性 -->
-        <aside class="panel left-col">
-            <div class="avatar-container">
-                <img src="images/me.jpg" alt="avatar">
-            </div>
-            <div style="text-align:center;">
-                <h1 style="font-family:'Fredoka One'; margin-top:10px;">无音desu</h1>
-                <span style="background:var(--accent-yellow); padding:5px 10px; border-radius:10px; font-size:0.8rem; font-weight:bold;">LV.23 DESIGNER</span>
-            </div>
-
-            <div style="margin-top:20px;">
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; margin-bottom:5px;">
-                    <span>HP (精力)</span> <span>100/100</span>
-                </div>
-                <div style="height:10px; background:#eee; border-radius:5px; overflow:hidden;">
-                    <div style="width:100%; height:100%; background:#ff5252;"></div>
-                </div>
-                
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; margin-top:10px; margin-bottom:5px;">
-                    <span>MP (灵感)</span> <span>85/100</span>
-                </div>
-                <div style="height:10px; background:#eee; border-radius:5px; overflow:hidden;">
-                    <div style="width:85%; height:100%; background:#4facfe;"></div>
-                </div>
-            </div>
-
-            <div style="margin-top:auto; display:grid; gap:10px;">
-<!-- === 修改后的按钮区域 === -->
-            <div style="margin-top:auto; display:grid; gap:12px;">
-                
-                <!-- 1. B站/社交主页按钮 -->
-                <!-- ⚠️ 记得把 href 里面的链接换成你自己的 B站主页链接 -->
-                <a href="https://space.bilibili.com/504400240" target="_blank" class="action-btn bilibili-style">
-                    📺 Bilibili / 社交主页
-                </a>
-
-                <!-- 2. 发送邮件按钮 -->
-                <!-- 我顺便把这个也升级了，现在它也会动了！ -->
-                <a href="mailto:1939888510@qq.com?subject=来自个人主页的联系" class="action-btn email-style">
-                    ✉️ 发送邮件 / Email
-                </a>
-                
-            </div>
-        </aside>
-
-        <!-- 🏠 中间栏：内容展示 (包含了原本的 Inventory) -->
-        <main class="panel mid-col">
-            
-            <!-- 欢迎语 -->
-            <div style="margin-bottom: 20px;">
-                <h2>👋 HELLO WORLD!</h2>
-                <p style="color:#666; line-height:1.6;">
-                    这里是我的数字秘密基地。我不只是写代码，我还拯救过海拉鲁大陆，
-                    在帕底亚地区当宝可梦训练家，偶尔也在云村听听歌。
-                    持续更新主页中...(2025/11/25)
-                </p>
-            </div>
-
-<!-- 音乐卡片 (升级版) -->
-            <h2 style="border-color: #ff9a9e; color: #ff6b6b;">🎵 NOW PLAYING</h2>
-            
-            <!-- 主播放器卡片 -->
-            <div class="music-player-card" id="track-player-ui">
-                <div class="album-cover">
-                    <!-- 封面图 -->
-                    <img id="track-cover" src="https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163" alt="Album">
-                </div>
-                
-                <div style="flex: 1; overflow: hidden;">
-                    <!-- 歌名和歌手 -->
-                    <h3 id="track-title" style="margin:0; font-size:1.1rem; white-space:nowrap;">Beat It</h3>
-                    <p id="track-artist" style="margin:5px 0; font-size:0.8rem; opacity:0.9;">Michael Jackson</p>
-                    
-                    <!-- 控制按钮区 -->
-                    <div class="player-controls">
-                        <button onclick="prevTrack()" title="上一首">⏮</button>
-                        <button onclick="toggleTrackPlay()" id="play-pause-btn" title="播放/暂停" style="font-size:1.2rem;">🞂 </button>
-                        <button onclick="nextTrack()" title="下一首">⏭</button>
-                        <button onclick="togglePlaylist()" title="播放列表" style="margin-left:10px; font-size:0.9rem;">📜 列表</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 隐藏的播放列表 (默认收起) -->
-            <div id="playlist-box" class="playlist-container hidden-list">
-                <!-- 列表内容由 JS 生成 -->
-            </div>
-
-            <!-- 游戏收藏 -->
-            <h2 style="margin-top: 30px; border-color: #4ecdc4; color: #4ecdc4;">🎮 COLLECTION</h2>
-            <div class="game-shelf">
-                <div class="game-box"><img src="images/宝可梦紫.jpg"><div class="game-title">宝可梦紫</div></div>
-                <div class="game-box"><img src="images/圣兽之王.webp"><div class="game-title">圣兽之王</div></div>
-                <div class="game-box"><img src="images/英雄联盟.jpg"><div class="game-title">英雄联盟</div></div>
-                <div class="game-box"><img src="images/塞尔达传说王国之泪.jpg"><div class="game-title">王国之泪</div></div>
-            </div>
-
-            <!-- 🎒 物品栏 (从右侧搬过来了！) -->
-            <h2 style="margin-top:30px; border-color:#ffe66d; color:#e6c200;">🎒 INVENTORY (模型库)</h2>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                <!-- 物品 1 -->
-                <div class="cartridge" onclick="openModelView('3d model/Astronaut.glb', '太空宇航员')">
-                    <div class="cartridge-icon" style="color:#ff6b6b;">🧑‍🚀</div>
-                    <div>
-                        <div style="font-weight:bold; font-size:0.9rem;">Astronaut</div>
-                        <div style="font-size:0.7rem; opacity:0.7;">NASA Demo</div>
-                    </div>
-                </div>
-                <!-- 物品 2 -->
-                <div class="cartridge" onclick="openModelView('3d model/car.glb', '法拉利')">
-                    <div class="cartridge-icon" style="color:#4ecdc4;">🏎️</div>
-                    <div>
-                        <div style="font-weight:bold; font-size:0.9rem;">Racing Car</div>
-                        <div style="font-size:0.7rem; opacity:0.7;">3D Asset</div>
-                    </div>
-                </div>
-                <!-- 🔵 物品 3 (这是新加的) -->
-                <div class="cartridge" onclick="openModelView('3d model/baimao.glb', '角色模型')">
-                    <!-- 👇 图标颜色和形状可以改 -->
-                    <div class="cartridge-icon" style="color:#a29bfe;">📱</div>
-                    <div>
-                        <!-- 👇 卡片上显示的名字 -->
-                        <div style="font-weight:bold; font-size:0.9rem;">Role Model</div>
-                        <!-- 👇 下面的小字描述 -->
-                        <div style="font-size:0.7rem; opacity:0.7;">3d model</div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-<!-- 🏢 右侧栏：作品集 (Projects) -->
-        <aside class="panel right-col">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h2 style="margin:0; border:none; font-size:1.4rem;">📂 作品集 </h2>
-                <span style="background:#333; color:#fff; padding:2px 8px; border-radius:5px; font-size:0.7rem;">PUBLIC</span>
-            </div>
-            
-            <p style="font-size:0.8rem; color:#888; margin-bottom:20px;">
-                已解密的任务档案 (Selected Works)
+        <!-- ==================== 🏛️ Hero ==================== -->
+        <section class="hero container">
+            <p class="eyebrow reveal">Personal Space · Est. 2025</p>
+            <h1 class="reveal d1">你好，我是无音desu。<br>一位热爱游戏的<span class="accent">设计师</span>。</h1>
+            <p class="hero-desc reveal d2">
+                这里是我的数字秘密基地。我不只是写代码，我还拯救过海拉鲁大陆，
+                在帕底亚地区当宝可梦训练家，偶尔也在云村听听歌。
             </p>
-
-            <!-- 作品列表容器 -->
-            <div class="portfolio-container">
-
-                <!-- 1. 个人博客 (原来在最下面，现在换到第一个) -->
-                <div class="portfolio-card">
-                    <!-- 👇 换了一张更有书卷气的图 -->
-                    <div class="card-img" style="background-image: url('images/绫小路.jpg');"></div>
-                    <div class="card-content">
-                        <!-- 标签颜色改为清新的薄荷绿 -->
-                        <div class="card-tag" style="background:#00b894; color:#fff;">BLOG</div>
-                        <h3 class="card-title">个人博客</h3>
-                        <p class="card-desc">分享我的技术笔记、游戏攻略与生活感悟。</p>
-                        
-                        <!-- 👇 点击触发 openBlog() -->
-                        <a href="javascript:void(0)" onclick="openBlog()" class="card-btn">
-                            📖 阅览博客
-                        </a>
-                    </div>
+            <div class="hero-cta reveal d3">
+                <a href="#works" class="btn btn-solid">查看我的作品 ↓</a>
+                <a href="#contact" class="btn btn-ghost">给我留言</a>
+            </div>
+            <div class="hero-stats reveal d3">
+                <div class="stat">
+                    <div class="num">23</div>
+                    <div class="lbl">LV · Designer</div>
                 </div>
-
-                <!-- 2. 相册集 (保持在中间不变) -->
-                <div class="portfolio-card">
-                    <div class="card-img" style="background-image: url('images/blender作品.png');"></div>
-                    <div class="card-content">
-                        <!-- 标签颜色代表相册 -->
-                        <div class="card-tag" style="background:#a29bfe; color:#fff;">GALLERY</div>
-                        <h3 class="card-title">相册集</h3>
-                        <p class="card-desc">展示个人品味与成就的相册集</p>
-                        
-                        <!-- 👇 按钮触发 openGallery() -->
-                        <a href="javascript:void(0)" onclick="openGallery()" class="card-btn">
-                            📸 查看图片集
-                        </a>
-                    </div>
+                <div class="stat">
+                    <div class="num" id="visit-count">--</div>
+                    <div class="lbl">Visitors</div>
                 </div>
+                <div class="stat">
+                    <div class="num"><span class="live">●</span> Online</div>
+                    <div class="lbl">System Status</div>
+                </div>
+            </div>
+        </section>
 
-                <!-- 3. 游戏 Demo (原来在第一个，现在换到最下面) -->
-                <div class="portfolio-card">
-                    <!-- 👇 这里可以换成你的游戏截图 -->
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=500&q=80');"></div>
-                    <div class="card-content">
-                        <div class="card-tag" style="background:#ff7675;">GAME DEMO</div>
-                        <h3 class="card-title">游戏 Demo 演示</h3>
-                        <p class="card-desc">这是我开发的独立游戏实机演示录屏
-                                             开发最新进度2025.11.27
+        <!-- ==================== 👤 关于 ==================== -->
+        <section id="about" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">01</span> About</p>
+                    <h2 class="sec-title">关于我</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="about-photo reveal">
+                        <img src="images/me.jpg" alt="无音desu 的头像">
+                        <div class="lv-chip"><b>LV.23</b> · DESIGNER</div>
+                    </div>
+                    <div class="about-text reveal d1">
+                        <h3>在代码与游戏之间，寻找热爱。</h3>
+                        <p>
+                            喜欢用代码构建有趣的界面，也沉迷于游戏世界里的冒险。
+                            从海拉鲁到帕底亚，从 Blender 建模到前端开发，
+                            我相信好设计和好游戏一样，都能让人沉浸其中。
                         </p>
-                        
-                        <!-- 👇 关键：点击调用 openVideo 函数 -->
-                        <a href="javascript:void(0)" onclick="openVideo('游戏demo.mp4')" class="card-btn">
-                            🎬 点击播放视频
-                        </a>
+                        <div class="meters">
+                            <div>
+                                <div class="meter-row">
+                                    <span class="m-name">HP · 精力值</span>
+                                    <span class="m-val">100 / 100</span>
+                                </div>
+                                <div class="meter-track"><div class="meter-fill" style="width:100%"></div></div>
+                            </div>
+                            <div>
+                                <div class="meter-row">
+                                    <span class="m-name">MP · 灵感值</span>
+                                    <span class="m-val">85 / 100</span>
+                                </div>
+                                <div class="meter-track"><div class="meter-fill" style="width:85%"></div></div>
+                            </div>
+                        </div>
+                        <div class="social-row">
+                            <a href="https://space.bilibili.com/504400240" target="_blank" class="btn btn-ghost">📺 Bilibili</a>
+                            <a href="mailto:1939888510@qq.com?subject=来自个人主页的联系" class="btn btn-ghost">✉️ Email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 📂 作品集 ==================== -->
+        <section id="works" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">02</span> Selected Works</p>
+                    <h2 class="sec-title">作品集</h2>
+                    <p class="sec-sub">我写下的文字、拍下的瞬间，以及正在构建的世界。</p>
+                </div>
+                <div class="works-grid">
+                    <article class="work-card reveal">
+                        <div class="work-cover" style="background-image:url('images/绫小路.jpg')"></div>
+                        <div class="work-body">
+                            <p class="work-tag">Blog</p>
+                            <h3 class="work-title">个人博客</h3>
+                            <p class="work-desc">分享我的技术笔记、游戏攻略与生活感悟。</p>
+                            <button class="work-link" onclick="openBlog()">阅览博客 →</button>
+                        </div>
+                    </article>
+                    <article class="work-card reveal d1">
+                        <div class="work-cover" style="background-image:url('images/blender作品.png')"></div>
+                        <div class="work-body">
+                            <p class="work-tag">Gallery</p>
+                            <h3 class="work-title">相册集</h3>
+                            <p class="work-desc">展示个人品味与成就的相册集。</p>
+                            <button class="work-link" onclick="openGallery()">查看图片集 →</button>
+                        </div>
+                    </article>
+                    <article class="work-card reveal d2">
+                        <div class="work-cover" style="background-image:url('https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=500&q=80')"></div>
+                        <div class="work-body">
+                            <p class="work-tag">Game Demo</p>
+                            <h3 class="work-title">游戏 Demo 演示</h3>
+                            <p class="work-desc">我开发的独立游戏实机演示录屏，开发最新进度 2025.11.27。</p>
+                            <button class="work-link" onclick="openVideo('游戏demo.mp4')">点击播放视频 →</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 🎮 游戏收藏 ==================== -->
+        <section id="games" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">03</span> Now Playing</p>
+                    <h2 class="sec-title">游戏收藏</h2>
+                    <p class="sec-sub">这些世界，我都认真生活过。</p>
+                </div>
+                <div class="games-grid">
+                    <div class="game-item reveal">
+                        <div class="game-cover"><img src="images/宝可梦紫.jpg" alt="宝可梦紫" loading="lazy"></div>
+                        <p class="game-name">宝可梦 紫</p>
+                        <p class="game-sub">Pokémon Violet</p>
+                    </div>
+                    <div class="game-item reveal d1">
+                        <div class="game-cover"><img src="images/圣兽之王.webp" alt="圣兽之王" loading="lazy"></div>
+                        <p class="game-name">圣兽之王</p>
+                        <p class="game-sub">Unicorn Overlord</p>
+                    </div>
+                    <div class="game-item reveal d2">
+                        <div class="game-cover"><img src="images/英雄联盟.jpg" alt="英雄联盟" loading="lazy"></div>
+                        <p class="game-name">英雄联盟</p>
+                        <p class="game-sub">League of Legends</p>
+                    </div>
+                    <div class="game-item reveal d3">
+                        <div class="game-cover"><img src="images/塞尔达传说王国之泪.jpg" alt="王国之泪" loading="lazy"></div>
+                        <p class="game-name">王国之泪</p>
+                        <p class="game-sub">Tears of the Kingdom</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 🧊 3D 模型 ==================== -->
+        <section id="models" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">04</span> 3D Assets</p>
+                    <h2 class="sec-title">3D 模型库</h2>
+                    <p class="sec-sub">点击进入检查模式，可自由旋转与缩放。</p>
+                </div>
+                <div class="models-grid">
+                    <button class="model-card reveal" onclick="openModelView('3d model/Astronaut.glb', '太空宇航员')">
+                        <div class="model-icon">🧑‍🚀</div>
+                        <p class="model-name">Astronaut</p>
+                        <p class="model-sub">NASA DEMO · GLB</p>
+                        <span class="model-open">打开检查 →</span>
+                    </button>
+                    <button class="model-card reveal d1" onclick="openModelView('3d model/car.glb', '法拉利')">
+                        <div class="model-icon">🏎️</div>
+                        <p class="model-name">Racing Car</p>
+                        <p class="model-sub">3D ASSET · GLB</p>
+                        <span class="model-open">打开检查 →</span>
+                    </button>
+                    <button class="model-card reveal d2" onclick="openModelView('3d model/baimao.glb', '角色模型')">
+                        <div class="model-icon">📱</div>
+                        <p class="model-name">Role Model</p>
+                        <p class="model-sub">3D MODEL · GLB</p>
+                        <span class="model-open">打开检查 →</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 🎵 音乐 ==================== -->
+        <section id="music" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">05</span> Soundtrack</p>
+                    <h2 class="sec-title">正在循环</h2>
+                    <p class="sec-sub">写代码时的背景音，分享给你。</p>
+                </div>
+
+                <div class="music-card reveal" id="track-player-ui">
+                    <div class="cover-wrap">
+                        <img id="track-cover" src="https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163" alt="专辑封面">
+                    </div>
+                    <div class="track-info">
+                        <p class="now-label"><span class="eq"><i></i><i></i><i></i></span> Now Playing</p>
+                        <h3 id="track-title" class="track-title">インタビュア</h3>
+                        <p id="track-artist" class="track-artist">H△G</p>
+                        <div class="controls">
+                            <button class="ctrl" onclick="prevTrack()" title="上一首">⏮</button>
+                            <button class="ctrl main" id="play-pause-btn" onclick="toggleTrackPlay()" title="播放 / 暂停">▶</button>
+                            <button class="ctrl" onclick="nextTrack()" title="下一首">⏭</button>
+                            <button class="ctrl wide" onclick="togglePlaylist()" title="播放列表">LIST · 6</button>
+                        </div>
                     </div>
                 </div>
 
+                <div id="playlist-box" class="playlist-box">
+                    <!-- JS 动态生成 -->
+                </div>
             </div>
-            
-            <div style="margin-top:auto; border-top:2px dashed #ddd; padding-top:10px; text-align:center; color:#aaa; font-size:0.7rem;">
-                SYSTEM STATUS: ONLINE <br> © 2025 PLAYER ONE
+        </section>
+
+        <!-- ==================== ✉️ 留言 ==================== -->
+        <section id="contact" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">06</span> Contact</p>
+                    <h2 class="sec-title">给我留言</h2>
+                    <p class="sec-sub">你的留言会直接发送到我的邮箱，欢迎交流。</p>
+                </div>
+                <div class="contact-wrap reveal d1">
+                    <form id="my-game-form" class="contact-form">
+                        <input type="text" name="name" placeholder="你的昵称 / Name" required>
+                        <textarea name="message" placeholder="写点什么吧… / Message" rows="4" required></textarea>
+                        <button type="submit" id="send-btn" class="send-btn">发送 →</button>
+                        <p id="form-status"></p>
+                    </form>
+                    <p class="contact-mail">也可以直接写信给我：<a href="mailto:1939888510@qq.com">1939888510@qq.com</a></p>
+                </div>
             </div>
-        </aside>
+        </section>
 
-    </div>
+    </main>
 
-    <!-- === 3D 模型弹窗 === -->
-    <div id="model-modal" class="modal-overlay hidden">
-        <div class="model-window">
-            <button class="close-btn" onclick="closeModelView()">❌ CLOSE</button>
-            <h2 id="model-title" style="text-align:center; color:#333; margin-bottom:10px;">ITEM INSPECTION</h2>
-            <model-viewer id="model-viewer-entity" src="" alt="3D Model" auto-rotate camera-controls style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 15px;"></model-viewer>
-            <p style="text-align:center; color:#666; font-size:0.8rem; margin-top:10px;">🖱️ 拖动旋转 | 🤏 滚轮缩放</p>
+    <!-- ==================== 🦶 Footer ==================== -->
+    <footer>
+        <div class="container footer-inner">
+            <span>© 2025 无音desu · Designed & Built with ♥</span>
+            <span>SYSTEM <span class="ok">● ONLINE</span> · VISITORS <span id="visit-count-foot">--</span></span>
+        </div>
+    </footer>
+
+    <!-- ==================== 🧊 3D 模型弹窗 ==================== -->
+    <div id="model-modal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModelView()">✕</button>
+            <p class="modal-kicker">Item Inspection</p>
+            <h2 class="modal-title" id="model-title">3D Model</h2>
+            <p class="modal-sub">正在加载 3D 资产…</p>
+            <model-viewer id="model-viewer-entity" src="" alt="3D Model" auto-rotate camera-controls></model-viewer>
+            <p class="model-hint">🖱 拖动旋转 · 🤏 滚轮缩放</p>
         </div>
     </div>
-    <!-- === 新增：视频播放弹窗 === -->
-    <div id="video-modal" class="modal-overlay hidden">
-        <div class="model-window" style="background:#000; border-color:#333;">
-            <!-- 关闭按钮 -->
-            <button class="close-btn" onclick="closeVideo()">❌ CLOSE</button>
-            
-            <h2 style="text-align:center; color:#fff; margin-bottom:10px;">GAMEPLAY FOOTAGE</h2>
-            
-            <!-- 视频播放器 -->
-            <video id="video-player" controls style="width: 100%; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.1);">
+
+    <!-- ==================== 🎬 视频弹窗 ==================== -->
+    <div id="video-modal" class="modal-overlay">
+        <div class="modal-card video-card">
+            <button class="modal-close" onclick="closeVideo()">✕</button>
+            <p class="modal-kicker">Gameplay Footage</p>
+            <h2 class="modal-title">游戏 Demo 演示</h2>
+            <p class="modal-sub" style="color:#6C6B75">实机录制 · 2025.11.27</p>
+            <video id="video-player" controls>
                 <source src="" type="video/mp4">
                 您的浏览器不支持视频播放。
             </video>
         </div>
     </div>
-    <!-- === 新增：博客文章列表弹窗 === -->
-    <div id="blog-modal" class="modal-overlay hidden">
-        <div class="model-window" style="max-width: 500px;">
-            <!-- 关闭按钮 -->
-            <button class="close-btn" onclick="closeBlog()">❌ CLOSE</button>
-            
-            <h2 style="text-align:center; color:#333; margin-bottom:5px;">MY ARTICLES</h2>
-            <p style="text-align:center; color:#888; font-size:0.8rem; margin-bottom:20px;">最近更新 / Recent Updates</p>
-            
-            <!-- 文章列表容器 -->
-<div class="article-list">
-    
-    <!-- 文章 1：火焰纹章 -->
-    <a href="javascript:void(0)" onclick="openReader('fireemblem')" class="article-item">
-        <div class="article-date">2025.7.24</div>
-        <div class="article-title">🎮 火焰纹章engage为什么能让人玩到停不下来？</div>
-        <div class="article-arrow">➜</div>
-    </a>
 
-    <a href="javascript:void(0)" onclick="openReader('zelda')" class="article-item">
-        <div class="article-date">2024.11.15</div>
-        <div class="article-title">🎮《塞尔达传说：王国之泪》通关感想</div>
-        <div class="article-arrow">➜</div>
-    </a>
-
-    <a href="javascript:void(0)" onclick="openReader('ai_logic')" class="article-item">
-        <div class="article-date">2025.11.23</div>
-        <div class="article-title">💻 AI时代下，如何重构程序员的分层逻辑？</div>
-        <div class="article-arrow">➜</div>
-    </a>
-
-    <a href="javascript:void(0)" onclick="openReader('game experience')" class="article-item">
-        <div class="article-date">2025.10.01</div>
-        <div class="article-title">🎮 我的游戏经历 </div>
-        <div class="article-arrow">➜</div>
-    </a>
-
-    <a href="javascript:void(0)" onclick="openReader('yhbj')" class="article-item">
-        <div class="article-date">2025.10.01</div>
-        <div class="article-title">💻 优化笔记版本迭代方法</div>
-        <div class="article-arrow">➜</div>
-    </a>
-
-    <!-- === 这是一个跳转链接 (External Link) === -->
-    <!-- 1. href: 填你要跳转的网址 -->
-    <!-- 2. target="_blank": 强制在新窗口打开，不覆盖当前网页 -->
-    <!-- 3. 去掉 onclick 事件，因为它不需要打开阅读器 -->
-    <a href="https://www.bilibili.com/video/BVxxxxxx" target="_blank" class="article-item">
-        <div class="article-date">2025.11.25</div>
-        <div class="article-title">📺 [视频] 点击跳转去看我的 B 站视频</div>
-        <!-- 小细节：把箭头改成斜箭头，暗示是跳转 -->
-        <div class="article-arrow">↗</div> 
-    </a>
-</div>
+    <!-- ==================== 📝 博客列表弹窗 ==================== -->
+    <div id="blog-modal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeBlog()">✕</button>
+            <p class="modal-kicker">My Articles</p>
+            <h2 class="modal-title">个人博客</h2>
+            <p class="modal-sub">最近更新 / Recent Updates</p>
+            <div class="article-list">
+                <a href="javascript:void(0)" onclick="openReader('fireemblem')" class="article-item">
+                    <span class="article-date">2025.07.24</span>
+                    <span class="article-title">火焰纹章 Engage 为什么能让人玩到停不下来？</span>
+                    <span class="article-arrow">→</span>
+                </a>
+                <a href="javascript:void(0)" onclick="openReader('zelda')" class="article-item">
+                    <span class="article-date">2024.11.15</span>
+                    <span class="article-title">《塞尔达传说：王国之泪》通关感想</span>
+                    <span class="article-arrow">→</span>
+                </a>
+                <a href="javascript:void(0)" onclick="openReader('ai_logic')" class="article-item">
+                    <span class="article-date">2025.11.23</span>
+                    <span class="article-title">AI 时代下，如何重构程序员的分层逻辑？</span>
+                    <span class="article-arrow">→</span>
+                </a>
+                <a href="javascript:void(0)" onclick="openReader('game experience')" class="article-item">
+                    <span class="article-date">2025.10.01</span>
+                    <span class="article-title">我的游戏经历</span>
+                    <span class="article-arrow">→</span>
+                </a>
+                <a href="javascript:void(0)" onclick="openReader('yhbj')" class="article-item">
+                    <span class="article-date">2025.10.01</span>
+                    <span class="article-title">优化笔记版本迭代方法</span>
+                    <span class="article-arrow">→</span>
+                </a>
+                <a href="https://www.bilibili.com/video/BVxxxxxx" target="_blank" class="article-item">
+                    <span class="article-date">2025.11.25</span>
+                    <span class="article-title">[视频] 点击跳转去看我的 B 站视频</span>
+                    <span class="article-arrow">↗</span>
+                </a>
+            </div>
         </div>
     </div>
-    <!-- === 新增：全屏渐变画廊 === -->
-    <div id="gallery-modal" class="gallery-overlay hidden">
-        
-        <!-- 关闭按钮 (右上角) -->
-        <button class="close-btn-gallery" onclick="closeGallery()">❌ CLOSE</button>
-        
-        <!-- 图片容器 -->
+
+    <!-- ==================== 🖼️ 全屏画廊 ==================== -->
+    <div id="gallery-modal" class="gallery-overlay">
+        <button class="g-close" onclick="closeGallery()">✕ CLOSE</button>
         <div class="gallery-container">
-            <!-- 👇 这里放你要展示的图片，记得换成你自己的图片路径 -->
-            <!-- 第 1 张 (默认显示) -->
-            <img src="images/blender作品.png" class="gallery-slide active" alt="图1">
-            <!-- 第 2 张 -->
-            <img src="images/ZBrush小怪兽.png" class="gallery-slide" alt="图2">
-            <!-- 第 3 张 -->
-            <img src="images/对马岛相册1.png" class="gallery-slide" alt="图3">
-            <!-- 第 4 张 -->
-            <img src="images/对马岛相册2.png" class="gallery-slide" alt="图4">
-            <!-- 第 5 张 -->
-            <img src="images/表情包.jpg" class="gallery-slide" alt="图5">
-            <!-- 第 6 张 -->
-            <img src="images/线下观影.jpg" class="gallery-slide" alt="图6">
-            <!-- 第 7 张 -->
-            <img src="images/鼠标.jpg" class="gallery-slide" alt="图7">
-            <!-- 第 8 张 -->
-            <img src="images/美食1.jpg" class="gallery-slide" alt="图8">
-            <!-- 第 9 张 -->
-            <img src="images/美食2.jpg" class="gallery-slide" alt="图9">
-            <!-- 第 10 张 -->
-            <img src="images/美食3.jpg" class="gallery-slide" alt="图10">
+            <img src="images/blender作品.png" class="gallery-slide active" alt="作品图 1">
+            <img src="images/ZBrush小怪兽.png" class="gallery-slide" alt="作品图 2">
+            <img src="images/对马岛相册1.png" class="gallery-slide" alt="作品图 3">
+            <img src="images/对马岛相册2.png" class="gallery-slide" alt="作品图 4">
+            <img src="images/表情包.jpg" class="gallery-slide" alt="作品图 5">
+            <img src="images/线下观影.jpg" class="gallery-slide" alt="作品图 6">
+            <img src="images/鼠标.jpg" class="gallery-slide" alt="作品图 7">
+            <img src="images/美食1.jpg" class="gallery-slide" alt="作品图 8">
+            <img src="images/美食2.jpg" class="gallery-slide" alt="作品图 9">
+            <img src="images/美食3.jpg" class="gallery-slide" alt="作品图 10">
         </div>
+        <button class="g-nav prev" onclick="changeSlide(-1)">‹</button>
+        <button class="g-nav next" onclick="changeSlide(1)">›</button>
+        <div class="g-indicator"><b id="current-num">1</b> / <span id="total-num">10</span></div>
+    </div>
 
-        <!-- 左右切换按钮 -->
-        <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
-        <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
-
-        <!-- 底部指示文字 -->
-        <div class="gallery-indicator">
-            IMAGE <span id="current-num">1</span> / <span id="total-num">3</span>
+    <!-- ==================== 📖 文章阅读器 ==================== -->
+    <div id="reader-modal" class="modal-overlay">
+        <div class="reader-window">
+            <div class="reader-topbar">
+                <h3 id="reader-title">文章阅读</h3>
+                <button onclick="closeReader()" class="reader-close">✕</button>
+            </div>
+            <div id="reader-container">
+                <!-- JS 动态生成 -->
+            </div>
         </div>
     </div>
-    <!-- === 通用文章阅读器 (长图模式) === -->
-<div id="reader-modal" class="modal-overlay hidden">
-    <!-- 这里的 max-width: 800px 决定了阅读器有多宽，适合阅读 -->
-    <div class="model-window" style="max-width: 1200px; height: 90vh; padding: 0; display:flex; flex-direction:column; overflow:hidden;">
-        
-        
-        <!-- 顶部标题栏 -->
-        <div style="padding: 15px; background: #fff; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-            <h3 id="reader-title" style="margin:0; font-size:1rem; color:#333;">文章阅读</h3>
-            <button onclick="closeReader()" style="border:none; background:var(--primary-red); color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer; font-weight:bold;">×</button>
-        </div>
 
-        <!-- 图片容器 (这里是空的，JS 会往里塞图片) -->
-        <div id="reader-container" style="flex:1; overflow-y:auto; background: #f5f5f5; text-align:center;">
-            <!-- JS 动态生成的 img 标签会出现在这里 -->
-        </div>
-    </div>
-</div>
-<!-- 🛤️ 虚拟滑轨：用来撑开高度，产生滚动条 -->
-    <div id="scroll-track" style="height: 180vh; pointer-events: none;"></div>
-
-
-    <!-- JS 逻辑 -->
+    <!-- ==================== ⚙️ JS ==================== -->
     <script>
-// === 🎮 核心游戏逻辑：最终完美版 ===
-
-    function startGame() {
-        const intro = document.getElementById('intro-scene');
-        const dashboard = document.getElementById('main-dashboard');
-        const bgm = document.getElementById('bgm');
-
-        // 1. 播放音乐
-        bgm.volume = 0.3;
-        bgm.play().catch(e => console.log("需用户交互"));
-
-        // 2. 准备舞台
-        // 先让 dashboard 显示出来但透明，以便计算位置
-        dashboard.style.opacity = '1'; 
-        
-        // 3. 使用 requestAnimationFrame 确保浏览器已经画出了 Grid，再计算位置
-        requestAnimationFrame(() => {
-            initAnimationState();
-            
-            // 4. 动画开始：隐藏开场，显示舞台
-            intro.style.opacity = '0';
-            setTimeout(() => {
-                intro.classList.add('hidden');
-                dashboard.classList.add('visible');
-            }, 500);
-        });
-    }
-
-// === 🎮 核心逻辑：纯宽度变化 (内容不拉伸版) ===
-
-    function initAnimationState() {
-        const leftCol = document.querySelector('.left-col');
-        
-        if (window.innerWidth <= 1200) return;
-
-        // 1. 获取终点信息 (300px)
-        leftCol.style.width = '300px'; 
-        const endRect = leftCol.getBoundingClientRect();
-        
-        // 2. 设定起点宽度 (模拟主页宽度，例如 1100px)
-        const startWidth = Math.min(window.innerWidth * 0.8, 1100); 
-        const endWidth = 300; 
-
-        // 3. 计算中心点位移
-        const screenCenterX = window.innerWidth / 2;
-        const screenCenterY = window.innerHeight / 2;
-        const endCenterX = endRect.left + (endRect.width / 2);
-        const endCenterY = endRect.top + (endRect.height / 2);
-        
-        const moveX = screenCenterX - endCenterX;
-        const moveY = screenCenterY - endCenterY;
-
-        window.animData = {
-            moveX: moveX,
-            moveY: moveY,
-            startWidth: startWidth,
-            endWidth: endWidth,
-            widthDiff: startWidth - endWidth
-        };
-
-        // --- 🎬 设定初始状态 ---
-        leftCol.style.transition = 'none'; 
-        
-        // 关键：只设宽度，不设 scale
-        leftCol.style.width = `${startWidth}px`; 
-        leftCol.style.transform = `translate(${moveX}px, ${moveY}px)`; 
-        
-        leftCol.style.zIndex = "100";
-        // 蓝色光晕
-        leftCol.style.boxShadow = "0 0 80px rgba(79, 172, 254, 0.5)"; 
-    }
-
-    // 监听滚动 (短距离 200vh 版)
-    window.addEventListener('scroll', () => {
-        if(window.innerWidth <= 1200) return;
-
-        const scrollY = window.scrollY;
-        const leftCol = document.querySelector('.left-col');
-        const midCol = document.querySelector('.mid-col');
-        const rightCol = document.querySelector('.right-col');
-        const dashboard = document.getElementById('main-dashboard');
-        const data = window.animData; 
-
-        if (!data) return; 
-
-        // 动画过渡
-        leftCol.style.transition = 'transform 0.1s linear, width 0.1s linear, box-shadow 0.3s';
-        midCol.style.transition = 'all 0.1s linear';
-        rightCol.style.transition = 'all 0.1s linear';
-
-        // === 1. 宽度收缩 (0px - 300px) ===
-        if (scrollY <= 300) {
-            const p = Math.min(scrollY / 300, 1);
-            
-            const x = data.moveX * (1 - p);
-            const y = data.moveY * (1 - p);
-            const currentW = data.startWidth - (data.widthDiff * p);
-
-            // 只移动和改宽
-            leftCol.style.transform = `translate(${x}px, ${y}px)`; 
-            leftCol.style.width = `${currentW}px`; 
-            
-            if (p > 0.9) leftCol.style.boxShadow = "";
-        } else {
-            // 锁定终点
-            leftCol.style.transform = "translate(0,0)";
-            leftCol.style.width = "300px"; 
-            leftCol.style.boxShadow = "";
-            leftCol.style.zIndex = "1";
-        }
-
-        // === 2. 中间内容上浮 ===
-        if (scrollY > 200) {
-            const p = Math.min((scrollY - 200) / 300, 1);
-            const y = 100 * (1 - p); 
-            midCol.style.transform = `translateY(${y}vh)`;
-            midCol.style.opacity = p;
-            midCol.style.filter = `blur(${20 * (1-p)}px)`; 
-        } else {
-            midCol.style.opacity = 0; 
-        }
-
-        // === 3. 右侧内容滑入 ===
-        if (scrollY > 400) {
-            const p = Math.min((scrollY - 400) / 300, 1);
-            const x = 50 * (1 - p); 
-            rightCol.style.transform = `translateX(${x}vw)`;
-            rightCol.style.opacity = p;
-        } else {
-            rightCol.style.opacity = 0; 
-        }
-
-        if (scrollY > document.body.scrollHeight - window.innerHeight - 50) {
-            dashboard.style.pointerEvents = "auto";
-        } else {
-            dashboard.style.pointerEvents = "none";
-        }
-    });
-    
-function toggleMusic() {
+    // === 🎵 BGM ===
     const bgm = document.getElementById('bgm');
-    const btn = document.getElementById('music-btn'); // 1. 找到按钮
-
-    if (bgm.paused) {
-        // === 如果当前是暂停，那就播放 ===
-        bgm.play();
-        
-        // 改变文字
-        btn.innerHTML = "🎵 BGM: ON 🎶"; 
-        
-        // 🌟 额外效果：让按钮变粉色，表示“激活状态”
-        btn.style.background = "#ff9a9e"; 
-        btn.style.color = "#fff";
-        btn.style.borderColor = "#ff9a9e";
-        
-    } else {
-        // === 如果当前是播放，那就暂停 ===
-        bgm.pause();
-        
-        // 变回原来的文字
-        btn.innerHTML = "🎵 BGM: OFF"; 
-        
-        // 🌟 恢复原来的白色背景
-        btn.style.background = "#fff";
-        btn.style.color = "#333";
-        btn.style.borderColor = "#eee";
+    bgm.volume = 0.3;
+    function toggleMusic() {
+        const btn = document.getElementById('music-btn');
+        if (bgm.paused) {
+            bgm.play();
+            btn.classList.add('on');
+        } else {
+            bgm.pause();
+            btn.classList.remove('on');
+        }
     }
-}
-        
-        function openModelView(modelPath, modelName) {
-            const modal = document.getElementById('model-modal');
-            const viewer = document.getElementById('model-viewer-entity');
-            const title = document.getElementById('model-title');
-            viewer.src = modelPath;
-            title.innerText = modelName;
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex'; 
-        }
 
-        function closeModelView() {
-            const modal = document.getElementById('model-modal');
-            modal.classList.add('hidden');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
-        }
-
-        // 留言板功能
-        function toggleMessageBoard() {
-            const panel = document.getElementById('message-board-panel');
-            panel.classList.toggle('open');
-            if(panel.classList.contains('open')) loadMessages();
-        }
-
-        document.addEventListener('click', function(e) {
-            const panel = document.getElementById('message-board-panel');
-            const btn = document.querySelector('.floating-btn');
-            if (!panel.contains(e.target) && !btn.contains(e.target) && panel.classList.contains('open')) {
-                panel.classList.remove('open');
-            }
-        });
-
-// === 真实的邮件发送逻辑 (Formspree AJAX) ===
-        const form = document.getElementById("my-game-form");
-        
-        async function handleSubmit(event) {
-            event.preventDefault(); // 1. 阻止页面跳转
-            
-            const status = document.getElementById("form-status");
-            const btn = document.getElementById("send-btn");
-            const originalBtnText = btn.innerText;
-
-            // 2. 锁定按钮，防止重复点
-            btn.disabled = true;
-            btn.innerText = "⏳ Sending...";
-            
-            // 3. 准备数据
-            const data = new FormData(event.target);
-
-            // ⚠️⚠️⚠️ 请把下面的 xxxxxxxx 换成你在第一步申请到的 Formspree ID ⚠️⚠️⚠️
-            fetch("https://formspree.io/f/mwpzewkq", {
-                method: "POST",
-                body: data,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    // 发送成功
-                    status.innerHTML = "✅ 发送成功！我会尽快查看邮件。<br>Message Sent!";
-                    status.style.color = "green";
-                    form.reset(); // 清空输入框
-                } else {
-                    // 发送失败
-                    status.innerHTML = "❌ 发送失败，请稍后再试。";
-                    status.style.color = "red";
-                }
-                // 恢复按钮
-                btn.disabled = false;
-                btn.innerText = originalBtnText;
-            }).catch(error => {
-                status.innerHTML = "❌ 网络错误，请检查网络。";
-                status.style.color = "red";
-                btn.disabled = false;
-                btn.innerText = originalBtnText;
-            });
-        }
-        
-        // 绑定监听器
-        form.addEventListener("submit", handleSubmit);
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-        // === 视频弹窗控制逻辑 ===
-        
-        function openVideo(videoPath) {
-            const modal = document.getElementById('video-modal');
-            const video = document.getElementById('video-player');
-            
-            // 1. 设置视频路径
-            video.src = videoPath;
-            
-            // 2. 显示弹窗
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
-            
-            // 3. 自动播放 (为了体验好)
-            video.play();
-        }
-
-        function closeVideo() {
-            const modal = document.getElementById('video-modal');
-            const video = document.getElementById('video-player');
-            
-            // 1. 暂停视频 (很重要！不然关了窗口声音还在响)
-            video.pause();
-            
-            // 2. 隐藏弹窗
-            modal.classList.add('hidden');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
-        }
-        
-        // 点击弹窗背景也能关闭视频
-        document.getElementById('video-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeVideo();
-            }
-        });
-        // === 全屏画廊逻辑 ===
-        let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.gallery-slide');
-        const totalSlides = slides.length;
-
-        // 初始化总页数
-        document.getElementById('total-num').innerText = totalSlides;
-
-        function openGallery() {
-            const modal = document.getElementById('gallery-modal');
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex'; // 使用 flex 居中
-        }
-
-        function closeGallery() {
-            const modal = document.getElementById('gallery-modal');
-            modal.classList.add('hidden');
-            setTimeout(() => { modal.style.display = 'none'; }, 500);
-        }
-
-        function changeSlide(direction) {
-            // 1. 找到当前显示的图，去掉 active (它会慢慢淡出)
-            slides[currentSlideIndex].classList.remove('active');
-
-            // 2. 计算下一张图的索引 (支持循环：最后一张点右边回到第一张)
-            currentSlideIndex += direction;
-            
-            if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
-            if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
-
-            // 3. 给下一张图加上 active (它会慢慢淡入)
-            slides[currentSlideIndex].classList.add('active');
-
-            // 4. 更新底部页码
-            document.getElementById('current-num').innerText = currentSlideIndex + 1;
-        }
-
-        // 支持键盘左右键切换 (体验优化)
-        document.addEventListener('keydown', function(e) {
-            const modal = document.getElementById('gallery-modal');
-            if (modal.style.display === 'flex') {
-                if (e.key === 'ArrowRight') changeSlide(1);
-                if (e.key === 'ArrowLeft') changeSlide(-1);
-                if (e.key === 'Escape') closeGallery();
-            }
-        });
-        // === 博客列表弹窗控制 ===
-        function openBlog() {
-            const modal = document.getElementById('blog-modal');
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
-        }
-
-        function closeBlog() {
-            const modal = document.getElementById('blog-modal');
-            modal.classList.add('hidden');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
-        }
-
-        // 点击博客弹窗背景关闭
-        document.getElementById('blog-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeBlog();
-        });
-// === 修改后的 toggleTheme 函数 ===
+    // === 🌙 主题切换 ===
     function toggleTheme() {
         const body = document.body;
         const btn = document.getElementById('theme-btn');
-        
-        // 检查当前是否是暗色模式
         const isDark = body.getAttribute('data-theme') === 'dark';
-        
         if (isDark) {
-            // 变回白天
-            body.removeAttribute('data-theme'); 
-            btn.innerHTML = "☀️ DAY";
-            btn.style.background = "#fff";
-            btn.style.color = "#333";
-            // 📝 记在小本本上：现在是白天
+            body.removeAttribute('data-theme');
+            btn.classList.remove('on');
             localStorage.setItem('site_theme', 'light');
         } else {
-            // 变成黑夜
-            body.setAttribute('data-theme', 'dark'); 
-            btn.innerHTML = "🌙 NIGHT";
-            btn.style.background = "#333";
-            btn.style.color = "#fff";
-            // 📝 记在小本本上：现在是黑夜
+            body.setAttribute('data-theme', 'dark');
+            btn.classList.add('on');
             localStorage.setItem('site_theme', 'dark');
         }
-        
-        if(typeof clickSound !== 'undefined') clickSound.play();
     }
-           // === 新增：页面加载时，自动读取小本本 ===
     (function checkTheme() {
         const savedTheme = localStorage.getItem('site_theme');
         const btn = document.getElementById('theme-btn');
-        
         if (savedTheme === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
-            if(btn) {
-                btn.innerHTML = "🌙 NIGHT";
-                btn.style.background = "#333";
-                btn.style.color = "#fff";
-            }
+            if (btn) btn.classList.add('on');
         }
-    })(); 
+    })();
 
-    // ==========================================
-    // 🎵 超级播放器逻辑 (Real Music Player)
-    // ==========================================
-    
-    // 1. 歌曲数据库 (你可以把这里换成你自己的 MP3 链接)
-    const trackList = [
-        {
-            title: "インタビュア",
-            artist: "H△G",
-            cover: "H△G - インタビュア.mp3",
-            src: "music/H△G - インタビュア.mp3" // 示例音乐1
-        },
-        {
-            title: "ハローハロー",
-            artist: "H△G",
-            cover: "",
-            src: "music/H△G - ハローハロー.mp3" // 示例音乐2
-        },
-        {
-            title: "没想到",
-            artist: "Max李玄",
-            cover: "",
-            src: "music/Max李玄 - 没想到.mp3" // 示例音乐3
-        },
-        {
-            title: "没关系[prod.Musi]",
-            artist: "MISTERK",
-            cover: "",
-            src: "music/MISTERK - 没关系[prod.Musi].mp3" // 示例音乐3
-        },
-        {
-            title: "总等到淋雨才逃跑",
-            artist: "土豆披萨直营",
-            cover: "",
-            src: "music/土豆披萨直营,Taisheng Music - 总等到淋雨才逃跑.mp3" // 示例音乐3
-        },
-        {
-            title: "归期",
-            artist: "钱润玉",
-            cover: "",
-            src: "music/钱润玉 - 归期.mp3" // 示例音乐3
+    // === 👁️ 入场动效 ===
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // === ✉️ 留言表单 (Formspree AJAX) ===
+    const form = document.getElementById("my-game-form");
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const status = document.getElementById("form-status");
+        const btn = document.getElementById("send-btn");
+        const originalBtnText = btn.innerText;
+
+        btn.disabled = true;
+        btn.innerText = "发送中…";
+
+        const data = new FormData(event.target);
+        fetch("https://formspree.io/f/mwpzewkq", {
+            method: "POST",
+            body: data,
+            headers: { 'Accept': 'application/json' }
+        }).then(response => {
+            if (response.ok) {
+                status.innerHTML = "✅ 发送成功！我会尽快查看邮件。";
+                status.style.color = "var(--accent-ink)";
+                form.reset();
+            } else {
+                status.innerHTML = "❌ 发送失败，请稍后再试。";
+                status.style.color = "#c0392b";
+            }
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+        }).catch(() => {
+            status.innerHTML = "❌ 网络错误，请检查网络。";
+            status.style.color = "#c0392b";
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+        });
+    }
+    form.addEventListener("submit", handleSubmit);
+
+    // === 🧊 3D 模型弹窗 ===
+    function openModelView(modelPath, modelName) {
+        const modal = document.getElementById('model-modal');
+        const viewer = document.getElementById('model-viewer-entity');
+        const title = document.getElementById('model-title');
+        viewer.src = modelPath;
+        title.innerText = modelName;
+        modal.style.display = 'flex';
+    }
+    function closeModelView() {
+        document.getElementById('model-modal').style.display = 'none';
+    }
+    document.getElementById('model-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeModelView();
+    });
+
+    // === 🎬 视频弹窗 ===
+    function openVideo(videoPath) {
+        const modal = document.getElementById('video-modal');
+        const video = document.getElementById('video-player');
+        video.src = videoPath;
+        modal.style.display = 'flex';
+        video.play();
+    }
+    function closeVideo() {
+        const modal = document.getElementById('video-modal');
+        const video = document.getElementById('video-player');
+        video.pause();
+        modal.style.display = 'none';
+    }
+    document.getElementById('video-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeVideo();
+    });
+
+    // === 🖼️ 画廊 ===
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.gallery-slide');
+    const totalSlides = slides.length;
+    document.getElementById('total-num').innerText = totalSlides;
+
+    function openGallery() {
+        document.getElementById('gallery-modal').style.display = 'flex';
+    }
+    function closeGallery() {
+        document.getElementById('gallery-modal').style.display = 'none';
+    }
+    function changeSlide(direction) {
+        slides[currentSlideIndex].classList.remove('active');
+        currentSlideIndex += direction;
+        if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
+        if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
+        slides[currentSlideIndex].classList.add('active');
+        document.getElementById('current-num').innerText = currentSlideIndex + 1;
+    }
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('gallery-modal');
+        if (modal.style.display === 'flex') {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'Escape') closeGallery();
         }
+        // Esc 关闭其他弹窗
+        if (e.key === 'Escape') {
+            closeModelView();
+            closeVideo();
+            closeBlog();
+            closeReader();
+        }
+    });
+
+    // === 📝 博客列表 ===
+    function openBlog() {
+        document.getElementById('blog-modal').style.display = 'flex';
+    }
+    function closeBlog() {
+        document.getElementById('blog-modal').style.display = 'none';
+    }
+    document.getElementById('blog-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeBlog();
+    });
+
+    // === 🎵 播放器 ===
+    const trackList = [
+        { title: "インタビュア", artist: "H△G", cover: "https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163", src: "music/H△G - インタビュア.mp3" },
+        { title: "ハローハロー", artist: "H△G", cover: "https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163", src: "music/H△G - ハローハロー.mp3" },
+        { title: "没想到", artist: "Max李玄", cover: "https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163", src: "music/Max李玄 - 没想到.mp3" },
+        { title: "没关系[prod.Musi]", artist: "MISTERK", cover: "https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163", src: "music/MISTERK - 没关系[prod.Musi].mp3" },
+        { title: "总等到淋雨才逃跑", artist: "土豆披萨直营", cover: "https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163", src: "music/土豆披萨直营,Taisheng Music - 总等到淋雨才逃跑.mp3" },
+        { title: "归期", artist: "钱润玉", cover: "https://i.scdn.co/image/ab67616d0000b2734ae1c4c5c45aabe565499163", src: "music/钱润玉 - 归期.mp3" }
     ];
 
     let currentTrackIndex = 0;
     let isTrackPlaying = false;
-    const trackAudio = new Audio(); // 创建一个新的音频对象，专门给这个播放器用
+    const trackAudio = new Audio();
     trackAudio.volume = 0.5;
 
-    // 初始化播放器
     document.addEventListener('DOMContentLoaded', () => {
         loadTrack(currentTrackIndex);
         renderPlaylist();
     });
 
-    // 加载歌曲信息
     function loadTrack(index) {
         const track = trackList[index];
         trackAudio.src = track.src;
         document.getElementById('track-title').innerText = track.title;
         document.getElementById('track-artist').innerText = track.artist;
         document.getElementById('track-cover').src = track.cover;
-        
-        // 更新播放列表的高亮状态
         updatePlaylistHighlight(index);
     }
 
-    // ⏯️ 播放/暂停控制 (核心冲突逻辑在这里！)
     function toggleTrackPlay() {
         const btn = document.getElementById('play-pause-btn');
-        
+        const card = document.getElementById('track-player-ui');
         if (isTrackPlaying) {
-            // 如果正在播，就暂停
             trackAudio.pause();
             isTrackPlaying = false;
-            btn.innerText = "🞂 ";
+            btn.innerText = "▶";
+            card.classList.remove('playing');
         } else {
-            // === 🌟 关键：如果要开始播放新歌，先关掉右上角的 BGM ===
-            const bgm = document.getElementById('bgm');
-            const bgmBtn = document.getElementById('music-btn');
-            
             if (!bgm.paused) {
-                bgm.pause(); // 暂停背景音乐
-                // 强制把右上角按钮变回 OFF 状态
-                if(bgmBtn) {
-                    bgmBtn.innerHTML = "🎵 BGM: OFF";
-                    bgmBtn.style.background = "#fff";
-                    bgmBtn.style.color = "#333";
-                }
+                bgm.pause();
+                document.getElementById('music-btn').classList.remove('on');
             }
-
-            // 然后再播放这首歌
             trackAudio.play();
             isTrackPlaying = true;
             btn.innerText = "⏸";
+            card.classList.add('playing');
         }
     }
 
-    // 上一首
     function prevTrack() {
         currentTrackIndex--;
         if (currentTrackIndex < 0) currentTrackIndex = trackList.length - 1;
         loadTrack(currentTrackIndex);
         if (isTrackPlaying) trackAudio.play();
     }
-
-    // 下一首
     function nextTrack() {
         currentTrackIndex++;
         if (currentTrackIndex >= trackList.length) currentTrackIndex = 0;
@@ -1952,202 +1269,388 @@ function toggleMusic() {
         if (isTrackPlaying) trackAudio.play();
     }
 
-    // 📜 切换显示/隐藏播放列表
     function togglePlaylist() {
         const box = document.getElementById('playlist-box');
-        if (box.classList.contains('hidden-list')) {
-            box.classList.remove('hidden-list');
-            box.classList.add('show-list');
-        } else {
-            box.classList.remove('show-list');
-            box.classList.add('hidden-list');
-        }
+        box.classList.toggle('show-list');
     }
 
-    // 渲染播放列表
     function renderPlaylist() {
         const box = document.getElementById('playlist-box');
-        box.innerHTML = ''; // 清空
-        
+        box.innerHTML = '';
         trackList.forEach((track, index) => {
             const div = document.createElement('div');
             div.className = 'track-item';
-            div.innerHTML = `<span>${index + 1}. ${track.title}</span> <span style="font-size:0.7rem;">${track.artist}</span>`;
+            div.innerHTML = `<span><span class="tk-num">${String(index + 1).padStart(2, '0')}</span>${track.title}</span><span class="tk-artist">${track.artist}</span>`;
             div.onclick = () => {
                 currentTrackIndex = index;
                 loadTrack(index);
-                // 如果没播，就自动开始播
-                if (!isTrackPlaying) toggleTrackPlay(); 
+                if (!isTrackPlaying) toggleTrackPlay();
                 else trackAudio.play();
             };
             box.appendChild(div);
         });
     }
 
-    // 更新列表高亮
     function updatePlaylistHighlight(index) {
-        const items = document.querySelectorAll('.track-item');
-        items.forEach((item, i) => {
-            if (i === index) item.classList.add('active');
-            else item.classList.remove('active');
+        document.querySelectorAll('.track-item').forEach((item, i) => {
+            item.classList.toggle('active', i === index);
         });
     }
-    
-    // 歌曲放完了自动切下一首
+
     trackAudio.addEventListener('ended', nextTrack);
 
-        // ==========================================
-    // 📖 博客阅读器功能 (长图版) - 新增代码区
-    // ==========================================
-
-    /* 1. 博客数据配置 (在这里添加新文章) */
+    // === 📖 文章阅读器 ===
     const blogData = {
-        // 文章ID : { 标题, 图片列表 }
         "fireemblem": {
             title: "🔥 火焰纹章Engage玩法大揭秘",
-            images: [
-                // ⚠️ 请确保这些图片真实存在于你的 articles 文件夹里
-                // 你可以把 PDF 转成 jpg/png 后改名放进去
-                "articles/火焰纹章Engage玩法大揭秘.png", 
-            ]
+            images: ["articles/火焰纹章Engage玩法大揭秘.png"]
         },
-        
         "zelda": {
             title: "🎮 塞尔达传说：王国之泪通关感想",
-            images: [
-                "articles/zelda_01.jpg",
-                "articles/zelda_02.jpg"
-            ]
+            images: ["articles/zelda_01.jpg", "articles/zelda_02.jpg"]
         },
-        
         "ai_logic": {
             title: "💻 AI时代，程序员的逻辑重构",
-            images: [
-                "articles/AI时代，如何重构程序员的分层逻辑.png" 
-            ]
+            images: ["articles/AI时代，如何重构程序员的分层逻辑.png"]
         },
-
         "game experience": {
             title: "我的游戏经历",
-            images: [
-                "articles/游戏经历.jpg" 
-            ]
+            images: ["articles/游戏经历.jpg"]
         },
-                "yhbj": {
+        "yhbj": {
             title: "优化笔记迭代方法",
-            images: [
-                "articles/优化笔记版本迭代方法.png" 
-            ]
-        },
+            images: ["articles/优化笔记版本迭代方法.png"]
+        }
     };
 
-    /* 2. 打开阅读器逻辑 */
     function openReader(articleId) {
         const modal = document.getElementById('reader-modal');
         const container = document.getElementById('reader-container');
         const title = document.getElementById('reader-title');
-        
-        // 从配置里找数据
+
         const data = blogData[articleId];
-        
         if (!data) {
             alert("🚧 该文章正在施工中，图片暂未上传！\n(Article ID: " + articleId + ")");
             return;
         }
 
-        // 设置标题
         title.innerText = data.title;
-
-        // 清空上一次的内容
         container.innerHTML = '';
 
-        // 循环生成图片标签
         data.images.forEach(imgSrc => {
             const img = document.createElement('img');
             img.src = imgSrc;
-            img.style.width = '100%';
-            img.style.height = 'auto';
-            img.style.display = 'block';
-            img.style.marginBottom = '0'; // 图片无缝拼接
-            img.loading = "lazy"; // 懒加载优化
-            
-            // 如果图片加载失败（比如路径不对），显示一个提示
+            img.loading = "lazy";
             img.onerror = function() {
-                this.style.display = 'none'; // 隐藏破图
+                this.style.display = 'none';
                 const err = document.createElement('div');
                 err.innerText = "❌ 图片加载失败: " + imgSrc;
-                err.style.color = "red";
+                err.style.color = "#c0392b";
                 err.style.padding = "20px";
                 container.appendChild(err);
             };
-
             container.appendChild(img);
         });
 
-        // 显示弹窗
-        modal.classList.remove('hidden');
         modal.style.display = 'flex';
     }
 
-    /* 3. 关闭阅读器逻辑 */
     function closeReader() {
-        const modal = document.getElementById('reader-modal');
-        modal.classList.add('hidden');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
+        document.getElementById('reader-modal').style.display = 'none';
     }
+    document.getElementById('reader-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeReader();
+    });
 
-    // 点击背景关闭
-    const readerModal = document.getElementById('reader-modal');
-    if(readerModal) {
-        readerModal.addEventListener('click', function(e) {
-            if (e.target === this) closeReader();
-        });
-    }
-    // === 🏠 首页功能：一键直达最终形态 ===
-    function skipToHome() {
-        // 1. 检查是否还在开场画面？如果是，先帮用户“点”开始
-        const intro = document.getElementById('intro-scene');
-        if (!intro.classList.contains('hidden')) {
-            startGame();
+    // === 🌌 动态背景 — 极光流动 + 星尘 ===
+    (function initBackground() {
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, dpr;
+
+        // 主题配色：亮色柔和、暗色深邃
+        const palettes = {
+            light: [
+                'rgba(180, 200, 255, 0.32)',  // 淡蓝
+                'rgba(212, 180, 255, 0.28)',  // 淡紫
+                'rgba(180, 240, 228, 0.26)',  // 淡青
+                'rgba(255, 196, 220, 0.26)',  // 淡粉
+                'rgba(255, 228, 180, 0.22)',  // 淡金
+            ],
+            dark: [
+                'rgba(92, 124, 255, 0.36)',   // 深紫蓝
+                'rgba(77, 168, 255, 0.32)',   // 深青
+                'rgba(199, 123, 255, 0.32)',  // 深紫
+                'rgba(59, 130, 246, 0.30)',   // 深蓝
+                'rgba(255, 92, 138, 0.22)',   // 深粉
+            ]
+        };
+
+        function currentTheme() {
+            return document.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
         }
 
-        // 2. 算出网页总高度
-        // (减去窗口高度是为了对齐底部，但直接滚到 scrollHeight 也行，浏览器会自己处理)
-        const bottom = document.body.scrollHeight;
+        // 发光球体
+        let blobs = [];
+        function buildBlobs() {
+            const palette = palettes[currentTheme()];
+            blobs = palette.map((color, i) => ({
+                color,
+                baseR: 0.32 + Math.random() * 0.18,           // 半径占屏占比
+                x: Math.random(),
+                y: Math.random(),
+                // 用三个不同频率的相位做漂移，运动自然
+                ax: Math.random() * Math.PI * 2,
+                ay: Math.random() * Math.PI * 2,
+                sx: 0.00018 + Math.random() * 0.00018,
+                sy: 0.00022 + Math.random() * 0.00020,
+                amp: 0.18 + Math.random() * 0.12,
+                cx: 0.5, cy: 0.5
+            }));
+        }
 
-        // 3. 丝滑滚动到底部
-        // 这一步会自动触发所有的“变形动画”，你会看到左侧栏迅速变窄归位，非常帅！
-        window.scrollTo({
-            top: bottom,
-            behavior: 'smooth' // 如果想要瞬间跳过去，把 'smooth' 改成 'auto'
-        });
-    }
+        // 星尘
+        let stars = [];
+        function buildStars() {
+            const count = Math.min(120, Math.floor(w * h / 14000));
+            stars = Array.from({ length: count }, () => ({
+                x: Math.random(),
+                y: Math.random(),
+                r: Math.random() * 1.4 + 0.3,
+                tw: Math.random() * Math.PI * 2,
+                twSpeed: 0.001 + Math.random() * 0.002,
+                drift: (Math.random() - 0.5) * 0.00005
+            }));
+        }
 
-    // === 📊 访问量计数器 (自动累加) ===
+        function resize() {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = window.innerWidth;
+            h = window.innerHeight;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            buildBlobs();
+            buildStars();
+        }
+
+        let t = 0;
+        function draw() {
+            t += 1;
+            ctx.clearRect(0, 0, w, h);
+
+            // 极光发光球：多层 radial gradient
+            ctx.globalCompositeOperation = 'lighter';
+            blobs.forEach(b => {
+                b.ax += b.sx; b.ay += b.sy;
+                const x = (b.cx + Math.cos(b.ax) * b.amp + Math.sin(b.ax * 1.7) * 0.06) * w;
+                const y = (b.cy + Math.sin(b.ay) * b.amp + Math.cos(b.ay * 1.3) * 0.06) * h;
+                const radius = Math.max(40, b.baseR * Math.min(w, h));
+                const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                g.addColorStop(0, b.color);
+                g.addColorStop(0.5, b.color.replace(/[\d.]+\)$/, '0.08)'));
+                g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 星尘
+            ctx.globalCompositeOperation = 'source-over';
+            const isDark = currentTheme() === 'dark';
+            stars.forEach(s => {
+                s.tw += s.twSpeed;
+                s.x += s.drift;
+                if (s.x > 1) s.x = 0;
+                if (s.x < 0) s.x = 1;
+                const alpha = (Math.sin(s.tw) * 0.5 + 0.5) * (isDark ? 0.85 : 0.32);
+                ctx.beginPath();
+                ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = isDark
+                    ? `rgba(255, 255, 255, ${alpha})`
+                    : `rgba(60, 70, 110, ${alpha})`;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        // 主题切换时重建配色
+        const themeBtn = document.getElementById('theme-btn');
+        if (themeBtn) {
+            const orig = window.toggleTheme;
+            window.toggleTheme = function() {
+                orig && orig();
+                setTimeout(buildBlobs, 60);
+            };
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        draw();
+    })();
+
+    // === ☄️ 鼠标流星拖影 ===
+    (function initCursorTrail() {
+        const canvas = document.getElementById('cursor-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, dpr;
+
+        function resize() {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = window.innerWidth;
+            h = window.innerHeight;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const meteors = [];
+        const MAX_METEORS = 48;
+        let lastX = -1, lastY = -1;
+        let hue = 200;            // 起始色相，会缓慢推进，形成青→紫→粉流星
+        let mouseMoving = false;
+        let moveTimer = null;
+
+        function spawn(x, y, vx, vy, dist) {
+            if (meteors.length >= MAX_METEORS) meteors.shift();
+            const speed = Math.hypot(vx, vy);
+            // 色相随时间 + 速度漂移，连续流星呈现彩虹流
+            hue = (hue + 2.5 + speed * 0.08) % 360;
+            // 流星朝鼠标运动方向飞射，带轻微随机偏角，更自然
+            const angle = Math.atan2(vy, vx) + (Math.random() - 0.5) * 0.25;
+            const flySpeed = Math.min(speed * 0.35, 6) + 0.6;
+            meteors.push({
+                x: x, y: y,
+                vx: Math.cos(angle) * flySpeed,
+                vy: Math.sin(angle) * flySpeed,
+                life: 1,
+                decay: 0.018 + Math.random() * 0.012,
+                // 尾巴长度基于初始速度，移动越快尾巴越长
+                tail: 18 + Math.min(speed * 1.6, 60) + Math.random() * 14,
+                hue: hue + (Math.random() - 0.5) * 40,
+                size: 1.6 + Math.random() * 1.4 + Math.min(speed * 0.04, 2.2)
+            });
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX, y = e.clientY;
+            if (lastX < 0) { lastX = x; lastY = y; return; }
+            const dx = x - lastX, dy = y - lastY;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 1.2) {
+                spawn(x, y, dx, dy, dist);
+                lastX = x; lastY = y;
+            }
+            mouseMoving = true;
+            clearTimeout(moveTimer);
+            moveTimer = setTimeout(() => mouseMoving = false, 80);
+        }, { passive: true });
+
+        // 触摸支持
+        window.addEventListener('touchmove', (e) => {
+            const t0 = e.touches[0]; if (!t0) return;
+            const x = t0.clientX, y = t0.clientY;
+            if (lastX < 0) { lastX = x; lastY = y; return; }
+            const dx = x - lastX, dy = y - lastY;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 1.2) { spawn(x, y, dx, dy, dist); lastX = x; lastY = y; }
+        }, { passive: true });
+
+        function draw() {
+            // 残影渐隐：destination-out 让上一帧流星尾巴逐帧透明化
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.lineCap = 'round';
+
+            for (let i = meteors.length - 1; i >= 0; i--) {
+                const m = meteors[i];
+                m.x += m.vx;
+                m.y += m.vy;
+                m.vx *= 0.985;              // 惯性：缓慢减速，让流星飞射一段
+                m.vy *= 0.985;
+                m.life -= m.decay;
+                if (m.life <= 0) { meteors.splice(i, 1); continue; }
+
+                const alpha = m.life;
+                // 拖尾方向 = 运动方向的反方向
+                const sp = Math.hypot(m.vx, m.vy) || 0.001;
+                const ux = m.vx / sp, uy = m.vy / sp;
+                const tailLen = m.tail * (0.4 + m.life * 0.6);
+                const tx = m.x - ux * tailLen;
+                const ty = m.y - uy * tailLen;
+
+                // 拖尾渐变：头部白热 → 中段彩色 → 尾部透明
+                const grad = ctx.createLinearGradient(m.x, m.y, tx, ty);
+                grad.addColorStop(0, `hsla(0, 0%, 100%, ${alpha})`);
+                grad.addColorStop(0.15, `hsla(${m.hue}, 100%, 88%, ${alpha * 0.9})`);
+                grad.addColorStop(0.5, `hsla(${m.hue}, 95%, 65%, ${alpha * 0.5})`);
+                grad.addColorStop(1, `hsla(${m.hue}, 95%, 55%, 0)`);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = Math.max(0.5, m.size * (0.5 + m.life * 0.5));
+                ctx.beginPath();
+                ctx.moveTo(m.x, m.y);
+                ctx.lineTo(tx, ty);
+                ctx.stroke();
+
+                // 头部外发光（白热 → 彩色边缘 → 透明）
+                const headR = Math.max(0.6, m.size * m.life);
+                const hg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, headR * 5);
+                hg.addColorStop(0, `hsla(0, 0%, 100%, ${alpha})`);
+                hg.addColorStop(0.3, `hsla(${m.hue}, 100%, 85%, ${alpha * 0.6})`);
+                hg.addColorStop(1, `hsla(${m.hue}, 95%, 60%, 0)`);
+                ctx.fillStyle = hg;
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, headR * 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 头部实心白热核心
+                ctx.fillStyle = `hsla(0, 0%, 100%, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, headR * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 鼠标核心光晕（待机柔和 / 移动明亮）
+            if (lastX >= 0) {
+                const coreAlpha = mouseMoving ? 0.8 : 0.3;
+                const coreR = mouseMoving ? 14 : 8;
+                const cg = ctx.createRadialGradient(lastX, lastY, 0, lastX, lastY, coreR * 2.2);
+                cg.addColorStop(0, `hsla(0, 0%, 100%, ${coreAlpha})`);
+                cg.addColorStop(0.4, `hsla(${hue}, 95%, 70%, ${coreAlpha * 0.4})`);
+                cg.addColorStop(1, `hsla(${hue}, 95%, 60%, 0)`);
+                ctx.fillStyle = cg;
+                ctx.beginPath();
+                ctx.arc(lastX, lastY, coreR * 2.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+
+    // === 📊 访问量计数器 ===
     (function updateVisitCount() {
-        // 1. 定义存储的键名
         const key = 'my_website_visits';
-        
-        // 2. 从浏览器缓存里读取现在的次数
         let count = localStorage.getItem(key);
-
-        if (!count) {
-            // 🌟 如果是第一次访问，给个“初始人气值”
-            // 你可以改成任何你喜欢的数字，比如 0 或 500
-            count = 100; 
-        } else {
-            // 如果有记录，就 +1
-            count = parseInt(count) + 1;
-        }
-
-        // 3. 把新的数字存回去
+        if (!count) count = 100;
+        else count = parseInt(count) + 1;
         localStorage.setItem(key, count);
-
-        // 4. 更新到页面上 (找到刚才加 ID 的那个元素)
-        const countElement = document.getElementById('visit-count');
-        if (countElement) {
-            countElement.innerText = count;
-        }
+        const heroEl = document.getElementById('visit-count');
+        const footEl = document.getElementById('visit-count-foot');
+        if (heroEl) heroEl.innerText = count;
+        if (footEl) footEl.innerText = count;
     })();
     </script>
 </body>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 👇 1. 这里修改浏览器标题 -->
+    <title>文章标题 | My Blog</title>
+    
+    <!-- 引入字体 -->
+    <link href="https://fonts.loli.net/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 通用样式，保持和主页一致 */
+        :root { --primary-red: #E60012; --sky-blue: #4facfe; --bg-color: #f5f6f7; --card-bg: #fff; }
+        @media (prefers-color-scheme: dark) { :root { --bg-color: #121212; --card-bg: #1e1e2e; color: #fff; } }
+        
+        body { font-family: 'Nunito', sans-serif; background: var(--bg-color); margin: 0; padding: 0; color: #333; }
+        @media (prefers-color-scheme: dark) { body { color: #eee; } }
+
+        /* 顶部导航 */
+        nav { background: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .home-btn { text-decoration: none; background: #eee; color: #333; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; transition:0.3s; }
+        .home-btn:hover { background: var(--sky-blue); color: #fff; }
+
+        /* 内容容器 */
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        
+        /* 文章卡片 */
+        .article-card { background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        
+        /* 排版样式 */
+        h1 { font-size: 2rem; margin-bottom: 10px; color: var(--primary-red); }
+        .meta { color: #999; font-size: 0.9rem; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        
+        p { line-height: 1.8; margin-bottom: 20px; font-size: 1.05rem; }
+        img { max-width: 100%; border-radius: 10px; margin: 20px 0; }
+        
+        /* 引用块 */
+        blockquote { border-left: 5px solid var(--sky-blue); margin: 20px 0; padding-left: 20px; color: #666; background: rgba(79, 172, 254, 0.1); padding: 15px; border-radius: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <nav>
+        <div style="font-weight:bold; font-size:1.2rem; font-family:'Fredoka One';">PLAYER ONE</div>
+        <a href="index.html" class="home-btn">🏠 HOME</a>
+    </nav>
+
+    <div class="container">
+        <article class="article-card">
+            
+            <!-- 👇 2. 这里修改文章大标题 -->
+            <h1>在此处输入文章标题</h1>
+            
+            <div class="meta">
+                <!-- 👇 3. 修改日期和标签 -->
+                <span>📅 2025-11-26</span> &nbsp; | &nbsp; 
+                <span style="color:var(--sky-blue);">#标签Tag</span>
+            </div>
+
+            <!-- 👇 4. 这里放封面图 (不需要删掉即可) -->
+            <img src="images/blender作品.png" alt="封面图">
+
+            <!-- 👇 5. 正文区域 (尽情写作吧) -->
+            <p>
+                这里是第一段话。你可以复制这个文件，用来写单独的游戏评测、技术文章或者日记。
+            </p>
+
+            <p>
+                如果需要插入图片，就像上面那样写 img 标签。
+            </p>
+
+            <blockquote>
+                这是一个引用块，适合用来做总结或者强调。
+            </blockquote>
+
+            <p>
+                写完了记得保存，然后在 index.html 的列表里链接到这个文件哦！
+            </p>
+
+        </article>
+    </div>
+
+</body>
+</html>

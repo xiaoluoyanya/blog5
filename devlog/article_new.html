@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优化笔记 | DevLog</title>
+    <!-- 引入同样的字体 -->
+    <link href="https://fonts.loli.net/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === 核心变量 (保持风格统一) === */
+        :root {
+            --primary-red: #E60012;
+            --sky-blue: #4facfe;
+            --text-dark: #4a4a4a;
+            --bg-color: #f5f6f7;
+            --card-bg: #fff;
+        }
+
+        /* 黑夜模式适配 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-dark: #e0e0e0;
+                --bg-color: #121212;
+                --card-bg: #1e1e2e;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-dark);
+            overflow-y: auto; /* 允许滚动 */
+        }
+
+        /* === 顶部导航 === */
+        .note-navbar {
+            background: var(--card-bg); 
+            padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 100;
+        }
+        
+        .back-btn {
+            text-decoration: none;
+            background: #f0f2f5; padding: 8px 20px;
+            border-radius: 20px; font-weight: bold; color: #666;
+            transition: 0.2s;
+            border: none; cursor: pointer;
+        }
+        .back-btn:hover { background: var(--primary-red); color: #fff; }
+
+        /* === 核心布局 === */
+        .note-container {
+            max-width: 1200px; width: 90%; margin: 30px auto;
+            display: grid; 
+            grid-template-columns: 280px 1fr; 
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* === 左侧栏 === */
+        .note-sidebar { position: sticky; top: 90px; }
+        
+        .info-card, .toc-card {
+            background: var(--card-bg); border-radius: 15px; padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .version-list { list-style: none; }
+        .version-item {
+            padding: 10px; border-radius: 8px; cursor: pointer;
+            transition: 0.2s; border-bottom: 1px dashed #eee;
+            font-size: 0.9rem; color: #666; display: flex; align-items: center; gap: 8px;
+        }
+        .version-item:hover { background: #f9f9f9; color: var(--sky-blue); }
+        .version-item.active {
+            background: #e3f2fd; color: var(--sky-blue); font-weight: bold;
+            border-left: 3px solid var(--sky-blue);
+        }
+        .v-tag {
+            background: var(--primary-red); color: #fff; 
+            font-size: 0.6rem; padding: 2px 5px; border-radius: 4px;
+        }
+
+        /* === 右侧内容 === */
+        .note-content-card {
+            background: var(--card-bg); border-radius: 15px; padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            min-height: 80vh;
+        }
+        .note-header { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
+        .note-tag { background: var(--sky-blue); color: #fff; padding: 2px 8px; border-radius: 5px; font-size: 0.8rem; }
+        .note-date { color: #999; font-size: 0.9rem; }
+        
+        .note-banner {
+            width: 100%; height: 200px; 
+            background-size: cover; background-position: center;
+            border-radius: 10px; margin: 20px 0;
+            position: relative; overflow: hidden;
+        }
+        .note-banner-text {
+            position: absolute; bottom: 20px; left: 20px; color: #fff; 
+            font-size: 1.5rem; font-weight: bold; z-index: 2;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* 正文样式 */
+        h1 { margin-bottom: 20px; }
+        h2 { border-left: 5px solid var(--primary-red); padding-left: 10px; margin-top: 40px; margin-bottom: 15px; font-size: 1.4rem; }
+        p { line-height: 1.8; margin-bottom: 15px; }
+        ul { margin-left: 20px; margin-bottom: 20px; line-height: 1.8; }
+        
+        .code-block {
+            background: #2d3436; color: #a29bfe; padding: 15px; 
+            border-radius: 8px; font-family: monospace; margin: 15px 0;
+        }
+        .badge { background: #eee; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
+
+        /* 手机适配 */
+        @media (max-width: 900px) {
+            .note-container { grid-template-columns: 1fr; }
+            .note-sidebar { position: static; margin-bottom: 20px; }
+        }
+        
+        /* 切换动画 */
+        .version-content { animation: fadeIn 0.3s ease; display: none; }
+        /* 默认显示第一个 */
+        #content-v6 { display: block; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. 顶部导航 -->
+    <nav class="note-navbar">
+        <div style="font-weight:bold; font-size:1.2rem;">📝 优化笔记 / DevLog</div>
+        <!-- 👇 这里改成了链接，点击直接回到首页 -->
+        <a href="index.html" class="back-btn">🏠 返回主页 / HOME</a>
+    </nav>
+
+    <!-- 2. 主布局 -->
+    <div class="note-container">
+
+        <!-- 左侧栏：版本列表 -->
+        <aside class="note-sidebar">
+            <div class="toc-card">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--primary-red); padding-left:10px;">
+                    🕒 历史版本 / Versions
+                </div>
+                <ul class="version-list">
+                    <!-- 👇 点击触发 JS 切换 -->
+                    <li onclick="switchVersion('v6')" id="btn-v6" class="version-item active">
+                        <span class="v-tag">NEW</span> 第六版 (v6.0)
+                    </li>
+                    <li onclick="switchVersion('v5')" id="btn-v5" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第五版 (v5.0)
+                    </li>
+                    <li onclick="switchVersion('v4')" id="btn-v4" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第四版 (v4.0)
+                    </li>
+                    <li onclick="switchVersion('v3')" id="btn-v3" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第三版 (v3.0)
+                    </li>
+                    <li onclick="switchVersion('v2')" id="btn-v2" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第二版 (v2.0)
+                    </li>
+                     <li onclick="switchVersion('v1')" id="btn-v1" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第一版 (v1.0)
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 作者卡片 -->
+            <div class="info-card" style="text-align:center;">
+                 <img src="images/me.jpg" style="width:80px; height:80px; border-radius:50%;" alt="me">
+                 <p style="margin-top:10px; font-weight:bold;">无音desu</p>
+                 <p style="font-size:0.8rem; color:#888;">持续更新中...</p>
+            </div>
+        </aside>
+
+        <!-- 右侧栏：内容区 -->
+        <main class="note-content-card">
+            
+            <!-- 这里把之前的 v6 到 v1 的内容全部粘贴过来 -->
+            <!-- 为了节省篇幅，我这里只放 v6 做示例，你把 index.html 里对应的 v5-v1 复制过来放到下面即可 -->
+
+            <!-- === v6 内容 === -->
+            <div id="content-v6" class="version-content">
+                <div class="note-header">
+                    <span class="note-tag">v6.0 Major Update</span>
+                    <span class="note-date">📅 2025-11-25</span>
+                </div>
+                <h1>🚀 v6.0：从静态主页升级为动态主页</h1>
+                <div class="note-banner" style="background-image: url('images/blender作品.png');">
+                    <div class="note-banner-text">Project: Transformer Profile</div>
+                </div>
+                <div class="note-body">
+                    <p>这是一个里程碑式的版本...</p>
+                    <h2>1. 核心特效：动态形态变换</h2>
+                    <p>左侧栏拥有了两种形态...</p>
+                </div>
+            </div>
+            
+            <!-- 👇 在这里继续粘贴 <div id="content-v5"> ... </div> 等等 -->
+            <div id="content-v5" class="version-content"> <h1>这里放 v5 的内容...</h1> </div>
+            <div id="content-v4" class="version-content"> <h1>这里放 v4 的内容...</h1> </div>
+            <div id="content-v3" class="version-content"> <h1>这里放 v3 的内容...</h1> </div>
+            <div id="content-v2" class="version-content"> <h1>这里放 v2 的内容...</h1> </div>
+            <div id="content-v1" class="version-content"> <h1>这里放 v1 的内容...</h1> </div>
+
+        </main>
+    </div>
+
+    <script>
+        // === 切换版本的逻辑 (和之前一样) ===
+        function switchVersion(verID) {
+            // 1. 隐藏所有内容
+            const allContents = document.querySelectorAll('.version-content');
+            allContents.forEach(div => div.style.display = 'none'); 
+            
+            // 2. 显示目标内容
+            const targetContent = document.getElementById('content-' + verID);
+            if (targetContent) targetContent.style.display = 'block';
+
+            // 3. 按钮高亮处理
+            const allBtns = document.querySelectorAll('.version-item');
+            allBtns.forEach(btn => btn.classList.remove('active')); 
+            
+            const targetBtn = document.getElementById('btn-' + verID);
+            if (targetBtn) targetBtn.classList.add('active');
+            
+            // 4. 滚回顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

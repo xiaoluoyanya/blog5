@@ -255,8 +255,21 @@
 
             <!-- (B) 目录区 (所有版本的目录都在这里，默认隐藏旧的) -->
             
+            <!-- v8 目录 -->
+            <div id="toc-v8" class="note-toc-card version-toc">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
+                    📑 目录 (v8.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v8-1"># 1. 设计理念：Less is More</a></li>
+                    <li><a href="#v8-2"># 2. 设计系统重建</a></li>
+                    <li><a href="#v8-3"># 3. 交互的减法与加法</a></li>
+                    <li><a href="#v8-4"># 4. 工程化收尾</a></li>
+                </ul>
+            </div>
+
             <!-- v7 目录 -->
-            <div id="toc-v7" class="note-toc-card version-toc">
+            <div id="toc-v7" class="note-toc-card version-toc" style="display:none;">
                 <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
                     📑 目录 (v7.0)
                 </div>
@@ -269,7 +282,7 @@
             </div>
             
             <!-- v6 目录 -->
-            <div id="toc-v6" class="note-toc-card version-toc">
+            <div id="toc-v6" class="note-toc-card version-toc" style="display:none;">
                 <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
                     📑 目录 (v6.0)
                 </div>
@@ -346,8 +359,11 @@
                     🕒 历史版本 / Versions
                 </div>
                 <ul class="version-list">
-                    <li onclick="switchVersion('v7')" id="btn-v7" class="version-item active">
-                    <span class="v-tag">NEW</span> 第七版 (v7.0)
+                    <li onclick="switchVersion('v8')" id="btn-v8" class="version-item active">
+                        <span class="v-tag">NEW</span> 第八版 (v8.0)
+                    </li>
+                    <li onclick="switchVersion('v7')" id="btn-v7" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第七版 (v7.0)
                     </li>
                     <li onclick="switchVersion('v6')" id="btn-v6" class="version-item">
                         <span class="v-tag" style="background:#ccc;">OLD</span> 第六版 (v6.0)
@@ -374,8 +390,74 @@
 
         <!-- ➡️ 右侧主要内容区 -->
         <main class="note-content-card">
+            <!-- ====================  第八版内容 (v8.0) ==================== -->
+            <div id="content-v8" class="version-content">
+                <div class="note-header">
+                    <span class="note-tag">v8.0 UI Redesign</span>
+                    <span class="note-date">📅 2026-08-09</span>
+                </div>
+
+                <h1>🎨 v8.0：美学觉醒 - 从游戏面板到高级简约</h1>
+
+                <div class="note-banner" style="background-image: url('https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80');">
+                    <div class="note-banner-text">Refined Minimalism</div>
+                </div>
+
+                <div class="note-body">
+                    <p>时隔近一年，主页迎来了一次彻底的「整容」。v1.0 确立的游戏面板风格陪我走过了七个版本，但在浏览了市面上大量优秀的个人作品集后，我决定做一件大事：<b>推翻视觉，保留灵魂</b>。v8.0 是一次全面的 UI 重构——交互形式大改，功能一个不少。</p>
+
+                    <h2 id="v8-1">1. 设计理念：Less is More</h2>
+                    <p>旧版的设计哲学是「信息密度优先」：开场动画、三栏布局、滚动变形……元素很多，但视觉噪音也很大。v8.0 转向<b>「呼吸感优先」</b>：</p>
+                    <ul>
+                        <li><b>移除开场动画：</b> 删掉了 PRESS START 启动画面，打开即见内容，不再让访客多等一秒。</li>
+                        <li><b>移除三栏滚动变形：</b> 曾经的招牌特效正式退役，改为更成熟的<b>单页纵向叙事</b>。</li>
+                        <li><b>页面结构：</b> Hero → 关于我 → 作品集 → 游戏收藏 → 3D 模型库 → 音乐 → 联系，一条清晰的阅读动线。</li>
+                    </ul>
+
+                    <h2 id="v8-2">2. 设计系统重建 (Design Tokens)</h2>
+                    <p>这次不是换皮，而是从底层重建了一整套设计令牌：</p>
+                    <ul>
+                        <li><span class="badge">色彩</span> 米白纸面 <code>#FAFAF7</code> 打底，点缀<b>克莱因蓝 <code>#002FA7</code></b>——克制的双色系统是高级感的来源；暗色模式则切换为墨夜黑。</li>
+                        <li><span class="badge">字体</span> 标题启用衬线组合 <code>DM Serif Display × 思源宋体</code>，正文使用思源黑体，标签细节用等宽字体——三种字体各司其职。</li>
+                        <li><span class="badge">细节</span> hairline 细分隔线、01/02 编号区块、克制的滚动入场动效（Intersection Observer）。</li>
+                    </ul>
+                    <div class="code-block">
+                        :root {
+                            --bg: #FAFAF7;      /* 米白纸面 */
+                            --accent: #002FA7;  /* 克莱因蓝 */
+                            --font-serif: 'DM Serif Display', 'Noto Serif SC', serif;
+                        }
+                    </div>
+
+                    <h2 id="v8-3">3. 交互的减法与加法</h2>
+                    <p><b>做的减法：</b>开场画面、三栏 Grid 布局、侧滑留言板抽屉（改为独立的「联系」区块）。</p>
+                    <p><b>做的加法：</b></p>
+                    <ul>
+                        <li>播放音乐时新增<b>均衡器跳动动画</b>，正在播放的状态一目了然；</li>
+                        <li>所有弹窗支持 <b>Esc 键关闭</b>，告别满屏找叉号；</li>
+                        <li>访问量统计升级为 Hero 区 + 页脚<b>双位置显示</b>；</li>
+                        <li>图片全部懒加载，暗色模式依旧记忆你的选择。</li>
+                    </ul>
+                    <p><b>始终保留：</b>6 首歌播放器、3D 模型查看、全屏画廊、博客阅读器、视频 Demo、Formspree 留言、日夜切换——<b>功能清单一个都没少</b>。</p>
+
+                    <h2 id="v8-4">4. 工程化收尾</h2>
+                    <p>大改之后最怕「看着好看，点着失灵」。这次重构做了完整的回归验证：</p>
+                    <ul>
+                        <li><b>钩子核对：</b> JS 引用的 26 个元素 ID、17 个交互函数全部逐一比对，零缺失；</li>
+                        <li><b>旧代码清理：</b> 开场动画与滚动变形相关的残留代码全部移除，零残留；</li>
+                        <li><b>BUG 修复：</b> 顺手修掉了旧版遗留的 <code>loadMessages()</code> 未定义报错；</li>
+                        <li><b>渲染验证：</b> 通过无头浏览器确认播放器初始化、访问计数、入场动效均正常工作。</li>
+                    </ul>
+
+                    <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                    <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                        Simplicity is the ultimate sophistication. <br>
+                        © 2026 无音desu / Code with Passion
+                    </p>
+                </div>
+            </div>
             <!-- ====================  第七版内容 (v7.0) ==================== -->
-            <div id="content-v7" class="version-content">
+            <div id="content-v7" class="version-content" style="display: none;">
                 <div class="note-header">
                     <span class="note-tag">v7.0 Architecture</span>
                     <span class="note-date">📅 2025-11-26</span>
@@ -428,7 +510,7 @@
                 </div>
             </div>
             <!-- ====================  第六版内容 (v6.0) ==================== -->
-            <div id="content-v6" class="version-content">
+            <div id="content-v6" class="version-content" style="display: none;">
                 <div class="note-header">
                     <span class="note-tag">v6.0 Major Update</span>
                     <span class="note-date">📅 2025-11-25</span>
@@ -776,7 +858,7 @@
             // --- D. 滚回顶部 (优化体验) ---
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-                switchVersion('v7');
+                switchVersion('v8');
     </script>
 </body>
 </html>
