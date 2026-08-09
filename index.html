@@ -644,10 +644,10 @@
     body[data-theme="dark"] #cursor-canvas { mix-blend-mode: screen; }
 
     /* 主内容提到 canvas 之上 */
-    main, footer, .topbar, .modal-overlay, .gallery-overlay { position: relative; z-index: 1; }
+    main, footer, .topbar { position: relative; z-index: 1; }
     .topbar { z-index: 1000; }
-    .modal-overlay { z-index: 2000; }
-    .gallery-overlay { z-index: 6000; }
+    .modal-overlay { position: fixed; z-index: 2000; }
+    .gallery-overlay { position: fixed; z-index: 6000; }
 
     /* 让 body 背景透明一点，让 canvas 极光透出来 */
     body {
