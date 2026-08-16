@@ -255,8 +255,22 @@
 
             <!-- (B) 目录区 (所有版本的目录都在这里，默认隐藏旧的) -->
             
+            <!-- v9 目录 -->
+            <div id="toc-v9" class="note-toc-card version-toc">
+                <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
+                    📑 目录 (v9.0)
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#v9-1"># 1. 主题焕新：暖奶油 × 深蓝灰</a></li>
+                    <li><a href="#v9-2"># 2. 内容独立：博客与相册成页</a></li>
+                    <li><a href="#v9-3"># 3. 项目展示集与游戏收藏</a></li>
+                    <li><a href="#v9-4"># 4. 板块渐进切换</a></li>
+                    <li><a href="#v9-5"># 5. 细节打磨</a></li>
+                </ul>
+            </div>
+            
             <!-- v8 目录 -->
-            <div id="toc-v8" class="note-toc-card version-toc">
+            <div id="toc-v8" class="note-toc-card version-toc" style="display:none;">
                 <div style="font-weight:bold; margin-bottom:10px; border-left:4px solid var(--sky-blue); padding-left:10px;">
                     📑 目录 (v8.0)
                 </div>
@@ -359,8 +373,11 @@
                     🕒 历史版本 / Versions
                 </div>
                 <ul class="version-list">
-                    <li onclick="switchVersion('v8')" id="btn-v8" class="version-item active">
-                        <span class="v-tag">NEW</span> 第八版 (v8.0)
+                    <li onclick="switchVersion('v9')" id="btn-v9" class="version-item active">
+                        <span class="v-tag">NEW</span> 第九版 (v9.0)
+                    </li>
+                    <li onclick="switchVersion('v8')" id="btn-v8" class="version-item">
+                        <span class="v-tag" style="background:#ccc;">OLD</span> 第八版 (v8.0)
                     </li>
                     <li onclick="switchVersion('v7')" id="btn-v7" class="version-item">
                         <span class="v-tag" style="background:#ccc;">OLD</span> 第七版 (v7.0)
@@ -390,8 +407,72 @@
 
         <!-- ➡️ 右侧主要内容区 -->
         <main class="note-content-card">
+            <!-- ====================  第九版内容 (v9.0) ==================== -->
+            <div id="content-v9" class="version-content">
+                <div class="note-header">
+                    <span class="note-tag">v9.0 Experience Upgrade</span>
+                    <span class="note-date">📅 2026-08-16</span>
+                </div>
+
+                <h1>🌙 v9.0：从页面到舞台 - 板块渐进切换与内容独立</h1>
+
+                <div class="note-banner" style="background-image: url('images/work-demo.jpg');">
+                    <div class="note-banner-text">Progressive &amp; Independent</div>
+                </div>
+
+                <div class="note-body">
+                    <p>v8.0 奠定了「高级简约」的视觉基调，v9.0 则是一次<b>体验与内容架构</b>的大升级：主页从「滚动页面」进化为「舞台切换」，博客与相册从弹窗中解放出来成为独立页面，配色体系也经历了一轮全新的推敲。</p>
+
+                    <h2 id="v9-1">1. 主题焕新：暖奶油 × 深蓝灰</h2>
+                    <p>受中国色启发，亮色模式改为<b>暖奶油 <code>#ECE4D0</code></b> 纸面质感，暗色模式改为<b>深蓝灰 <code>#312F36</code></b>——两种模式都是克制的低饱和灰调，切换时和谐不跳脱：</p>
+                    <ul>
+                        <li><span class="badge">亮色</span> 暖奶油打底、暖灰棕 <code>#7C7564</code> 点缀、近白卡片——纸张般的温柔质感。</li>
+                        <li><span class="badge">暗色</span> 深蓝灰背景、蓝紫强调——沉稳且耐看。</li>
+                        <li><span class="badge">统一</span> 主页、博客、相册、文章、相册详情五个页面共享同一套设计令牌，深色模式状态跨页记忆。</li>
+                    </ul>
+
+                    <h2 id="v9-2">2. 内容独立：博客与相册成页</h2>
+                    <p>个人博客和相册集不再藏身于弹窗，而是拥有了自己的页面与独立的阅读体验：</p>
+                    <ul>
+                        <li><b>博客列表页 <code>blog.html</code>：</b> 参考 windndream 风格的文章卡片流——编号、封面、日期、摘要、标签，整卡可点。</li>
+                        <li><b>文章阅读页 <code>article.html</code>：</b> 面包屑 + 大标题 + 标签胶囊，PDF 研报直接在浏览器内嵌翻阅（已收录国泰海通潮玩研报、AI 剧漫数据报告）。</li>
+                        <li><b>相册集页 <code>gallery.html</code> + 相册详情页 <code>album.html</code>：</b> 相册卡片网格 + 瀑布流图片墙。</li>
+                        <li>文章与相册数据抽离为共享 JS 文件（<code>articles.js</code> / <code>albums.js</code>），新增内容只改数据不改页面。</li>
+                        <li>四个页面间切换带<b>淡入淡出过渡</b>，导航栏统一（首页 / 博客 / 相册）。</li>
+                    </ul>
+
+                    <h2 id="v9-3">3. 项目展示集与游戏收藏</h2>
+                    <ul>
+                        <li><b>3D 模型库 → 项目展示集：</b> Astronaut / Racing Car / Role Model 转型为 English Workbench、R-report copy、BI_Dashboard 三个视频项目，点击直接播放演示视频。</li>
+                        <li><b>游戏收藏扩充至 29 款：</b> 火焰纹章 Engage、inZOI、幻兽帕鲁、黑神话悟空、王国保卫战全系列（1-5）……封面全部来自 Steam / 任天堂官方 CDN，竖版统一。</li>
+                        <li>社交栏新增 GitHub 按钮，直达个人仓库主页。</li>
+                    </ul>
+
+                    <h2 id="v9-4">4. 板块渐进切换</h2>
+                    <p>主页最大的交互变化：从「滚动页面」变为「舞台切换」——页面本身保持不动，滚动时当前板块向上渐隐、下一个板块从下方渐进显现，内容再阶梯式浮现：</p>
+                    <ul>
+                        <li><b>全屏交叉过渡：</b> 0.8s easeOutExpo 缓动 + 微缩放，丝滑不顿挫。</li>
+                        <li><b>长板块内部滚动：</b> 游戏收藏等超长板块内滚轮优先浏览内容，滚到边界才切换板块。</li>
+                        <li><b>导航直达：</b> 点击导航栏直接切换对应板块；视频/模型弹窗打开时滚动不误切。</li>
+                        <li><b>细节：</b> 滚动条隐藏、页脚固定毛玻璃底条、作品集卡片拉伸填满视口、板块内容垂直居中。</li>
+                    </ul>
+
+                    <h2 id="v9-5">5. 细节打磨</h2>
+                    <ul>
+                        <li>移除极光动画与鼠标流星特效，背景回归纯净双色。</li>
+                        <li>作品集外部图片全部本地化，切换零卡顿。</li>
+                        <li>修复板块切换布局下的页脚定位、音乐播放器初始化等历史问题。</li>
+                    </ul>
+
+                    <hr style="border:0; border-top:1px dashed #eee; margin:30px 0;">
+                    <p style="text-align:center; color:#ccc; font-size:0.8rem;">
+                        Progress is the art of refinement. <br>
+                        © 2026 无音desu / Code with Passion
+                    </p>
+                </div>
+            </div>
             <!-- ====================  第八版内容 (v8.0) ==================== -->
-            <div id="content-v8" class="version-content">
+            <div id="content-v8" class="version-content" style="display: none;">
                 <div class="note-header">
                     <span class="note-tag">v8.0 UI Redesign</span>
                     <span class="note-date">📅 2026-08-09</span>
@@ -417,14 +498,14 @@
                     <h2 id="v8-2">2. 设计系统重建 (Design Tokens)</h2>
                     <p>这次不是换皮，而是从底层重建了一整套设计令牌：</p>
                     <ul>
-                        <li><span class="badge">色彩</span> 米白纸面 <code>#FAFAF7</code> 打底，点缀<b>克莱因蓝 <code>#002FA7</code></b>——克制的双色系统是高级感的来源；暗色模式则切换为墨夜黑。</li>
+                        <li><span class="badge">色彩</span> 暖奶油 <code>#ECE4D0</code> 打底，点缀<b>暖灰棕 <code>#7C7564</code></b>——克制的双色系统是高级感的来源；暗色模式则切换为深蓝灰 #312F36。</li>
                         <li><span class="badge">字体</span> 标题启用衬线组合 <code>DM Serif Display × 思源宋体</code>，正文使用思源黑体，标签细节用等宽字体——三种字体各司其职。</li>
                         <li><span class="badge">细节</span> hairline 细分隔线、01/02 编号区块、克制的滚动入场动效（Intersection Observer）。</li>
                     </ul>
                     <div class="code-block">
                         :root {
-                            --bg: #FAFAF7;      /* 米白纸面 */
-                            --accent: #002FA7;  /* 克莱因蓝 */
+                            --bg: #ECE4D0;      /* 暖奶油 */
+                            --accent: #c0c4c3;  /* 月影白 */
                             --font-serif: 'DM Serif Display', 'Noto Serif SC', serif;
                         }
                     </div>
@@ -858,7 +939,7 @@
             // --- D. 滚回顶部 (优化体验) ---
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-                switchVersion('v8');
+                switchVersion('v9');
     </script>
 </body>
 </html>
