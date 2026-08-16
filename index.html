@@ -320,8 +320,25 @@
     /* ============================================================
        🎮 游戏收藏
        ============================================================ */
+    .game-filters {
+        display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+        margin-bottom: 30px;
+    }
+    .gf-btn {
+        padding: 7px 16px; border-radius: 999px;
+        border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+        font-size: 0.8rem; font-family: var(--font-sans); cursor: pointer;
+        transition: all 0.22s ease;
+    }
+    .gf-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+    .gf-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .gf-count {
+        margin-left: auto;
+        font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1.5px;
+        color: var(--ink-faint); white-space: nowrap;
+    }
     .games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
-    .game-item { text-align: left; }
+    .game-item { text-align: left; position: relative; }
     .game-cover {
         border-radius: 14px; overflow: hidden; aspect-ratio: 3/4;
         box-shadow: var(--shadow-card);
@@ -609,10 +626,10 @@
 <a href="#about">关于</a>
 <a href="#works">作品</a>
 <a href="#models">项目</a>
-<a href="#games">游戏</a>
 <a href="#music">音乐</a>
                 <a href="devlog.html">笔记</a>
                 <a href="#contact">联系</a>
+<a href="#games">游戏</a>
             </nav>
             <div class="nav-actions">
                 <button class="icon-pill" id="music-btn" onclick="toggleMusic()">♪ BGM</button>
@@ -770,169 +787,11 @@
             </div>
         </section>
 
-        <!-- ==================== 🎮 游戏收藏 ==================== -->
-        <section id="games" class="block hairline">
-            <div class="container">
-                <div class="sec-head reveal">
-                    <p class="sec-kicker"><span class="no">04</span> Now Playing</p>
-                    <h2 class="sec-title">游戏收藏</h2>
-                    <p class="sec-sub">这些世界，我都认真生活过。</p>
-                </div>
-                <div class="games-grid">
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/宝可梦紫.jpg" alt="宝可梦紫" loading="lazy"></div>
-                        <p class="game-name">宝可梦 紫</p>
-                        <p class="game-sub">Pokémon Violet</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/圣兽之王.webp" alt="圣兽之王" loading="lazy"></div>
-                        <p class="game-name">圣兽之王</p>
-                        <p class="game-sub">Unicorn Overlord</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/英雄联盟.jpg" alt="英雄联盟" loading="lazy"></div>
-                        <p class="game-name">英雄联盟</p>
-                        <p class="game-sub">League of Legends</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/塞尔达传说王国之泪.jpg" alt="王国之泪" loading="lazy"></div>
-                        <p class="game-name">王国之泪</p>
-                        <p class="game-sub">Tears of the Kingdom</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/火焰纹章engage.jpg" alt="火焰纹章engage" loading="lazy"></div>
-                        <p class="game-name">火焰纹章engage</p>
-                        <p class="game-sub">Fire Emblem Engage</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/inZOI.jpg" alt="inZOI" loading="lazy"></div>
-                        <p class="game-name">inZOI</p>
-                        <p class="game-sub">inZOI</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/幻兽帕鲁.jpg" alt="幻兽帕鲁" loading="lazy"></div>
-                        <p class="game-name">幻兽帕鲁</p>
-                        <p class="game-sub">Palworld</p>
-                    </div>
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/动物森友会.jpg" alt="动物森友会" loading="lazy"></div>
-                        <p class="game-name">动物森友会</p>
-                        <p class="game-sub">Animal Crossing</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/三国杀.jpg" alt="三国杀" loading="lazy"></div>
-                        <p class="game-name">三国杀</p>
-                        <p class="game-sub">Sanguosha</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/旷野之息.jpg" alt="旷野之息" loading="lazy"></div>
-                        <p class="game-name">旷野之息</p>
-                        <p class="game-sub">Breath of the Wild</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/黑神话悟空.jpg" alt="黑神话悟空" loading="lazy"></div>
-                        <p class="game-name">黑神话悟空</p>
-                        <p class="game-sub">Black Myth: Wukong</p>
-                    </div>
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/APEX.jpg" alt="APEX" loading="lazy"></div>
-                        <p class="game-name">APEX</p>
-                        <p class="game-sub">Apex Legends</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/漫威争锋.jpg" alt="漫威争锋" loading="lazy"></div>
-                        <p class="game-name">漫威争锋</p>
-                        <p class="game-sub">Marvel Rivals</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/战地1.jpg" alt="战地1" loading="lazy"></div>
-                        <p class="game-name">战地1</p>
-                        <p class="game-sub">Battlefield 1</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/双人成形.jpg" alt="双人成形" loading="lazy"></div>
-                        <p class="game-name">双人成形</p>
-                        <p class="game-sub">It Takes Two</p>
-                    </div>
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/双影奇境.jpg" alt="双影奇境" loading="lazy"></div>
-                        <p class="game-name">双影奇境</p>
-                        <p class="game-sub">Split Fiction</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/碧蓝幻想relink.jpg" alt="碧蓝幻想relink" loading="lazy"></div>
-                        <p class="game-name">碧蓝幻想relink</p>
-                        <p class="game-sub">Granblue Fantasy: Relink</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/瑞奇与叮当.jpg" alt="瑞奇与叮当" loading="lazy"></div>
-                        <p class="game-name">瑞奇与叮当</p>
-                        <p class="game-sub">Rift Apart</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/星界战士.jpg" alt="星界战士" loading="lazy"></div>
-                        <p class="game-name">星界战士</p>
-                        <p class="game-sub">Astral Ascent</p>
-                    </div>
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/大乱斗.jpg" alt="大乱斗" loading="lazy"></div>
-                        <p class="game-name">大乱斗</p>
-                        <p class="game-sub">Smash Bros. Ultimate</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/FIFA23.jpg" alt="FIFA23" loading="lazy"></div>
-                        <p class="game-name">FIFA23</p>
-                        <p class="game-sub">FIFA 23</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/对马岛之魂.jpg" alt="对马岛之魂" loading="lazy"></div>
-                        <p class="game-name">对马岛之魂</p>
-                        <p class="game-sub">Ghost of Tsushima</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/王国保卫战1.jpg" alt="王国保卫战" loading="lazy"></div>
-                        <p class="game-name">王国保卫战</p>
-                        <p class="game-sub">Kingdom Rush</p>
-                    </div>
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/王国保卫战2前线.jpg" alt="王国保卫战：前线" loading="lazy"></div>
-                        <p class="game-name">王国保卫战：前线</p>
-                        <p class="game-sub">Frontiers</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/王国保卫战3起源.jpg" alt="王国保卫战：起源" loading="lazy"></div>
-                        <p class="game-name">王国保卫战：起源</p>
-                        <p class="game-sub">Origins</p>
-                    </div>
-                    <div class="game-item reveal d2">
-                        <div class="game-cover"><img src="images/王国保卫战4复仇.jpg" alt="王国保卫战：复仇" loading="lazy"></div>
-                        <p class="game-name">王国保卫战：复仇</p>
-                        <p class="game-sub">Vengeance</p>
-                    </div>
-                    <div class="game-item reveal d3">
-                        <div class="game-cover"><img src="images/王国保卫战5联盟.jpg" alt="王国保卫战：联盟" loading="lazy"></div>
-                        <p class="game-name">王国保卫战：联盟</p>
-                        <p class="game-sub">Alliance</p>
-                    </div>
-                    <div class="game-item reveal">
-                        <div class="game-cover"><img src="images/火影忍者羁绊.jpg" alt="火影忍者羁绊" loading="lazy"></div>
-                        <p class="game-name">火影忍者羁绊</p>
-                        <p class="game-sub">Storm Connections</p>
-                    </div>
-                    <div class="game-item reveal d1">
-                        <div class="game-cover"><img src="images/鸡械绿洲.jpg" alt="鸡械绿洲" loading="lazy"></div>
-                        <p class="game-name">鸡械绿洲</p>
-                        <p class="game-sub">Cluckmech Oasis</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== 🎵 音乐 ==================== -->
+                <!-- ==================== 🎵 音乐 ==================== -->
         <section id="music" class="block hairline">
             <div class="container">
                 <div class="sec-head reveal">
-                    <p class="sec-kicker"><span class="no">05</span> Soundtrack</p>
+                    <p class="sec-kicker"><span class="no">04</span> Soundtrack</p>
                     <h2 class="sec-title">正在循环</h2>
                     <p class="sec-sub">写代码时的背景音，分享给你。</p>
                 </div>
@@ -964,7 +823,7 @@
         <section id="contact" class="block hairline">
             <div class="container">
                 <div class="sec-head reveal">
-                    <p class="sec-kicker"><span class="no">06</span> Contact</p>
+                    <p class="sec-kicker"><span class="no">05</span> Contact</p>
                     <h2 class="sec-title">给我留言</h2>
                     <p class="sec-sub">你的留言会直接发送到我的邮箱，欢迎交流。</p>
                 </div>
@@ -980,6 +839,198 @@
             </div>
         </section>
 
+<!-- ==================== 🎮 游戏收藏 ==================== -->
+        <section id="games" class="block hairline">
+            <div class="container">
+                <div class="sec-head reveal">
+                    <p class="sec-kicker"><span class="no">06</span> Now Playing</p>
+                    <h2 class="sec-title">游戏收藏</h2>
+                    <p class="sec-sub">这些世界，我都认真生活过。</p>
+                </div>
+                <div class="game-filters reveal d1">
+                    <button class="gf-btn active" data-filter="all">全部</button>
+                    <button class="gf-btn" data-filter="latest">最近在玩</button>
+                    <button class="gf-btn" data-filter="任天堂">任天堂</button>
+                    <button class="gf-btn" data-filter="开放世界">开放世界</button>
+                    <button class="gf-btn" data-filter="独立">独立</button>
+                    <button class="gf-btn" data-filter="联机">联机</button>
+                    <button class="gf-btn" data-filter="系列">系列</button>
+                    <span class="gf-count">共 <b id="games-count">30</b> 款</span>
+                </div>
+                <div class="games-grid">
+                    <div class="game-item reveal" data-tags="任天堂">
+                        <div class="game-cover"><img src="images/宝可梦紫.jpg" alt="宝可梦 紫" loading="lazy"></div>
+                        <p class="game-name">宝可梦 紫</p>
+                        <p class="game-sub">Pokémon Violet</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="">
+                        <div class="game-cover"><img src="images/圣兽之王.webp" alt="圣兽之王" loading="lazy"></div>
+                        <p class="game-name">圣兽之王</p>
+                        <p class="game-sub">Unicorn Overlord</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="联机" data-latest="1">
+                        <div class="game-cover"><img src="images/英雄联盟.jpg" alt="英雄联盟" loading="lazy"></div>
+                        <p class="game-name">英雄联盟</p>
+                        <p class="game-sub">League of Legends</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="任天堂 开放世界 系列">
+                        <div class="game-cover"><img src="images/塞尔达传说王国之泪.jpg" alt="王国之泪" loading="lazy"></div>
+                        <p class="game-name">王国之泪</p>
+                        <p class="game-sub">Tears of the Kingdom</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="任天堂">
+                        <div class="game-cover"><img src="images/火焰纹章engage.jpg" alt="火焰纹章engage" loading="lazy"></div>
+                        <p class="game-name">火焰纹章engage</p>
+                        <p class="game-sub">Fire Emblem Engage</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="开放世界">
+                        <div class="game-cover"><img src="images/inZOI.jpg" alt="inZOI" loading="lazy"></div>
+                        <p class="game-name">inZOI</p>
+                        <p class="game-sub">inZOI</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="开放世界 联机">
+                        <div class="game-cover"><img src="images/幻兽帕鲁.jpg" alt="幻兽帕鲁" loading="lazy"></div>
+                        <p class="game-name">幻兽帕鲁</p>
+                        <p class="game-sub">Palworld</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="任天堂">
+                        <div class="game-cover"><img src="images/动物森友会.jpg" alt="动物森友会" loading="lazy"></div>
+                        <p class="game-name">动物森友会</p>
+                        <p class="game-sub">Animal Crossing</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="联机" data-latest="1">
+                        <div class="game-cover"><img src="images/三国杀.jpg" alt="三国杀" loading="lazy"></div>
+                        <p class="game-name">三国杀</p>
+                        <p class="game-sub">Sanguosha</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="任天堂 开放世界 系列">
+                        <div class="game-cover"><img src="images/旷野之息.jpg" alt="旷野之息" loading="lazy"></div>
+                        <p class="game-name">旷野之息</p>
+                        <p class="game-sub">Breath of the Wild</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="开放世界">
+                        <div class="game-cover"><img src="images/黑神话悟空.jpg" alt="黑神话悟空" loading="lazy"></div>
+                        <p class="game-name">黑神话悟空</p>
+                        <p class="game-sub">Black Myth: Wukong</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="联机">
+                        <div class="game-cover"><img src="images/APEX.jpg" alt="APEX" loading="lazy"></div>
+                        <p class="game-name">APEX</p>
+                        <p class="game-sub">Apex Legends</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="联机">
+                        <div class="game-cover"><img src="images/漫威争锋.jpg" alt="漫威争锋" loading="lazy"></div>
+                        <p class="game-name">漫威争锋</p>
+                        <p class="game-sub">Marvel Rivals</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="联机" data-latest="1">
+                        <div class="game-cover"><img src="images/战地1.jpg" alt="战地1" loading="lazy"></div>
+                        <p class="game-name">战地1</p>
+                        <p class="game-sub">Battlefield 1</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="联机">
+                        <div class="game-cover"><img src="images/双人成形.jpg" alt="双人成形" loading="lazy"></div>
+                        <p class="game-name">双人成形</p>
+                        <p class="game-sub">It Takes Two</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="联机">
+                        <div class="game-cover"><img src="images/双影奇境.jpg" alt="双影奇境" loading="lazy"></div>
+                        <p class="game-name">双影奇境</p>
+                        <p class="game-sub">Split Fiction</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="联机">
+                        <div class="game-cover"><img src="images/碧蓝幻想relink.jpg" alt="碧蓝幻想relink" loading="lazy"></div>
+                        <p class="game-name">碧蓝幻想relink</p>
+                        <p class="game-sub">Granblue Fantasy: Relink</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="">
+                        <div class="game-cover"><img src="images/瑞奇与叮当.jpg" alt="瑞奇与叮当" loading="lazy"></div>
+                        <p class="game-name">瑞奇与叮当</p>
+                        <p class="game-sub">Rift Apart</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="独立">
+                        <div class="game-cover"><img src="images/星界战士.jpg" alt="星界战士" loading="lazy"></div>
+                        <p class="game-name">星界战士</p>
+                        <p class="game-sub">Astral Ascent</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="任天堂 联机">
+                        <div class="game-cover"><img src="images/大乱斗.jpg" alt="大乱斗" loading="lazy"></div>
+                        <p class="game-name">大乱斗</p>
+                        <p class="game-sub">Smash Bros. Ultimate</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="联机">
+                        <div class="game-cover"><img src="images/FIFA23.jpg" alt="FIFA23" loading="lazy"></div>
+                        <p class="game-name">FIFA23</p>
+                        <p class="game-sub">FIFA 23</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="开放世界">
+                        <div class="game-cover"><img src="images/对马岛之魂.jpg" alt="对马岛之魂" loading="lazy"></div>
+                        <p class="game-name">对马岛之魂</p>
+                        <p class="game-sub">Ghost of Tsushima</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="独立 系列">
+                        <div class="game-cover"><img src="images/王国保卫战1.jpg" alt="王国保卫战" loading="lazy"></div>
+                        <p class="game-name">王国保卫战</p>
+                        <p class="game-sub">Kingdom Rush</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="独立 系列">
+                        <div class="game-cover"><img src="images/王国保卫战2前线.jpg" alt="王国保卫战：前线" loading="lazy"></div>
+                        <p class="game-name">王国保卫战：前线</p>
+                        <p class="game-sub">Frontiers</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="独立 系列">
+                        <div class="game-cover"><img src="images/王国保卫战3起源.jpg" alt="王国保卫战：起源" loading="lazy"></div>
+                        <p class="game-name">王国保卫战：起源</p>
+                        <p class="game-sub">Origins</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="独立 系列">
+                        <div class="game-cover"><img src="images/王国保卫战4复仇.jpg" alt="王国保卫战：复仇" loading="lazy"></div>
+                        <p class="game-name">王国保卫战：复仇</p>
+                        <p class="game-sub">Vengeance</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="独立 系列" data-latest="1">
+                        <div class="game-cover"><img src="images/王国保卫战5联盟.jpg" alt="王国保卫战：联盟" loading="lazy"></div>
+                        <p class="game-name">王国保卫战：联盟</p>
+                        <p class="game-sub">Alliance</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="联机">
+                        <div class="game-cover"><img src="images/火影忍者羁绊.jpg" alt="火影忍者羁绊" loading="lazy"></div>
+                        <p class="game-name">火影忍者羁绊</p>
+                        <p class="game-sub">Storm Connections</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="独立">
+                        <div class="game-cover"><img src="images/鸡械绿洲.jpg" alt="鸡械绿洲" loading="lazy"></div>
+                        <p class="game-name">鸡械绿洲</p>
+                        <p class="game-sub">Cluckmech Oasis</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="独立">
+                        <div class="game-cover"><img src="images/杀戮尖塔2.jpg" alt="杀戮尖塔2" loading="lazy"></div>
+                        <p class="game-name">杀戮尖塔2</p>
+                        <p class="game-sub">Slay the Spire 2</p>
+                    </div>
+                    <div class="game-item reveal d2" data-tags="任天堂">
+                        <div class="game-cover"><img src="images/超级马里奥奥德赛.jpg" alt="超级马里奥奥德赛" loading="lazy"></div>
+                        <p class="game-name">超级马里奥奥德赛</p>
+                        <p class="game-sub">Super Mario Odyssey</p>
+                    </div>
+                    <div class="game-item reveal d3" data-tags="开放世界">
+                        <div class="game-cover"><img src="images/地平线5.jpg" alt="极限竞速：地平线5" loading="lazy"></div>
+                        <p class="game-name">极限竞速：地平线5</p>
+                        <p class="game-sub">Forza Horizon 5</p>
+                    </div>
+                    <div class="game-item reveal" data-tags="联机">
+                        <div class="game-cover"><img src="images/战地5.jpg" alt="战地5" loading="lazy"></div>
+                        <p class="game-name">战地5</p>
+                        <p class="game-sub">Battlefield V</p>
+                    </div>
+                    <div class="game-item reveal d1" data-tags="联机">
+                        <div class="game-cover"><img src="images/大巴扎.jpg" alt="大巴扎" loading="lazy"></div>
+                        <p class="game-name">大巴扎</p>
+                        <p class="game-sub">The Bazaar</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- ==================== 🦶 Footer ==================== -->
@@ -1328,6 +1379,42 @@
         set('foot-games', games);
         set('foot-projects', projects);
         set('foot-notes', notes);
+    })();
+
+    // === 🎮 游戏收藏：筛选 + 置顶最近在玩 + 计数 ===
+    (function initGameFilters() {
+        const items = [...document.querySelectorAll('.game-item')];
+        const countEl = document.getElementById('games-count');
+        const buttons = document.querySelectorAll('.gf-btn');
+        const total = items.length;
+
+        // 全部视图：最近在玩置顶
+        items.sort((a, b) => (b.dataset.latest === '1') - (a.dataset.latest === '1'));
+        const grid = document.querySelector('.games-grid');
+        items.forEach(el => grid.appendChild(el));
+
+        function apply(filter) {
+            let visible = 0;
+            items.forEach(item => {
+                let show;
+                if (filter === 'all') show = true;
+                else if (filter === 'latest') show = item.dataset.latest === '1';
+                else show = (item.dataset.tags || '').split(' ').includes(filter);
+                item.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            if (countEl) countEl.innerText = filter === 'all' ? total : visible;
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                apply(btn.dataset.filter);
+            });
+        });
+
+        apply('all');
     })();
     </script>
 </body>
