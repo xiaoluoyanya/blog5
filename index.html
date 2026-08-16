@@ -764,19 +764,19 @@
                     <p class="sec-sub">点击卡片，阅览每个项目的展示内容。</p>
                 </div>
                 <div class="models-grid">
-                    <button class="model-card reveal" onclick="openVideo('videos/english-workbench.mp4', 'Project Preview')">
+                    <button class="model-card reveal" onclick="openVideo('videos/english-workbench.mp4', 'Project Preview', 'English Workbench', 'PROJECT · VIDEO')">
                         <div class="model-icon">📖</div>
                         <p class="model-name">English Workbench</p>
                         <p class="model-sub">PROJECT · VIDEO</p>
                         <span class="model-open">打开阅览 →</span>
                     </button>
-                    <button class="model-card reveal d1" onclick="openVideo('videos/r-report-copy.mp4', 'Project Preview')">
+                    <button class="model-card reveal d1" onclick="openVideo('videos/r-report-copy.mp4', 'Project Preview', 'R-report copy', 'PROJECT · VIDEO')">
                         <div class="model-icon">📊</div>
                         <p class="model-name">R-report copy</p>
                         <p class="model-sub">PROJECT · VIDEO</p>
                         <span class="model-open">打开阅览 →</span>
                     </button>
-                    <button class="model-card reveal d2" onclick="openVideo('videos/bi-dashboard.mp4', 'Project Preview')">
+                    <button class="model-card reveal d2" onclick="openVideo('videos/bi-dashboard.mp4', 'Project Preview', 'BI_Dashboard', 'PROJECT · VIDEO')">
                         <div class="model-icon">📈</div>
                         <p class="model-name">BI_Dashboard</p>
                         <p class="model-sub">PROJECT · VIDEO</p>
@@ -1023,8 +1023,8 @@
         <div class="modal-card video-card">
             <button class="modal-close" onclick="closeVideo()">✕</button>
             <p class="modal-kicker" id="video-kicker">Gameplay Footage</p>
-            <h2 class="modal-title">游戏 Demo 演示</h2>
-            <p class="modal-sub" style="color:#6C6B75">实机录制 · 2025.11.27</p>
+            <h2 class="modal-title" id="video-title">游戏 Demo 演示</h2>
+            <p class="modal-sub" id="video-sub" style="color:#6C6B75">实机录制 · 2025.11.27</p>
             <video id="video-player" controls>
                 <source src="" type="video/mp4">
                 您的浏览器不支持视频播放。
@@ -1232,10 +1232,12 @@
     });
 
     // === 🎬 视频弹窗 ===
-    function openVideo(videoPath, kickerText) {
+    function openVideo(videoPath, kickerText, titleText, subText) {
         const modal = document.getElementById('video-modal');
         const video = document.getElementById('video-player');
         if (kickerText) document.getElementById('video-kicker').innerText = kickerText;
+        if (titleText) document.getElementById('video-title').innerText = titleText;
+        if (subText) document.getElementById('video-sub').innerText = subText;
         video.src = videoPath;
         modal.style.display = 'flex';
         video.play();
