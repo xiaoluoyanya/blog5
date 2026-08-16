@@ -1,2 +1,3 @@
 # WorkBuddy 内部目录，不纳入网站仓库
 .workbuddy/
+.zcode/
