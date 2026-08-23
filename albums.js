@@ -8,5 +8,21 @@
 // - images: 相册内图片列表
 // ============================================================
 const albums = [
-    // { title: "示例相册", tag: "标签", cover: "images/xxx.jpg", images: ["images/1.jpg", "images/2.jpg"] }
+    {
+        title: "风景随拍",
+        tag: "风景",
+        cover: "images/山水倒影.jpg",
+        images: [
+            "images/山水倒影.jpg",
+            "images/户外随拍-0823.jpg"
+        ]
+    },
+    {
+        title: "游戏时刻",
+        tag: "游戏",
+        cover: "images/三国杀对局.jpg",
+        images: [
+            "images/三国杀对局.jpg"
+        ]
+    }
 ];
